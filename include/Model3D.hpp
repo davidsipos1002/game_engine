@@ -17,6 +17,9 @@ namespace gps
 	{
 
 	public:
+		// Component meshes - group of objects
+		std::vector<gps::Mesh> meshes;
+
 		~Model3D();
 
 		void LoadModel(std::string fileName);
@@ -26,8 +29,6 @@ namespace gps
 		void Draw(gps::Shader shaderProgram);
 
 	private:
-		// Component meshes - group of objects
-		std::vector<gps::Mesh> meshes;
 		// Associated textures
 		std::vector<gps::Texture> loadedTextures;
 

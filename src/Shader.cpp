@@ -6,9 +6,11 @@
 //  Copyright © 2016 CGIS. All rights reserved.
 //
 
+#include <GeneralIncludes.hpp>
 #include <Shader.hpp>
 #include <exception>
 
+#define GET_LOC(name) glGetUniformLocation(shaderProgram, name.c_str())
 namespace gps
 {
     std::string Shader::readShaderFile(std::string fileName)
@@ -105,16 +107,33 @@ namespace gps
         glUseProgram(this->shaderProgram);
     }
 
-    void Shader::addUniform(std::string uniformName) 
+    void Shader::loadVector(std::string uniformName, glm::vec3 vector)
     {
-        GLint loc = glGetUniformLocation(shaderProgram, uniformName.c_str());
-        if (loc == -1)
-            throw std::runtime_error("Invalid uniform name!");
-        uniforms[uniformName] = loc;
+        glUniform3fv(GET_LOC(uniformName), 1, glm::value_ptr(vector));
+    }
+
+    void Shader::loadVector(std::string uniformName, glm::vec4 vector)
+    {
+        glUniform4fv(GET_LOC(uniformName), 1, glm::value_ptr(vector));
     }
     
-    GLint Shader::getUniformLocation(std::string uniformName)
+    void Shader::loadMatrix(std::string uniformName, glm::mat3 matrix) 
     {
-        return uniforms.at(uniformName);
+        glUniformMatrix3fv(GET_LOC(uniformName), 1, GL_FALSE, glm::value_ptr(matrix));
+    }
+    
+    void Shader::loadMatrix(std::string uniformName, glm::mat4 matrix)
+    {
+        glUniformMatrix4fv(GET_LOC(uniformName), 1, GL_FALSE, glm::value_ptr(matrix));
+    }
+
+    void Shader::loadValue(std::string uniformName, int value)
+    {
+        glUniform1i(GET_LOC(uniformName), value);
+    }
+
+    void Shader::loadValue(std::string uniformName, float value)
+    {
+        glUniform1f(GET_LOC(uniformName), value);
     }
 }

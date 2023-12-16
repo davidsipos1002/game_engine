@@ -31,46 +31,21 @@ namespace gps
         glFrontFace(GL_CCW);     // GL_CCW for counter clock-wise
 
         // Init models
-        teapot.LoadModel("models/teapot/teapot20segUT.obj");
 
+        Model3D *tea = new Model3D();
+        tea->LoadModel("models/teapot/teapot20segUT.obj");
+        teapot = new Entity(glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), tea);
         // Init shaders
         shader.loadShader("shaders/basic.vert", "shaders/basic.frag");
-        shader.addUniform("model");
-        shader.addUniform("view");
-        shader.addUniform("normalMatrix");
-        shader.addUniform("projection");
-        shader.addUniform("lightDir");
-        shader.addUniform("lightColor");
-
-        // Init uniforms  
-        initUniforms();
-    }
-
-    void Application::initUniforms()
-    {
-        shader.useShaderProgram();
-
-        // create model matrix for teapot
-        model = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
-
-        // compute normal matrix for teapot
-        normalMatrix = glm::mat3(glm::inverseTranspose(view * model));
-
-        // create projection matrix
+        
+        renderer.addEntity(teapot);
+        renderer.directionalLight.intensity = 1.0f;
+        renderer.directionalLight.lightColor = glm::vec3(1, 1, 1);
+        renderer.directionalLight.lightDirection = glm::vec3(0, 1, 1);
+        
         projection = glm::perspective(glm::radians(45.0f),
                                       (float)window.getWindowDimensions().width / (float)window.getWindowDimensions().height,
                                       0.1f, 20.0f);
-        // send projection matrix to shader
-        glUniformMatrix4fv(shader.getUniformLocation("projection"), 1, GL_FALSE, glm::value_ptr(projection));
-
-        // set the light direction (direction towards the light)
-        lightDir = glm::vec3(0.0f, 1.0f, 1.0f);
-        // send light dir to shader
-        glUniform3fv(shader.getUniformLocation("lightDir"), 1, glm::value_ptr(lightDir));
-
-        // set light color
-        lightColor = glm::vec3(1.0f, 1.0f, 1.0f); // white light
-        glUniform3fv(shader.getUniformLocation("lightColor"), 1, glm::value_ptr(lightColor));
     }
 
     void Application::update(double delta)
@@ -90,13 +65,13 @@ namespace gps
         if (keyboard->isKeyPressed(GLFW_KEY_Q))
         {
             angle -= 1.0f;
-            model = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0, 1, 0));
+            teapot->rotation.y = glm::radians(angle);
         }
 
         if (keyboard->isKeyPressed(GLFW_KEY_E))
         {
             angle += 1.0f;
-            model = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0, 1, 0));
+            teapot->rotation.y = glm::radians(angle);
         }
 
         static float mouseSpeed = 0.02f;
@@ -107,27 +82,13 @@ namespace gps
         yaw += delta * mouseSpeed * float(dim.height / 2 - ypos);
         camera.rotate(pitch, yaw);
         glfwSetCursorPos(window.getWindow(), dim.width / 2, dim.height / 2);
-
-        view = camera.getViewMatrix();
-        normalMatrix = glm::mat3(glm::inverseTranspose(view * model));
-        shader.useShaderProgram();
-        glUniformMatrix4fv(shader.getUniformLocation("view"), 1, GL_FALSE, glm::value_ptr(view));
     }
 
     void Application::render()
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        // select active shader program
-        shader.useShaderProgram();
-
-        // send teapot model matrix data to shader
-        glUniformMatrix4fv(shader.getUniformLocation("model"), 1, GL_FALSE, glm::value_ptr(model));
-
-        // send teapot normal matrix data to shader
-        glUniformMatrix3fv(shader.getUniformLocation("normalMatrix"), 1, GL_FALSE, glm::value_ptr(normalMatrix));
-
-        // draw teapot
-        teapot.Draw(shader);
+        
+        renderer.renderEntities(&camera, &shader, projection);
     }
 
     void Application::run()
