@@ -58,6 +58,9 @@ GLfloat angle;
 // shaders
 gps::Shader myBasicShader;
 
+float pitch = -3.14f;
+float yaw;
+
 GLenum glCheckError_(const char *file, int line)
 {
 	GLenum errorCode;
@@ -107,9 +110,15 @@ void keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int
 
 void mouseCallback(GLFWwindow* window, double xpos, double ypos) {
     //TODO
+    std::cout << "x: " << xpos << " " << "y: " << ypos << std::endl;
+    static float mouseSpeed = 0.0005f;
+    pitch += mouseSpeed * float(1024 / 2 - xpos);
+    yaw += mouseSpeed * float(768 / 2 - ypos);
+    glfwSetCursorPos(window, 1024 / 2, 768 / 2);
 }
 
 void processMovement() {
+
 	if (pressedKeys[GLFW_KEY_W]) {
 		myCamera.move(gps::MOVE_FORWARD, cameraSpeed);
 		//update view matrix
@@ -165,10 +174,15 @@ void processMovement() {
         // update normal matrix for teapot
         normalMatrix = glm::mat3(glm::inverseTranspose(view*model));
     }
+
+    myCamera.rotate(pitch, yaw);
+    view = myCamera.getViewMatrix();
+    myBasicShader.useShaderProgram();
+    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 }
 
 void initOpenGLWindow() {
-    myWindow.Create(1024, 768, "OpenGL Project Core");
+    myWindow.Create(1024, 768, "OpenGL Project");
 }
 
 void setWindowCallbacks() {

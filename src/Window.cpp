@@ -27,6 +27,8 @@ namespace gps {
             throw std::runtime_error("Could not create GLFW3 window!");
         }
 
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+
         glfwMakeContextCurrent(window);
 
         glfwSwapInterval(1);

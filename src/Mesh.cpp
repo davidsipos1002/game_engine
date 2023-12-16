@@ -23,7 +23,6 @@ namespace gps {
 
 		//set textures
 		for (GLuint i = 0; i < textures.size(); i++) {
-
 			glActiveTexture(GL_TEXTURE0 + i);
 			glUniform1i(glGetUniformLocation(shader.shaderProgram, this->textures[i].type.c_str()), i);
 			glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
@@ -34,7 +33,6 @@ namespace gps {
 		glBindVertexArray(0);
 
         for(GLuint i = 0; i < this->textures.size(); i++) {
-
             glActiveTexture(GL_TEXTURE0 + i);
             glBindTexture(GL_TEXTURE_2D, 0);
         }
