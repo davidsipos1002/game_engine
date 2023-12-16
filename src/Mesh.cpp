@@ -1,9 +1,11 @@
 #include <Mesh.hpp>
 
-namespace gps {
+namespace gps
+{
 
 	/* Mesh Constructor */
-	Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures) {
+	Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures)
+	{
 
 		this->vertices = vertices;
 		this->indices = indices;
@@ -12,17 +14,20 @@ namespace gps {
 		this->setupMesh();
 	}
 
-	Buffers Mesh::getBuffers() {
-	    return this->buffers;
+	Buffers Mesh::getBuffers()
+	{
+		return this->buffers;
 	}
 
 	/* Mesh drawing function - also applies associated textures */
-	void Mesh::Draw(gps::Shader shader)	{
+	void Mesh::Draw(gps::Shader shader)
+	{
 
 		shader.useShaderProgram();
 
-		//set textures
-		for (GLuint i = 0; i < textures.size(); i++) {
+		// set textures
+		for (GLuint i = 0; i < textures.size(); i++)
+		{
 			glActiveTexture(GL_TEXTURE0 + i);
 			glUniform1i(glGetUniformLocation(shader.shaderProgram, this->textures[i].type.c_str()), i);
 			glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
@@ -32,15 +37,16 @@ namespace gps {
 		glDrawElements(GL_TRIANGLES, (GLsizei)this->indices.size(), GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 
-        for(GLuint i = 0; i < this->textures.size(); i++) {
-            glActiveTexture(GL_TEXTURE0 + i);
-            glBindTexture(GL_TEXTURE_2D, 0);
-        }
-
-    }
+		for (GLuint i = 0; i < this->textures.size(); i++)
+		{
+			glActiveTexture(GL_TEXTURE0 + i);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+	}
 
 	// Initializes all the buffer objects/arrays
-	void Mesh::setupMesh() {
+	void Mesh::setupMesh()
+	{
 
 		// Create buffers/arrays
 		glGenVertexArrays(1, &this->buffers.VAO);
@@ -58,13 +64,13 @@ namespace gps {
 		// Set the vertex attribute pointers
 		// Vertex Positions
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)0);
 		// Vertex Normals
 		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, Normal));
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, Normal));
 		// Vertex Texture Coords
 		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, TexCoords));
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, TexCoords));
 
 		glBindVertexArray(0);
 	}
