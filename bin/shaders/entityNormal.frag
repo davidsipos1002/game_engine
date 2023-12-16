@@ -9,7 +9,6 @@ out vec4 fColor;
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 
-
 uniform vec3 directionalLightDirection[3];
 uniform vec3 directionalLightColor[3];
 uniform float directionalLightIntensity[3];

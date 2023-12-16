@@ -47,7 +47,7 @@ namespace gps
         teapot->specularStrength = 0.5f;
         renderer.addEntity(teapot);
 
-        loader.loadShader("shaders/basic.vert", "shaders/basic.frag", shader);
+        loader.loadShader("shaders/entityNormal.vert", "shaders/entityNormal.frag", shader);
         
         renderer.directionalLights[0].intensity = 1.0f;
         renderer.directionalLights[0].lightColor = glm::vec3(1, 1, 1);
