@@ -8,6 +8,7 @@
 #include <Renderer.hpp>
 #include <Shader.hpp>
 #include <Camera.hpp>
+#include <Loader.hpp>
 
 namespace gps
 {
@@ -17,9 +18,12 @@ namespace gps
         Window window;
         Keyboard *keyboard;
         Mouse *mouse;
-        Entity *teapot;
-        Shader shader;
+        Loader loader;
         Renderer renderer;
+        
+        std::string teapot1;
+        std::string teapot2;
+        std::string shader;
 
         glm::mat4 projection;
 

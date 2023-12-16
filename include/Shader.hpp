@@ -29,6 +29,8 @@ namespace gps
     {
 
     public:
+        ~Shader();
+        
         GLuint shaderProgram;
         void loadShader(std::string vertexShaderFileName, std::string fragmentShaderFileName);
         void useShaderProgram();

@@ -47,7 +47,7 @@ namespace gps
             }
         }
     }
-    
+
     void Renderer::renderEntities(Camera *camera, Shader *shader, glm::mat4 projectionMatrix)
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -57,7 +57,8 @@ namespace gps
         shader->loadMatrix("projectionMatrix", projectionMatrix);
         directionalLight.loadUniforms(shader, 0);
 
-        for (auto &pair : entities) {
+        for (auto &pair : entities)
+        {
             renderModels(pair.first, shader);
         }
     }

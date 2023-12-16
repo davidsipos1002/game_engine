@@ -14,6 +14,7 @@ namespace gps {
             glm::vec3 rotation;
             glm::vec3 scale;
 
+            Entity(Model3D *model) : model(model) {}
             Entity(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, Model3D *model);
             
             Model3D *getModel();

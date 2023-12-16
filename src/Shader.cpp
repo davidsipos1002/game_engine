@@ -13,9 +13,12 @@
 #define GET_LOC(name) glGetUniformLocation(shaderProgram, name.c_str())
 namespace gps
 {
+    Shader::~Shader() {
+        glDeleteProgram(shaderProgram);
+    }
+
     std::string Shader::readShaderFile(std::string fileName)
     {
-
         std::ifstream shaderFile;
         std::string shaderString;
 

@@ -2,6 +2,9 @@
 #include <ErrorCheck.hpp>
 #include <chrono>
 
+#define UUID_SYSTEM_GENERATOR
+#include <uuid.h>
+
 namespace gps
 {
     Application::Application()
@@ -14,31 +17,34 @@ namespace gps
 
     void Application::init()
     {
-        // Create window
         window.Create(1024, 768, "OpenGL Project");
         window.setResizeCallback(windowResizeCallback);
         keyboard = Keyboard::getInstance(window);
         mouse = Mouse::getInstance(window);
 
-        // Init OpenGL
         glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
         glViewport(0, 0, window.getWindowDimensions().width, window.getWindowDimensions().height);
         glEnable(GL_FRAMEBUFFER_SRGB);
-        glEnable(GL_DEPTH_TEST); // enable depth-testing
-        glDepthFunc(GL_LESS);    // depth-testing interprets a smaller value as "closer"
-        glEnable(GL_CULL_FACE);  // cull face
-        glCullFace(GL_BACK);     // cull back face
-        glFrontFace(GL_CCW);     // GL_CCW for counter clock-wise
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+        glFrontFace(GL_CCW);
 
-        // Init models
-
-        Model3D *tea = new Model3D();
-        tea->LoadModel("models/teapot/teapot20segUT.obj");
-        teapot = new Entity(glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), tea);
-        // Init shaders
-        shader.loadShader("shaders/basic.vert", "shaders/basic.frag");
-        
+        Entity *teapot = loader.loadEntity("models/teapot/teapot20segUT.obj", teapot1);
+        teapot->position = glm::vec3(0, 0, 0);
+        teapot->rotation = glm::vec3(0, 0, 0);
+        teapot->scale = glm::vec3(1, 1, 1);
         renderer.addEntity(teapot);
+        
+        teapot = loader.loadEntity("models/teapot/teapot20segUT.obj", teapot2);
+        teapot->position = glm::vec3(1, 1, 0);
+        teapot->rotation = glm::vec3(0, 3.14f / 2, 0);
+        teapot->scale = glm::vec3(1, 1, 0.5);
+        renderer.addEntity(teapot);
+
+        loader.loadShader("shaders/basic.vert", "shaders/basic.frag", shader);
+        
         renderer.directionalLight.intensity = 1.0f;
         renderer.directionalLight.lightColor = glm::vec3(1, 1, 1);
         renderer.directionalLight.lightDirection = glm::vec3(0, 1, 1);
@@ -65,13 +71,13 @@ namespace gps
         if (keyboard->isKeyPressed(GLFW_KEY_Q))
         {
             angle -= 1.0f;
-            teapot->rotation.y = glm::radians(angle);
+            loader.getEntity(teapot1)->rotation.y = glm::radians(angle);
         }
 
         if (keyboard->isKeyPressed(GLFW_KEY_E))
         {
             angle += 1.0f;
-            teapot->rotation.y = glm::radians(angle);
+            loader.getEntity(teapot2)->rotation.y = glm::radians(angle);
         }
 
         static float mouseSpeed = 0.02f;
@@ -88,7 +94,7 @@ namespace gps
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
-        renderer.renderEntities(&camera, &shader, projection);
+        renderer.renderEntities(&camera, loader.getShader(shader), projection);
     }
 
     void Application::run()
