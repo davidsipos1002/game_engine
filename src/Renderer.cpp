@@ -35,6 +35,8 @@ namespace gps
                 glm::mat4 modelMatrix = translate * rotate * scale;
 
                 shader->loadMatrix("modelMatrix", modelMatrix);
+                shader->loadValue("ambientStrength", entity->ambientStrength);
+                shader->loadValue("specularStrength", entity->specularStrength);
 
                 glDrawElements(GL_TRIANGLES, (GLsizei)mesh.indices.size(), GL_UNSIGNED_INT, 0);
             }
@@ -55,11 +57,11 @@ namespace gps
         shader->useShaderProgram();
         shader->loadMatrix("viewMatrix", camera->getViewMatrix());
         shader->loadMatrix("projectionMatrix", projectionMatrix);
-        directionalLight.loadUniforms(shader, 0);
+        for (int i = 0;i < directionalLights.size(); i++) {
+            directionalLights[i].loadUniforms(shader, i);
+        }
 
         for (auto &pair : entities)
-        {
             renderModels(pair.first, shader);
-        }
     }
 }

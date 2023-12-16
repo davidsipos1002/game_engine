@@ -35,19 +35,27 @@ namespace gps
         teapot->position = glm::vec3(0, 0, 0);
         teapot->rotation = glm::vec3(0, 0, 0);
         teapot->scale = glm::vec3(1, 1, 1);
+        teapot->ambientStrength = 0.2f;
+        teapot->specularStrength = 0.5f;
         renderer.addEntity(teapot);
         
         teapot = loader.loadEntity("models/teapot/teapot20segUT.obj", teapot2);
         teapot->position = glm::vec3(1, 1, 0);
         teapot->rotation = glm::vec3(0, 3.14f / 2, 0);
         teapot->scale = glm::vec3(1, 1, 0.5);
+        teapot->ambientStrength = 0.2f;
+        teapot->specularStrength = 0.5f;
         renderer.addEntity(teapot);
 
         loader.loadShader("shaders/basic.vert", "shaders/basic.frag", shader);
         
-        renderer.directionalLight.intensity = 1.0f;
-        renderer.directionalLight.lightColor = glm::vec3(1, 1, 1);
-        renderer.directionalLight.lightDirection = glm::vec3(0, 1, 1);
+        renderer.directionalLights[0].intensity = 1.0f;
+        renderer.directionalLights[0].lightColor = glm::vec3(1, 1, 1);
+        renderer.directionalLights[0].lightDirection = glm::vec3(0, 1, 1);
+        
+        renderer.directionalLights[1].intensity = 0.8f;
+        renderer.directionalLights[1].lightColor = glm::vec3(0, 1, 0);
+        renderer.directionalLights[1].lightDirection = glm::vec3(0, -1, -1);
         
         projection = glm::perspective(glm::radians(45.0f),
                                       (float)window.getWindowDimensions().width / (float)window.getWindowDimensions().height,
@@ -77,7 +85,11 @@ namespace gps
         if (keyboard->isKeyPressed(GLFW_KEY_E))
         {
             angle += 1.0f;
-            loader.getEntity(teapot2)->rotation.y = glm::radians(angle);
+            loader.getEntity(teapot1)->rotation.y = glm::radians(angle);
+        }
+        
+        if (keyboard->isKeyPressed(GLFW_KEY_L)) {
+            renderer.directionalLights[0].intensity -= 0.001f;
         }
 
         static float mouseSpeed = 0.02f;
