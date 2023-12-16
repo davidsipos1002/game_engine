@@ -22,7 +22,7 @@ namespace gps
         keyboard = Keyboard::getInstance(window);
         mouse = Mouse::getInstance(window);
 
-        glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glViewport(0, 0, window.getWindowDimensions().width, window.getWindowDimensions().height);
         glEnable(GL_FRAMEBUFFER_SRGB);
         glEnable(GL_DEPTH_TEST);
@@ -49,13 +49,21 @@ namespace gps
 
         loader.loadShader("shaders/entityNormal.vert", "shaders/entityNormal.frag", shader);
         
-        renderer.directionalLights[0].intensity = 1.0f;
+        renderer.directionalLights[0].intensity = 0.0f;
         renderer.directionalLights[0].lightColor = glm::vec3(1, 1, 1);
         renderer.directionalLights[0].lightDirection = glm::vec3(0, 1, 1);
         
-        renderer.directionalLights[1].intensity = 0.8f;
+        renderer.directionalLights[1].intensity = 0.5f;
         renderer.directionalLights[1].lightColor = glm::vec3(0, 1, 0);
         renderer.directionalLights[1].lightDirection = glm::vec3(0, -1, -1);
+        
+        renderer.pointLights[0].intensity = 1.5f;
+        renderer.pointLights[0].lightColor = glm::vec3(0, 0, 1);
+        renderer.pointLights[0].lightPosition = glm::vec3(0, -2, 0);
+        
+        renderer.pointLights[1].intensity = 0.4f;
+        renderer.pointLights[1].lightColor = glm::vec3(1, 1, 0);
+        renderer.pointLights[1].lightPosition = glm::vec3(0, 10, 0);
         
         projection = glm::perspective(glm::radians(45.0f),
                                       (float)window.getWindowDimensions().width / (float)window.getWindowDimensions().height,

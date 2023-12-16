@@ -57,9 +57,10 @@ namespace gps
         shader->useShaderProgram();
         shader->loadMatrix("viewMatrix", camera->getViewMatrix());
         shader->loadMatrix("projectionMatrix", projectionMatrix);
-        for (int i = 0;i < directionalLights.size(); i++) {
+        for (int i = 0;i < directionalLights.size(); i++) 
             directionalLights[i].loadUniforms(shader, i);
-        }
+        for (int i = 0;i < pointLights.size(); i++)
+            pointLights[i].loadUniforms(shader, i);
 
         for (auto &pair : entities)
             renderModels(pair.first, shader);

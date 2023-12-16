@@ -24,6 +24,7 @@ namespace gps
         {
             model = new Model3D();
             model->LoadModel(filename);
+            models[filename] = model;
         }
         else
             model = models.at(filename);
