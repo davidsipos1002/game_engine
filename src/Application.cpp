@@ -1,5 +1,6 @@
 #include <Application.hpp>
 #include <ErrorCheck.hpp>
+#include <chrono>
 
 namespace gps
 {
@@ -75,16 +76,16 @@ namespace gps
     void Application::update(double delta)
     {
         if (keyboard->isKeyPressed(GLFW_KEY_W))
-            camera.move(gps::MOVE_FORWARD, cameraSpeed);
+            camera.move(gps::MOVE_FORWARD, delta * cameraSpeed);
 
         if (keyboard->isKeyPressed(GLFW_KEY_S))
-            camera.move(gps::MOVE_BACKWARD, cameraSpeed);
+            camera.move(gps::MOVE_BACKWARD, delta * cameraSpeed);
 
         if (keyboard->isKeyPressed(GLFW_KEY_A))
-            camera.move(gps::MOVE_LEFT, cameraSpeed);
+            camera.move(gps::MOVE_LEFT, delta * cameraSpeed);
 
         if (keyboard->isKeyPressed(GLFW_KEY_D))
-            camera.move(gps::MOVE_RIGHT, cameraSpeed);
+            camera.move(gps::MOVE_RIGHT, delta * cameraSpeed);
 
         if (keyboard->isKeyPressed(GLFW_KEY_Q))
         {
@@ -98,12 +99,12 @@ namespace gps
             model = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0, 1, 0));
         }
 
-        static float mouseSpeed = 0.0005f;
+        static float mouseSpeed = 0.02f;
         double xpos, ypos;
         glfwGetCursorPos(window.getWindow(), &xpos, &ypos);
         WindowDimensions dim = window.getWindowDimensions();
-        pitch += mouseSpeed * float(dim.width / 2 - xpos);
-        yaw += mouseSpeed * float(dim.height / 2 - ypos);
+        pitch += delta * mouseSpeed * float(dim.width / 2 - xpos);
+        yaw += delta * mouseSpeed * float(dim.height / 2 - ypos);
         camera.rotate(pitch, yaw);
         glfwSetCursorPos(window.getWindow(), dim.width / 2, dim.height / 2);
 
@@ -133,9 +134,13 @@ namespace gps
     {
         init();
         glCheckError();
+        std::chrono::high_resolution_clock::time_point last = std::chrono::high_resolution_clock::now(); 
         while (!glfwWindowShouldClose(window.getWindow()))
         {
-            update(0);
+            std::chrono::high_resolution_clock::time_point now = std::chrono::high_resolution_clock::now();
+            double delta = std::chrono::duration_cast<std::chrono::duration<double>>(now - last).count();
+            last = now;
+            update(delta);
             render();
 
             glfwPollEvents();

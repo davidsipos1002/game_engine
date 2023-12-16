@@ -25,7 +25,14 @@ namespace gps
         // for antialising
         glfwWindowHint(GLFW_SAMPLES, 4);
 
-        this->window = glfwCreateWindow(width, height, title, NULL, NULL);
+        const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+        glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+        glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+        glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+        glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+
+        this->window = glfwCreateWindow(mode->width, mode->height, "", glfwGetPrimaryMonitor(), NULL);
         if (!this->window)
         {
             throw std::runtime_error("Could not create GLFW3 window!");

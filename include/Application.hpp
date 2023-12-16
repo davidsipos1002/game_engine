@@ -43,10 +43,10 @@ namespace gps
             glm::vec3(0.0f, 0.0f, -10.0f),
             glm::vec3(0.0f, 1.0f, 0.0f));
 
-        GLfloat cameraSpeed = 0.1f;
+        GLfloat cameraSpeed = 0.8f;
 
         float pitch = -3.14f;
-        float yaw;
+        float yaw = 0;
 
     public:
         Application();
