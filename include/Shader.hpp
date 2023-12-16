@@ -20,6 +20,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <unordered_set>
 
 namespace gps
 {
@@ -31,8 +32,11 @@ namespace gps
         GLuint shaderProgram;
         void loadShader(std::string vertexShaderFileName, std::string fragmentShaderFileName);
         void useShaderProgram();
+        void addUniform(std::string uniformName);
+        GLint getUniformLocation(std::string uniformName);
 
     private:
+        std::unordered_map<std::string, GLint> uniforms; 
         std::string readShaderFile(std::string fileName);
         void shaderCompileLog(GLuint shaderId);
         void shaderLinkLog(GLuint shaderProgramId);

@@ -7,6 +7,7 @@
 //
 
 #include <Shader.hpp>
+#include <exception>
 
 namespace gps
 {
@@ -101,8 +102,19 @@ namespace gps
 
     void Shader::useShaderProgram()
     {
-
         glUseProgram(this->shaderProgram);
     }
 
+    void Shader::addUniform(std::string uniformName) 
+    {
+        GLint loc = glGetUniformLocation(shaderProgram, uniformName.c_str());
+        if (loc == -1)
+            throw std::runtime_error("Invalid uniform name!");
+        uniforms[uniformName] = loc;
+    }
+    
+    GLint Shader::getUniformLocation(std::string uniformName)
+    {
+        return uniforms.at(uniformName);
+    }
 }
