@@ -39,19 +39,19 @@ namespace gps
         teapot->specularStrength = 0.5f;
         renderer.addEntity(teapot);
         
-        teapot = loader.loadEntity("models/teapot/teapot20segUT.obj", teapot2);
-        teapot->position = glm::vec3(1, 1, 0);
+        teapot = loader.loadEntity("models/ground/ground.obj", teapot2);
+        teapot->position = glm::vec3(0, -3, 0);
         teapot->rotation = glm::vec3(0, 3.14f / 2, 0);
-        teapot->scale = glm::vec3(1, 1, 0.5);
+        teapot->scale = glm::vec3(1, 1, 1);
         teapot->ambientStrength = 0.2f;
         teapot->specularStrength = 0.5f;
         renderer.addEntity(teapot);
         
         
-        teapot = loader.loadEntity("models/teapot/teapot20segUT.obj", teapot2);
+        teapot = loader.loadEntity("models/nanosuit/nanosuit.obj", teapot2);
         teapot->position = glm::vec3(1, -1, 0);
         teapot->rotation = glm::vec3(0, 3.14f / 2, 0);
-        teapot->scale = glm::vec3(1, 1, 0.5);
+        teapot->scale = glm::vec3(1, 1, 1);
         teapot->ambientStrength = 0.2f;
         teapot->specularStrength = 0.5f;
         renderer.addEntity(teapot);
@@ -62,23 +62,23 @@ namespace gps
         renderer.directionalLights[0].lightColor = glm::vec3(1, 1, 1);
         renderer.directionalLights[0].lightDirection = glm::vec3(0, 1, 1);
         
-        renderer.directionalLights[1].intensity = 0.5f;
+        renderer.directionalLights[1].intensity = 0.0f;
         renderer.directionalLights[1].lightColor = glm::vec3(0, 1, 0);
         renderer.directionalLights[1].lightDirection = glm::vec3(0, -1, -1);
         
-        renderer.pointLights[0].intensity = 1.5f;
+        renderer.pointLights[0].intensity = 0.4f;
         renderer.pointLights[0].lightColor = glm::vec3(0, 0, 1);
         renderer.pointLights[0].lightPosition = glm::vec3(0, -2, 0);
         
-        renderer.pointLights[1].intensity = 0.4f;
+        renderer.pointLights[1].intensity = 0.3f;
         renderer.pointLights[1].lightColor = glm::vec3(1, 1, 0);
-        renderer.pointLights[1].lightPosition = glm::vec3(0, 10, 0);
+        renderer.pointLights[1].lightPosition = glm::vec3(20, 10, 0);
         
         renderer.spotLights[0].intensity = 2.0f;
-        renderer.spotLights[0].lightPosition = glm::vec3(0, 2, 0);
+        renderer.spotLights[0].lightPosition = glm::vec3(0.75, 3, 0);
         renderer.spotLights[0].lightDirection = glm::vec3(0, -1, 0);
         renderer.spotLights[0].lightColor = glm::vec3(1, 1, 1);
-        renderer.spotLights[0].cutoff = cos(3.14f / 3);
+        renderer.spotLights[0].cutoff = cos(3.14f / 8);
         
         projection = glm::perspective(glm::radians(45.0f),
                                       (float)window.getWindowDimensions().width / (float)window.getWindowDimensions().height,

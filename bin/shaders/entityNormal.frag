@@ -119,7 +119,7 @@ void computeSpotLights()
 void main() 
 {
     normalMatrix = mat3(transpose(inverse(viewMatrix * modelMatrix)));
-    fPosEye = viewMatrix * modelMatrix * vec4(fPosition, 1.0f);
+    fPosEye = viewMatrix * modelMatrix * vec4(fPosition, 0.0f);
     normalEye = normalize(normalMatrix * fNormal);
     viewDir = normalize(- fPosEye.xyz);
     computeDirectionalLights();
@@ -138,7 +138,6 @@ void main()
     vec3 finalSpot = min((spotAmbientTotal + spotDiffuseTotal) *
                     diffuseTextureColor + spotSpecularTotal * specularTextureColor, 1.0f);
 
-    vec3 color = finalDirectional + finalPoint + finalSpot;
-    vec3 lightPosEye = vec3(viewMatrix * vec4(spotLightPosition[0], 1.0f));
+    vec3 color = min(finalDirectional + finalPoint + finalSpot, 1.0f);
     fColor = vec4(color, 1.0f);
 }

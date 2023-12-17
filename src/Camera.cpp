@@ -1,4 +1,5 @@
 #include <Camera.hpp>
+#include <iostream>
 
 namespace gps
 {
@@ -7,10 +8,10 @@ namespace gps
     Camera::Camera(glm::vec3 cameraPosition, glm::vec3 cameraTarget, glm::vec3 cameraUp)
     {
         this->cameraPosition = cameraPosition;
-        this->cameraTarget = cameraTarget;
-        this->cameraUpDirection = cameraUp;
-        this->cameraFrontDirection = -this->cameraTarget;
-        this->cameraRightDirection = glm::cross(cameraUp, cameraTarget);
+        this->cameraTarget = glm::normalize(cameraTarget);
+        this->cameraUpDirection = glm::normalize(cameraUp);
+        this->cameraFrontDirection = this->cameraTarget;
+        this->cameraRightDirection = glm::normalize(glm::cross(cameraFrontDirection, this->cameraUpDirection));
     }
 
     // return the view matrix, using the glm::lookAt() function
@@ -32,9 +33,11 @@ namespace gps
             break;
         case MOVE_LEFT:
             cameraPosition -= cameraRightDirection * speed;
+            cameraTarget -= cameraRightDirection * speed;
             break;
         case MOVE_RIGHT:
             cameraPosition += cameraRightDirection * speed;
+            cameraTarget += cameraRightDirection * speed;
             break;
         }
     }
@@ -44,7 +47,6 @@ namespace gps
     // pitch - camera rotation around the x axis
     void Camera::rotate(float pitch, float yaw)
     {
-        // TODO
         glm::vec3 dir(
             cos(yaw) * sin(pitch),
             sin(yaw),
