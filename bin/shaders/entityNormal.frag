@@ -54,7 +54,7 @@ void computeDirectionalLights()
 {
     for (int i = 0; i < 3; i++)
     {
-        vec3 lightDirN = vec3(normalize(viewMatrix * vec4(directionalLightDirection[i], 0.0f)));
+        vec3 lightDirN = vec3(normalize(viewMatrix * vec4(directionalLightDirection[i], 1.0f)));
         vec3 ambient = directionalLightIntensity[i] * ambientStrength * directionalLightColor[i];
         vec3 diffuse = directionalLightIntensity[i] * max(dot(normalEye, lightDirN), 0.0f) * directionalLightColor[i];
         vec3 reflectDir = reflect(-lightDirN, normalEye);
@@ -71,7 +71,7 @@ void computePointLights()
 {
     for (int i = 0; i < 10; i++)
     {
-        vec3 lightPosEye = vec3(viewMatrix * vec4(pointLightPosition[i], 0.0f));
+        vec3 lightPosEye = vec3(viewMatrix * vec4(pointLightPosition[i], 1.0f));
         vec3 lightVector = lightPosEye - fPosEye.xyz;
         float dist = length(lightVector);
         lightVector = normalize(lightVector);
@@ -93,7 +93,7 @@ void computeSpotLights()
 {
     for (int i = 0; i < 10; i++)
     {
-        vec3 lightPosEye = vec3(viewMatrix * vec4(spotLightPosition[i], 0.0f));
+        vec3 lightPosEye = vec3(viewMatrix * vec4(spotLightPosition[i], 1.0f));
         vec3 lightVector = lightPosEye - fPosEye.xyz;
         float dist = length(lightVector);
         lightVector = normalize(lightVector);
@@ -119,7 +119,7 @@ void computeSpotLights()
 void main() 
 {
     normalMatrix = mat3(transpose(inverse(viewMatrix * modelMatrix)));
-    fPosEye = viewMatrix * modelMatrix * vec4(fPosition, 0.0f);
+    fPosEye = viewMatrix * modelMatrix * vec4(fPosition, 1.0f);
     normalEye = normalize(normalMatrix * fNormal);
     viewDir = normalize(- fPosEye.xyz);
     computeDirectionalLights();

@@ -9,6 +9,8 @@
 #include <Shader.hpp>
 #include <Camera.hpp>
 #include <Loader.hpp>
+#include <Animation.hpp>
+#include <Animator.hpp>
 
 namespace gps
 {
@@ -20,6 +22,7 @@ namespace gps
         Mouse *mouse;
         Loader loader;
         Renderer renderer;
+        Animator animator;
         
         std::string teapot1;
         std::string teapot2;

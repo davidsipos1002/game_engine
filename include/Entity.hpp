@@ -2,10 +2,11 @@
 
 #include <GeneralIncludes.hpp>
 #include <Model3D.hpp>
+#include <Animated.hpp>
 
 namespace gps {
 
-    class Entity {
+    class Entity : public Animated {
         private:
             Model3D *model;
             

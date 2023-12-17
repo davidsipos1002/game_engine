@@ -29,11 +29,16 @@ namespace gps
 
             for (auto entity : v)
             {
+                Animation *animation = entity->getAnimation();
                 glm::mat4 scale = glm::scale(entity->scale);
                 glm::mat4 rotate = glm::rotate(entity->rotation.x, glm::vec3(1.0f, 0, 0));
                 rotate *= glm::rotate(entity->rotation.y, glm::vec3(0, 1.0f, 0));
                 rotate *= glm::rotate(entity->rotation.z, glm::vec3(0, 0, 1.0f));
                 glm::mat4 translate = glm::translate(entity->position);
+                if (animation)
+                {
+                    translate *= glm::translate(animation->interpolatedTranslation);
+                }
                 glm::mat4 modelMatrix = translate * rotate * scale;
 
                 shader->loadMatrix("modelMatrix", modelMatrix);
