@@ -46,6 +46,15 @@ namespace gps
         teapot->ambientStrength = 0.2f;
         teapot->specularStrength = 0.5f;
         renderer.addEntity(teapot);
+        
+        
+        teapot = loader.loadEntity("models/teapot/teapot20segUT.obj", teapot2);
+        teapot->position = glm::vec3(1, -1, 0);
+        teapot->rotation = glm::vec3(0, 3.14f / 2, 0);
+        teapot->scale = glm::vec3(1, 1, 0.5);
+        teapot->ambientStrength = 0.2f;
+        teapot->specularStrength = 0.5f;
+        renderer.addEntity(teapot);
 
         loader.loadShader("shaders/entityNormal.vert", "shaders/entityNormal.frag", shader);
         
@@ -64,6 +73,12 @@ namespace gps
         renderer.pointLights[1].intensity = 0.4f;
         renderer.pointLights[1].lightColor = glm::vec3(1, 1, 0);
         renderer.pointLights[1].lightPosition = glm::vec3(0, 10, 0);
+        
+        renderer.spotLights[0].intensity = 2.0f;
+        renderer.spotLights[0].lightPosition = glm::vec3(0, 2, 0);
+        renderer.spotLights[0].lightDirection = glm::vec3(0, -1, 0);
+        renderer.spotLights[0].lightColor = glm::vec3(1, 1, 1);
+        renderer.spotLights[0].cutoff = cos(3.14f / 3);
         
         projection = glm::perspective(glm::radians(45.0f),
                                       (float)window.getWindowDimensions().width / (float)window.getWindowDimensions().height,

@@ -7,6 +7,7 @@
 #include <Camera.hpp>
 #include <DirectionalLight.hpp>
 #include <PointLight.hpp>
+#include <SpotLight.hpp>
 #include <unordered_map>
 #include <array>
 
@@ -22,6 +23,7 @@ namespace gps
     public:
         std::array<DirectionalLight, 3> directionalLights;
         std::array<PointLight, 10> pointLights;
+        std::array<SpotLight, 10> spotLights;
 
         void addEntity(Entity *entity);
         void renderEntities(Camera *camera, Shader *shader, glm::mat4 projectionMatrix);

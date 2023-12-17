@@ -9,7 +9,7 @@ namespace gps
         public:
             glm::vec3 lightPosition;
             glm::vec3 lightColor;
-            float intensity;
+            float intensity = 0;
 
             PointLight() {}
             PointLight(glm::vec3 lightPosition, glm::vec3 lightColor, float intensity);

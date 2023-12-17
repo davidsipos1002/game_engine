@@ -8,7 +8,7 @@ namespace gps {
         public:
             glm::vec3 lightDirection;
             glm::vec3 lightColor;
-            float intensity;
+            float intensity = 0;
             
             DirectionalLight() {}
             DirectionalLight(glm::vec3 lightDirection, glm::vec3 lightColor, float intensity);

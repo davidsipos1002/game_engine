@@ -17,9 +17,14 @@ uniform vec3 pointLightPosition[10];
 uniform vec3 pointLightColor[10];
 uniform float pointLightIntensity[10];
 
+uniform vec3 spotLightPosition[10];
+uniform vec3 spotLightDirection[10];
+uniform vec3 spotLightColor[10];
+uniform float spotLightCutoff[10];
+uniform float spotLightIntensity[10];
+
 uniform float ambientStrength;
 uniform float specularStrength;
-
 
 uniform sampler2D diffuseTexture;
 uniform sampler2D specularTexture;
@@ -31,6 +36,10 @@ vec3 directionalSpecularTotal = vec3(0, 0, 0);
 vec3 pointAmbientTotal = vec3(0, 0, 0);
 vec3 pointDiffuseTotal = vec3(0, 0, 0);
 vec3 pointSpecularTotal = vec3(0, 0, 0);
+
+vec3 spotAmbientTotal = vec3(0, 0, 0);
+vec3 spotDiffuseTotal = vec3(0, 0, 0);
+vec3 spotSpecularTotal = vec3(0, 0, 0);
 
 mat3 normalMatrix;
 vec4 fPosEye;
@@ -80,6 +89,33 @@ void computePointLights()
     }
 }
 
+void computeSpotLights()
+{
+    for (int i = 0; i < 10; i++)
+    {
+        vec3 lightPosEye = vec3(viewMatrix * vec4(spotLightPosition[i], 0.0f));
+        vec3 lightVector = lightPosEye - fPosEye.xyz;
+        float dist = length(lightVector);
+        lightVector = normalize(lightVector);
+        vec3 spotDir = normalize(vec3(viewMatrix * vec4(spotLightDirection[i], 0.0f)));
+        float angle = max(dot(spotDir, -lightVector), 0.0f);
+        if (angle > spotLightCutoff[i])
+        {
+            float fade = 1.0 - (1.0 - angle) / (1.0 - spotLightCutoff[i]);
+            float attenuation = 1.0f / (constant + linear * dist + quadratic * (dist * dist));
+            vec3 ambient = attenuation * fade * spotLightIntensity[i] * ambientStrength * spotLightColor[i];
+            vec3 diffuse = attenuation * fade * spotLightIntensity[i] * max(dot(normalEye, lightVector), 0.0f) * spotLightColor[i];
+            vec3 reflectDir = reflect(-lightVector, normalEye);
+            float specCoeff = pow(max(dot(viewDir, reflectDir), 0.0f), 32);
+            vec3 specular = attenuation * fade * spotLightIntensity[i] * specularStrength * specCoeff * spotLightColor[i];
+            
+            spotAmbientTotal += ambient;
+            spotDiffuseTotal += diffuse;
+            spotSpecularTotal += specular;
+        }
+    }
+}
+
 void main() 
 {
     normalMatrix = mat3(transpose(inverse(viewMatrix * modelMatrix)));
@@ -88,6 +124,7 @@ void main()
     viewDir = normalize(- fPosEye.xyz);
     computeDirectionalLights();
     computePointLights();
+    computeSpotLights();
 
     vec3 diffuseTextureColor = texture(diffuseTexture, fTexCoords).rgb;
     vec3 specularTextureColor = texture(specularTexture, fTexCoords).rgb;
@@ -98,6 +135,10 @@ void main()
     vec3 finalPoint = min((pointAmbientTotal + pointDiffuseTotal) * 
                      diffuseTextureColor + pointSpecularTotal * specularTextureColor, 1.0f);
 
-    vec3 color = finalDirectional + finalPoint;
+    vec3 finalSpot = min((spotAmbientTotal + spotDiffuseTotal) *
+                    diffuseTextureColor + spotSpecularTotal * specularTextureColor, 1.0f);
+
+    vec3 color = finalDirectional + finalPoint + finalSpot;
+    vec3 lightPosEye = vec3(viewMatrix * vec4(spotLightPosition[0], 1.0f));
     fColor = vec4(color, 1.0f);
 }

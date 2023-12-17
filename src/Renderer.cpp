@@ -61,6 +61,8 @@ namespace gps
             directionalLights[i].loadUniforms(shader, i);
         for (int i = 0;i < pointLights.size(); i++)
             pointLights[i].loadUniforms(shader, i);
+        for (int i = 0;i < spotLights.size(); i++)
+            spotLights[i].loadUniforms(shader, i);
 
         for (auto &pair : entities)
             renderModels(pair.first, shader);
