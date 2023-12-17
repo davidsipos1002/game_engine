@@ -11,19 +11,9 @@ namespace gps
 
 	void Model3D::LoadModel(std::string fileName, std::string basePath)
 	{
-
 		ReadOBJ(fileName, basePath);
 	}
 
-	// Draw each mesh from the model
-	void Model3D::Draw(gps::Shader shaderProgram)
-	{
-
-		for (int i = 0; i < meshes.size(); i++)
-			meshes[i].Draw(shaderProgram);
-	}
-
-	// Does the parsing of the .obj file and fills in the data structure
 	void Model3D::ReadOBJ(std::string fileName, std::string basePath)
 	{
 		std::cout << "Loading : " << fileName << std::endl;
@@ -36,20 +26,14 @@ namespace gps
 		bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, fileName.c_str(), basePath.c_str(), GL_TRUE);
 
 		if (!err.empty())
-		{
-			// `err` may contain warning message.
 			std::cerr << err << std::endl;
-		}
 
 		if (!ret)
-		{
 			exit(1);
-		}
 
 		std::cout << "# of shapes    : " << shapes.size() << std::endl;
 		std::cout << "# of materials : " << materials.size() << std::endl;
 
-		// Loop over shapes
 		for (size_t s = 0; s < shapes.size(); s++)
 		{
 
@@ -57,21 +41,14 @@ namespace gps
 			std::vector<GLuint> indices;
 			std::vector<gps::Texture> textures;
 
-			// Loop over faces(polygon)
 			size_t index_offset = 0;
 			for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++)
 			{
 
 				int fv = shapes[s].mesh.num_face_vertices[f];
 
-				// gps::Texture currentTexture = LoadTexture("index1.png", "ambientTexture");
-				// textures.push_back(currentTexture);
-
-				// Loop over vertices in the face.
 				for (size_t v = 0; v < fv; v++)
 				{
-
-					// access to vertex
 					tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
 
 					float vx = attrib.vertices[3 * idx.vertex_index + 0];
@@ -106,23 +83,18 @@ namespace gps
 				index_offset += fv;
 			}
 
-			// get material id
-			// Only try to read materials if the .mtl file is present
 			size_t a = shapes[s].mesh.material_ids.size();
 
 			if (a > 0 && materials.size() > 0)
 			{
-
 				materialId = shapes[s].mesh.material_ids[0];
 				if (materialId != -1)
 				{
-
 					gps::Material currentMaterial;
 					currentMaterial.ambient = glm::vec3(materials[materialId].ambient[0], materials[materialId].ambient[1], materials[materialId].ambient[2]);
 					currentMaterial.diffuse = glm::vec3(materials[materialId].diffuse[0], materials[materialId].diffuse[1], materials[materialId].diffuse[2]);
 					currentMaterial.specular = glm::vec3(materials[materialId].specular[0], materials[materialId].specular[1], materials[materialId].specular[2]);
 
-					// ambient texture
 					std::string ambientTexturePath = materials[materialId].ambient_texname;
 
 					if (!ambientTexturePath.empty())
@@ -132,7 +104,6 @@ namespace gps
 						textures.push_back(currentTexture);
 					}
 
-					// diffuse texture
 					std::string diffuseTexturePath = materials[materialId].diffuse_texname;
 
 					if (!diffuseTexturePath.empty())
@@ -142,7 +113,6 @@ namespace gps
 						textures.push_back(currentTexture);
 					}
 
-					// specular texture
 					std::string specularTexturePath = materials[materialId].specular_texname;
 
 					if (!specularTexturePath.empty())
@@ -153,8 +123,7 @@ namespace gps
 					}
 				}
 			}
-
-			meshes.push_back(gps::Mesh(vertices, indices, textures));
+			meshes[shapes[s].name] = new Mesh(vertices, indices, textures);
 		}
 	}
 
@@ -194,7 +163,7 @@ namespace gps
 			fprintf(stderr, "ERROR: could not load %s\n", file_name);
 			return false;
 		}
-		// NPOT check
+
 		if ((x & (x - 1)) != 0 || (y & (y - 1)) != 0)
 		{
 			fprintf(
@@ -227,7 +196,7 @@ namespace gps
 		glTexImage2D(
 			GL_TEXTURE_2D,
 			0,
-			GL_SRGB, // GL_SRGB,//GL_RGBA,
+			GL_SRGB,
 			x,
 			y,
 			0,
@@ -253,14 +222,15 @@ namespace gps
 			glDeleteTextures(1, &loadedTextures.at(i).id);
 		}
 
-		for (size_t i = 0; i < meshes.size(); i++)
+		for (auto pair : meshes)
 		{
-			GLuint VBO = meshes.at(i).getBuffers().VBO;
-			GLuint EBO = meshes.at(i).getBuffers().EBO;
-			GLuint VAO = meshes.at(i).getBuffers().VAO;
+			GLuint VBO = pair.second->getBuffers().VBO;
+			GLuint EBO = pair.second->getBuffers().EBO;
+			GLuint VAO = pair.second->getBuffers().VAO;
 			glDeleteBuffers(1, &VBO);
 			glDeleteBuffers(1, &EBO);
 			glDeleteVertexArrays(1, &VAO);
+			delete pair.second;
 		}
 	}
 }

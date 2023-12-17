@@ -12,10 +12,12 @@ namespace gps
     {
         std::vector<Entity *> &v = entities[model];
 
-        for (auto &mesh : model->meshes)
+        for (auto &meshPair : model->meshes)
         {
-            Buffers buff = mesh.getBuffers();
-            std::vector<Texture> &textures = mesh.textures;
+            const std::string &name = meshPair.first;
+            Mesh *mesh = meshPair.second;
+            Buffers buff = mesh->getBuffers();
+            std::vector<Texture> &textures = mesh->textures;
 
             for (GLuint i = 0; i < textures.size(); i++)
             {
@@ -38,7 +40,7 @@ namespace gps
                 shader->loadValue("ambientStrength", entity->ambientStrength);
                 shader->loadValue("specularStrength", entity->specularStrength);
 
-                glDrawElements(GL_TRIANGLES, (GLsizei)mesh.indices.size(), GL_UNSIGNED_INT, 0);
+                glDrawElements(GL_TRIANGLES, (GLsizei)mesh->indices.size(), GL_UNSIGNED_INT, 0);
             }
 
             glBindVertexArray(0);

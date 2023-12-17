@@ -1,15 +1,7 @@
 #ifndef Mesh_hpp
 #define Mesh_hpp
 
-#if defined(__APPLE__)
-#define GL_SILENCE_DEPRECATION
-#include <OpenGL/gl3.h>
-#else
-#define GLEW_STATIC
-#include <GL/glew.h>
-#endif
-
-#include <glm/glm.hpp>
+#include <GeneralIncludes.hpp>
 
 #include "Shader.hpp"
 
@@ -63,13 +55,9 @@ namespace gps
 
         Buffers getBuffers();
 
-        void Draw(gps::Shader shader);
-
     private:
-        /*  Render data  */
         Buffers buffers;
 
-        // Initializes all the buffer objects/arrays
         void setupMesh();
     };
 
