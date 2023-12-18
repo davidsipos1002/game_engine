@@ -29,22 +29,17 @@ namespace gps
 
             for (auto entity : v)
             {
-                Animation *animation = entity->getAnimation();
                 glm::mat4 scale = glm::scale(entity->scale);
                 glm::mat4 rotate = glm::rotate(entity->rotation.x, glm::vec3(1.0f, 0, 0));
                 rotate *= glm::rotate(entity->rotation.y, glm::vec3(0, 1.0f, 0));
                 rotate *= glm::rotate(entity->rotation.z, glm::vec3(0, 0, 1.0f));
                 glm::mat4 translate = glm::translate(entity->position);
-                if (animation)
-                {
-                    translate *= glm::translate(animation->interpolatedTranslation);
-                }
+                getEntityAnimationMatrices(entity->getMainComponentAnimation(), translate, rotate, scale);
+                getEntityAnimationMatrices(entity->getSubComponentAnimation(name), translate, rotate, scale);
                 glm::mat4 modelMatrix = translate * rotate * scale;
-
                 shader->loadMatrix("modelMatrix", modelMatrix);
                 shader->loadValue("ambientStrength", entity->ambientStrength);
                 shader->loadValue("specularStrength", entity->specularStrength);
-
                 glDrawElements(GL_TRIANGLES, (GLsizei)mesh->indices.size(), GL_UNSIGNED_INT, 0);
             }
 
@@ -64,14 +59,26 @@ namespace gps
         shader->useShaderProgram();
         shader->loadMatrix("viewMatrix", camera->getViewMatrix());
         shader->loadMatrix("projectionMatrix", projectionMatrix);
-        for (int i = 0;i < directionalLights.size(); i++) 
+        for (int i = 0; i < directionalLights.size(); i++)
             directionalLights[i].loadUniforms(shader, i);
-        for (int i = 0;i < pointLights.size(); i++)
+        for (int i = 0; i < pointLights.size(); i++)
             pointLights[i].loadUniforms(shader, i);
-        for (int i = 0;i < spotLights.size(); i++)
+        for (int i = 0; i < spotLights.size(); i++)
             spotLights[i].loadUniforms(shader, i);
 
         for (auto &pair : entities)
             renderModels(pair.first, shader);
+    }
+
+    void Renderer::getEntityAnimationMatrices(Animation<Entity> *animation, glm::mat4 &translate, glm::mat4 &rotate, glm::mat4 &scale)
+    {
+        if (animation)
+        {
+            translate *= glm::translate(animation->interpolatedKeyFrame.translate);
+            rotate *= glm::rotate(animation->interpolatedKeyFrame.rotate.x, glm::vec3(1, 0, 0));
+            rotate *= glm::rotate(animation->interpolatedKeyFrame.rotate.y, glm::vec3(0, 1, 0));
+            rotate *= glm::rotate(animation->interpolatedKeyFrame.rotate.z, glm::vec3(0, 0, 1));
+            scale *= glm::scale(animation->interpolatedKeyFrame.scale);
+        }
     }
 }

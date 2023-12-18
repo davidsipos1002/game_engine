@@ -10,13 +10,30 @@ namespace gps
     class Animator
     {
     private:
-        std::vector<std::pair<std::function<bool()>, Animation *>> animations;
+        float elapsed = 0;
+        std::vector<std::pair<std::function<bool()>, AnimationBase *>> triggeredAnimations;
+        std::vector<std::tuple<float, float, AnimationBase *>> periodicAnimations;
 
     public:
         Animator();
         ~Animator();
 
-        Animation *createTriggeredAnimation(std::function<bool()> trigger);
+        template <class T>
+        Animation<T> *createTriggeredAnimation(std::function<bool()> trigger)
+        {
+            Animation<T> *animation = new Animation<T>();
+            triggeredAnimations.push_back(std::make_pair(trigger, animation));
+            return animation;
+        }
+
+        template <class T>
+        Animation<T> *createPeriodicAnimation(float start, float period)
+        {
+            Animation<T> *animation = new Animation<T>();
+            periodicAnimations.push_back(std::tuple<float, float, AnimationBase *>(start, period, animation));
+            return animation;
+        }
+
         void updateAnimations(double delta);
     };
 }

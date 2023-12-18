@@ -2,6 +2,7 @@
 
 #include <GeneralIncludes.hpp>
 #include <Model3D.hpp>
+#include <Animation.hpp>
 #include <Entity.hpp>
 #include <Shader.hpp>
 #include <Camera.hpp>
@@ -19,6 +20,7 @@ namespace gps
         std::unordered_map<Model3D *, std::vector<Entity *>> entities;
 
         void renderModels(Model3D *model, Shader *shader);
+        void getEntityAnimationMatrices(Animation<Entity> *animation, glm::mat4 &translate, glm::mat4 &rotate, glm::mat4 &scale);
 
     public:
         std::array<DirectionalLight, 3> directionalLights;

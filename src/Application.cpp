@@ -65,27 +65,35 @@ namespace gps
         renderer.directionalLights[1].lightColor = glm::vec3(0, 1, 0);
         renderer.directionalLights[1].lightDirection = glm::vec3(0, -1, -1);
 
-        renderer.pointLights[0].intensity = 0.4f;
+        renderer.pointLights[0].intensity = 0.3f;
         renderer.pointLights[0].lightColor = glm::vec3(0, 0, 1);
-        renderer.pointLights[0].lightPosition = glm::vec3(0, -2, 0);
+        renderer.pointLights[0].lightPosition = glm::vec3(-3, 2, 0);
 
-        renderer.pointLights[1].intensity = 0.3f;
+        renderer.pointLights[1].intensity = 0.2f;
         renderer.pointLights[1].lightColor = glm::vec3(1, 1, 0);
-        renderer.pointLights[1].lightPosition = glm::vec3(20, 10, 0);
+        renderer.pointLights[1].lightPosition = glm::vec3(3, 2, 0);
 
-        renderer.spotLights[0].intensity = 2.0f;
+        renderer.spotLights[0].intensity = 5.0f;
         renderer.spotLights[0].lightPosition = glm::vec3(0.75, 3, 0);
         renderer.spotLights[0].lightDirection = glm::vec3(0, -1, 0);
         renderer.spotLights[0].lightColor = glm::vec3(1, 1, 1);
-        renderer.spotLights[0].cutoff = cos(3.14f / 8);
+        renderer.spotLights[0].cutoff = cos(3.14f / 10);
 
         projection = glm::perspective(glm::radians(45.0f),
                                       (float)window.getWindowDimensions().width / (float)window.getWindowDimensions().height,
                                       0.1f, 20.0f);
         
-        Animation *animation = animator.createTriggeredAnimation([&] () {return keyboard->isKeyPressed(GLFW_KEY_P);});
-        animation->addKeyFrame(Animation::KeyFrame(10, glm::vec3(10, 1, 1), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0)));
-        animation->attach(loader.getEntity(teapot1));
+        Animation<Entity> *animation = animator.createTriggeredAnimation<Entity>([&] () {return keyboard->isKeyPressed(GLFW_KEY_P);});
+        Animation<Entity> *teapotA = animator.createPeriodicAnimation<Entity>(3, 3);
+        Animation<Entity> *subComponent = animator.createTriggeredAnimation<Entity>([&] () {return keyboard->isKeyPressed(GLFW_KEY_P);});
+        animation->addKeyFrame(KeyFrame<Entity>(1.5, glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1)));
+        subComponent->addKeyFrame(KeyFrame<Entity>(1.5, glm::vec3(0, 0, 0), glm::vec3(0, 3.14f, 0), glm::vec3(1, 1, 1)));
+        teapotA->addKeyFrame(KeyFrame<Entity>(1.5, glm::vec3(-5, 0, 0), glm::vec3(0, 3.14f, 0), glm::vec3(1, 1, 1)));
+        teapotA->addKeyFrame(KeyFrame<Entity>(2.5, glm::vec3(-5, 3, 0), glm::vec3(0, 2 * 3.14f, 0), glm::vec3(1, 1, 1)));
+        loader.getEntity(this->teapot1)->attachMainComponentAnimation(teapotA);
+        loader.getEntity(teapot2)->attachMainComponentAnimation(animation);
+        loader.getEntity(teapot2)->attachSubComponentAnimation(subComponent, "Helmet_Helmet");
+        loader.getEntity(teapot2)->attachSubComponentAnimation(subComponent, "Visor_Glass");
     }
 
     void Application::update(double delta)
@@ -112,11 +120,6 @@ namespace gps
         {
             angle += 1.0f;
             loader.getEntity(teapot1)->rotation.y = glm::radians(angle);
-        }
-
-        if (keyboard->isKeyPressed(GLFW_KEY_L))
-        {
-            renderer.directionalLights[0].intensity -= 0.001f;
         }
 
         animator.updateAnimations(delta);

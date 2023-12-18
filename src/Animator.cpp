@@ -1,5 +1,7 @@
 #include <Animator.hpp>
 
+#include <limits>
+
 namespace gps
 {
 
@@ -7,29 +9,45 @@ namespace gps
 
     Animator::~Animator()
     {
-        for (auto pair : animations)
+        for (auto &pair : triggeredAnimations)
             delete pair.second;
-    }
-
-    Animation *Animator::createTriggeredAnimation(std::function<bool()> trigger)
-    {
-        Animation *animation = new Animation();
-        animations.push_back(std::make_pair(trigger, animation));
-        return animation;
+        for (auto &tuple : periodicAnimations)
+            delete std::get<2>(tuple);
     }
 
     void Animator::updateAnimations(double delta)
     {
-        for (auto &pair : animations)
+        elapsed += delta;
+        for (auto &pair : triggeredAnimations)
         {
             std::function<bool()> &trigger = pair.first;
-            Animation *animation = pair.second;
+            AnimationBase *animation = pair.second;
 
             if (!animation->isRunning())
             {
                 if (trigger())
                     animation->start();
             }
+            else
+                animation->update(delta);
+        }
+        for (auto &tuple : periodicAnimations)
+        {
+            float &start = std::get<0>(tuple);
+            float period = std::get<1>(tuple);
+            AnimationBase *animation = std::get<2>(tuple);
+            
+            if (!animation->isRunning())
+            {
+                if (std::isgreaterequal(elapsed, start))
+                {
+                    animation->start();
+                    if (std::isgreater(period, 0))
+                        start += animation->duration + period;
+                    else
+                        start = std::numeric_limits<float>::infinity();
+                }
+            }   
             else
                 animation->update(delta);
         }

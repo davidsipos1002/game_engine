@@ -54,7 +54,7 @@ void computeDirectionalLights()
 {
     for (int i = 0; i < 3; i++)
     {
-        vec3 lightDirN = vec3(normalize(viewMatrix * vec4(directionalLightDirection[i], 1.0f)));
+        vec3 lightDirN = vec3(normalize(viewMatrix * vec4(directionalLightDirection[i], 0.0f)));
         vec3 ambient = directionalLightIntensity[i] * ambientStrength * directionalLightColor[i];
         vec3 diffuse = directionalLightIntensity[i] * max(dot(normalEye, lightDirN), 0.0f) * directionalLightColor[i];
         vec3 reflectDir = reflect(-lightDirN, normalEye);

@@ -2,21 +2,45 @@
 
 #include <Animation.hpp>
 
+#include <string>
+#include <unordered_map>
+
 namespace gps
 {
-    class Animation;
-
+    template <class T>
     class Animated
     {
-        friend class Animation;
+    };
 
+    class Entity;
+    template <>
+    class Animated<Entity>
+    {
     private:
-        Animation *animation;
+        Animation<Entity> *mainComponentAnimation = nullptr;
+        std::unordered_map<std::string, Animation<Entity> *> subComponentAnimations;
 
     public:
-        Animated();
-        virtual ~Animated();
+        Animation<Entity> *getMainComponentAnimation()
+        {
+            return mainComponentAnimation;
+        }
 
-        Animation *getAnimation();
+        Animation<Entity> *getSubComponentAnimation(const std::string &subComponentName)
+        {
+            if (subComponentAnimations.find(subComponentName) != subComponentAnimations.end())
+                return subComponentAnimations.at(subComponentName);
+            return nullptr;
+        }
+
+        void attachMainComponentAnimation(Animation<Entity> *animation)
+        {
+            mainComponentAnimation = animation;
+        }
+
+        void attachSubComponentAnimation(Animation<Entity> *animation, const std::string &subComponentName)
+        {
+            subComponentAnimations[subComponentName] = animation;
+        }
     };
 }
