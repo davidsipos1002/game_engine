@@ -10,6 +10,22 @@ namespace gps
     template <class T>
     class Animated
     {
+        private:
+            Animation<T> *animation = nullptr;
+            
+        public:
+            Animated() {};
+            virtual ~Animated() {};
+
+            Animation<T> *getAnimation()
+            {
+                return animation;
+            }
+
+            void setAnimation(Animation<T> *animation)
+            {
+                this->animation = animation;
+            }
     };
 
     class Entity;
@@ -21,6 +37,8 @@ namespace gps
         std::unordered_map<std::string, Animation<Entity> *> subComponentAnimations;
 
     public:
+        virtual ~Animated() {}
+
         Animation<Entity> *getMainComponentAnimation()
         {
             return mainComponentAnimation;

@@ -13,6 +13,9 @@ namespace gps
     };
 
     class Entity;
+    class DirectionalLight;
+    class PointLight;
+    class SpotLight;
 
     template <>
     class KeyFrame<Entity>
@@ -43,6 +46,105 @@ namespace gps
             ret.scale += other.scale;
             return ret;
         }
+    };
+    
+    template <>
+    class KeyFrame<DirectionalLight>
+    {
+        public:
+            float offset;
+            glm::vec3 direction;
+            glm::vec3 color;
+            float intensity;
+            
+            KeyFrame() : offset(0), direction(glm::vec3(0, 0, 0)), color(glm::vec3(0, 0, 0)), intensity(0) {}
+            KeyFrame(float offset, glm::vec3 direction, glm::vec3 color, float intensity) : offset(offset), direction(direction), color(color), intensity(intensity) {}
+
+            KeyFrame operator*(float other) const
+            {
+                KeyFrame ret = *this;
+                ret.direction *= other;
+                ret.color *= other;
+                ret.intensity *= other;
+                return ret;
+            }
+            
+            KeyFrame operator+(const KeyFrame &other) const
+            {
+                KeyFrame ret = *this;
+                ret.direction += other.direction;
+                ret.color += other.color;
+                ret.intensity += other.intensity;
+                return ret;
+            }
+    };
+
+    template <>
+    class KeyFrame<PointLight>
+    {
+        public:
+            float offset;
+            glm::vec3 position;
+            glm::vec3 color;
+            float intensity;
+            
+            KeyFrame() : offset(0), position(glm::vec3(0, 0, 0)), color(glm::vec3(0, 0, 0)), intensity(0) {}
+            KeyFrame(float offset, glm::vec3 position, glm::vec3 color, float intensity) : offset(offset), position(position), color(color), intensity(intensity) {}
+
+            KeyFrame operator*(float other) const
+            {
+                KeyFrame ret = *this;
+                ret.position *= other;
+                ret.color *= other;
+                ret.intensity *= other;
+                return ret;
+            }
+            
+            KeyFrame operator+(const KeyFrame &other) const
+            {
+                KeyFrame ret = *this;
+                ret.position += other.position;
+                ret.color += other.color;
+                ret.intensity += other.intensity;
+                return ret;
+            }
+    };
+    
+    template <>
+    class KeyFrame<SpotLight>
+    {
+        public:
+            float offset;
+            glm::vec3 position;
+            glm::vec3 direction;
+            glm::vec3 color;
+            float cutoff;
+            float intensity;
+            
+            KeyFrame() : offset(0), position(glm::vec3(0, 0, 0)), direction(glm::vec3(0, 0, 0)), color(glm::vec3(0, 0, 0)), cutoff(0), intensity(0) {}
+            KeyFrame(float offset, glm::vec3 position, glm::vec3 direction, glm::vec3 color, float cutoff, float intensity) : offset(offset), position(position), direction(direction), color(color), cutoff(cutoff), intensity(intensity) {}
+
+            KeyFrame operator*(float other) const
+            {
+                KeyFrame ret = *this;
+                ret.position *= other;
+                ret.direction *= other;
+                ret.color *= other;
+                ret.cutoff *= other;
+                ret.intensity *= other;
+                return ret;
+            }
+            
+            KeyFrame operator+(const KeyFrame &other) const
+            {
+                KeyFrame ret = *this;
+                ret.position += other.position;
+                ret.direction += other.direction;
+                ret.color += other.color;
+                ret.cutoff += other.cutoff;
+                ret.intensity += other.intensity;
+                return ret;
+            }
     };
 
     template <class T>
@@ -81,7 +183,6 @@ namespace gps
 
         Animation() : running(false)
         {
-            addKeyFrame(KeyFrame<T>());
         };
 
         void start() override

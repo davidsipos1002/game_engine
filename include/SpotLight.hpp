@@ -1,11 +1,12 @@
 #pragma once
 
 #include <GeneralIncludes.hpp>
+#include <Animated.hpp>
 #include <Light.hpp>
 
 namespace gps
 {
-    class SpotLight : public Light
+    class SpotLight : public Light, Animated<SpotLight> 
     {
     public:
         glm::vec3 lightPosition;

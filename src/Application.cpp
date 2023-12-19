@@ -86,8 +86,11 @@ namespace gps
         Animation<Entity> *animation = animator.createTriggeredAnimation<Entity>([&] () {return keyboard->isKeyPressed(GLFW_KEY_P);});
         Animation<Entity> *teapotA = animator.createPeriodicAnimation<Entity>(3, 3);
         Animation<Entity> *subComponent = animator.createTriggeredAnimation<Entity>([&] () {return keyboard->isKeyPressed(GLFW_KEY_P);});
+        animation->addKeyFrame(KeyFrame<Entity>());
         animation->addKeyFrame(KeyFrame<Entity>(1.5, glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1)));
+        subComponent->addKeyFrame(KeyFrame<Entity>());
         subComponent->addKeyFrame(KeyFrame<Entity>(1.5, glm::vec3(0, 0, 0), glm::vec3(0, 3.14f, 0), glm::vec3(1, 1, 1)));
+        teapotA->addKeyFrame(KeyFrame<Entity>());
         teapotA->addKeyFrame(KeyFrame<Entity>(1.5, glm::vec3(-5, 0, 0), glm::vec3(0, 3.14f, 0), glm::vec3(1, 1, 1)));
         teapotA->addKeyFrame(KeyFrame<Entity>(2.5, glm::vec3(-5, 3, 0), glm::vec3(0, 2 * 3.14f, 0), glm::vec3(1, 1, 1)));
         loader.getEntity(this->teapot1)->attachMainComponentAnimation(teapotA);
