@@ -1,5 +1,4 @@
 #include <object/Model3D.hpp>
-
 namespace gps
 {
 
@@ -9,9 +8,11 @@ namespace gps
 		ReadOBJ(fileName, basePath);
 	}
 
-	void Model3D::LoadModel(std::string fileName, std::string basePath)
-	{
-		ReadOBJ(fileName, basePath);
+	// Draw each mesh from the model
+	void Model3D::Draw(Shader *shaderProgram) {
+
+		for (auto &pair : meshes)
+			pair.second->Draw(shaderProgram);
 	}
 
 	void Model3D::ReadOBJ(std::string fileName, std::string basePath)

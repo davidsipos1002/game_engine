@@ -2,6 +2,7 @@
 #define Mesh_hpp
 
 #include <engine/GeneralIncludes.hpp>
+#include <graphics/Shader.hpp>
 
 #include <string>
 #include <vector>
@@ -52,6 +53,8 @@ namespace gps
         Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures);
 
         Buffers getBuffers();
+
+        void Draw(gps::Shader *shader);
 
     private:
         Buffers buffers;

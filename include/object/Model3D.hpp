@@ -5,6 +5,7 @@
 
 #include <io/tiny_obj_loader.h>
 #include <io/stb_image.h>
+#include <graphics/Shader.hpp>
 
 #include <iostream>
 #include <string>
@@ -24,7 +25,7 @@ namespace gps
 
 		void LoadModel(std::string fileName);
 
-		void LoadModel(std::string fileName, std::string basePath);
+		void Draw(gps::Shader *shaderProgram);
 
 	private:
 		std::vector<gps::Texture> loadedTextures;

@@ -28,6 +28,7 @@ uniform float specularStrength;
 
 uniform sampler2D diffuseTexture;
 uniform sampler2D specularTexture;
+uniform sampler2D shadowMap;
 
 vec3 directionalAmbientTotal = vec3(0, 0, 0);
 vec3 directionalDiffuseTotal = vec3(0, 0, 0);
@@ -49,6 +50,8 @@ vec3 viewDir;
 float constant = 1.0f;
 float linear = 0.0045f;
 float quadratic = 0.0075f;
+
+in vec4 fPositionLight; 
 
 void computeDirectionalLights()
 {
@@ -116,6 +119,35 @@ void computeSpotLights()
     }
 }
 
+float computeShadow() {
+    vec3 normalizedCoords = fPositionLight.xyz / fPositionLight.w;
+    
+    normalizedCoords = normalizedCoords * 0.5 + 0.5;
+    
+    if (normalizedCoords.z > 1.0f)
+        return 0.0f;
+    
+    float closestDepth = texture(shadowMap, normalizedCoords.xy).r;
+    
+    float currentDepth = normalizedCoords.z;
+
+    float bias = 0.005f;
+
+    float shadow = 0.0;
+    vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
+    for(int x = -1; x <= 1; ++x)
+    {
+        for(int y = -1; y <= 1; ++y)
+        {
+            float pcfDepth = texture(shadowMap, normalizedCoords.xy + vec2(x, y) * texelSize).r; 
+            shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;        
+        }    
+    }   
+    shadow /= 9.0;
+
+    return shadow;
+}
+
 void main() 
 {
     normalMatrix = mat3(transpose(inverse(viewMatrix * modelMatrix)));
@@ -129,8 +161,9 @@ void main()
     vec3 diffuseTextureColor = texture(diffuseTexture, fTexCoords).rgb;
     vec3 specularTextureColor = texture(specularTexture, fTexCoords).rgb;
 
-    vec3 finalDirectional = min((directionalAmbientTotal + directionalDiffuseTotal) * 
-                     diffuseTextureColor + directionalSpecularTotal * specularTextureColor, 1.0f);
+    float shadow = computeShadow();
+    vec3 finalDirectional = min((directionalAmbientTotal + (1.0f - shadow) * directionalDiffuseTotal) * 
+                     diffuseTextureColor + (1.0f - shadow) * directionalSpecularTotal * specularTextureColor, 1.0f);
 
     vec3 finalPoint = min((pointAmbientTotal + pointDiffuseTotal) * 
                      diffuseTextureColor + pointSpecularTotal * specularTextureColor, 1.0f);
@@ -140,4 +173,6 @@ void main()
 
     vec3 color = min(finalDirectional + finalPoint + finalSpot, 1.0f);
     fColor = vec4(color, 1.0f);
+    // fColor = vec4(shadow, 0, 0, 1.0f);
+    // fColor = vec4(fPositionLight.xyz / fPositionLight.w, 1.0f);
 }

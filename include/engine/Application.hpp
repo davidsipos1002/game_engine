@@ -21,12 +21,16 @@ namespace gps
         Keyboard *keyboard;
         Mouse *mouse;
         Loader loader;
-        Renderer renderer;
+        Renderer *renderer;
+        ShadowMap *shadow;
         Animator animator;
         
         std::string teapot1;
         std::string teapot2;
         std::string shader;
+        std::string dirShadowMap;
+        std::string quad;
+        std::string quadEntity;
 
         glm::mat4 projection;
 

@@ -131,4 +131,9 @@ namespace gps
     {
         glUniform1f(GET_LOC(uniformName), value);
     }
+
+    void Shader::loadValue(std::string uniformName, GLuint value)
+    {
+        glUniform1f(GET_LOC(uniformName), value);
+    }
 }

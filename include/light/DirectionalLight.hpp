@@ -7,6 +7,7 @@
 namespace gps {
     class DirectionalLight : public Light, Animated<DirectionalLight> {
         public:
+            glm::mat4 lightSpaceMatrix;
             glm::vec3 lightDirection;
             glm::vec3 lightColor;
             float intensity = 0;
@@ -15,5 +16,6 @@ namespace gps {
             DirectionalLight(glm::vec3 lightDirection, glm::vec3 lightColor, float intensity);
             ~DirectionalLight();
             void loadUniforms(Shader *shader, int i);
+            void calculateLightSpaceMatrix();
     };
 }

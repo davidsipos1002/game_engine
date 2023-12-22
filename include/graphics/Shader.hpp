@@ -1,11 +1,3 @@
-//
-//  Shader.hpp
-//  Lab3
-//
-//  Created by CGIS on 05/10/2016.
-//  Copyright © 2016 CGIS. All rights reserved.
-//
-
 #ifndef Shader_hpp
 #define Shader_hpp
 
@@ -34,6 +26,7 @@ namespace gps
         void loadMatrix(std::string uniformName, glm::mat4 matrix);
         void loadValue(std::string uniformName, int value);
         void loadValue(std::string uniformName, float value);
+        void loadValue(std::string uniformName, GLuint value);
 
     private:
         std::string readShaderFile(std::string fileName);

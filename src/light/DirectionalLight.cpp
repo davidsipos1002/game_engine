@@ -14,4 +14,12 @@ namespace gps
         shader->loadVector("directionalLightColor[" + std::to_string(i) + "]", lightColor); 
         shader->loadValue("directionalLightIntensity[" + std::to_string(i) + "]", intensity); 
     }
+
+    void DirectionalLight::calculateLightSpaceMatrix() 
+    {
+        glm::mat4 viewMatrix = glm::lookAt(4.0f * lightDirection, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+        const GLfloat near_plane = 0.1f, far_plane = 20.0f;
+        glm::mat4 orthographicMatrix = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+        lightSpaceMatrix = orthographicMatrix * viewMatrix;
+    }
 }

@@ -19,6 +19,33 @@ namespace gps
 		return this->buffers;
 	}
 
+	/* Mesh drawing function - also applies associated textures */
+	void Mesh::Draw(Shader *shader)
+	{
+
+		shader->useShaderProgram();
+
+		// set textures
+		for (GLuint i = 0; i < textures.size(); i++)
+		{
+
+			glActiveTexture(GL_TEXTURE0 + i);
+			glUniform1i(glGetUniformLocation(shader->shaderProgram, this->textures[i].type.c_str()), i);
+			glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
+		}
+
+		glBindVertexArray(this->buffers.VAO);
+		glDrawElements(GL_TRIANGLES, (GLsizei)this->indices.size(), GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
+
+		for (GLuint i = 0; i < this->textures.size(); i++)
+		{
+
+			glActiveTexture(GL_TEXTURE0 + i);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+	}
+
 	void Mesh::setupMesh()
 	{
 		glGenVertexArrays(1, &this->buffers.VAO);
