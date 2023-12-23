@@ -2,7 +2,7 @@
 #include <graphics/Shader.hpp>
 #include <exception>
 
-#define GET_LOC(name) glGetUniformLocation(shaderProgram, name.c_str())
+#define GET_LOC(name) glGetUniformLocation(shaderProgram, (name).c_str())
 namespace gps
 {
     Shader::~Shader() {
@@ -134,6 +134,6 @@ namespace gps
 
     void Shader::loadValue(std::string uniformName, GLuint value)
     {
-        glUniform1f(GET_LOC(uniformName), value);
+        glUniform1i(GET_LOC(uniformName), value);
     }
 }

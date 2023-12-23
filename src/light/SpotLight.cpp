@@ -14,7 +14,7 @@ namespace gps
         shader->loadVector("spotLightPosition[" + std::to_string(i) + "]", lightPosition);
         shader->loadVector("spotLightDirection[" + std::to_string(i) + "]", lightDirection);
         shader->loadVector("spotLightColor[" + std::to_string(i) + "]", lightColor);
-        shader->loadValue("spotLightCutoff[" + std::to_string(i) + "]", cutoff);
+        shader->loadValue("spotLightCutoff[" + std::to_string(i) + "]", cos(cutoff));
         shader->loadValue("spotLightIntensity[" + std::to_string(i) + "]", intensity);
     }
 }

@@ -13,7 +13,8 @@ namespace gps
         shader->loadVector("directionalLightDirection[" + std::to_string(i) + "]", lightDirection); 
         shader->loadVector("directionalLightColor[" + std::to_string(i) + "]", lightColor); 
         shader->loadValue("directionalLightIntensity[" + std::to_string(i) + "]", intensity); 
-        shader->loadValue("directionalLightIsShadowCasting" + std::to_string(i) + "]", isShadowCasting); 
+        shader->loadValue("directionalLightIsShadowCasting[" + std::to_string(i) + "]", isShadowCasting); 
+        shader->loadMatrix("directionalLightSpaceMatrix[" + std::to_string(i) + "]", lightSpaceMatrix); 
     }
 
     void DirectionalLight::calculateLightMatrices() 

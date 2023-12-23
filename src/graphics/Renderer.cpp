@@ -14,15 +14,17 @@ namespace gps
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
         glFrontFace(GL_CCW);
-        directionalShadowMap = new ShadowMap(window->getWindowDimensions().width, window->getWindowDimensions().height);
+        for (auto &pair : directionalLights)
+            pair.second = new ShadowMap(window->getWindowDimensions().width, window->getWindowDimensions().height);
         entityShader = loader->loadShader("shaders/entityNormal.vert", "shaders/entityNormal.frag");
         directionalShadowShader = loader->loadShader("shaders/directionalShadow.vert", "shaders/directionalShadow.frag");
-        shadowMapShader = loader->loadShader("shaders/shadowMap.vert", "shaders/shadowMap.frag"); 
+        shadowMapShader = loader->loadShader("shaders/shadowMap.vert", "shaders/shadowMap.frag");
     }
 
     Renderer::~Renderer()
     {
-        delete directionalShadowMap;
+        for (auto &pair : directionalLights)
+            delete pair.second;
     }
 
     void Renderer::addEntity(Entity *entity)
@@ -76,26 +78,18 @@ namespace gps
 
     void Renderer::renderEntities(Camera *camera, glm::mat4 projectionMatrix)
     {
-        renderDirectionalLightShadowMapEntities();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        renderShadowMaps();
         entityShader->useShaderProgram();
+        loadShadowMaps(entityShader);
         entityShader->loadMatrix("viewMatrix", camera->getViewMatrix());
         entityShader->loadMatrix("projectionMatrix", projectionMatrix);
-        directionalLights[directionalShadowCaster].calculateLightMatrices();
-        entityShader->loadMatrix("lightSpaceMatrix", directionalLights[directionalShadowCaster].lightSpaceMatrix);
-        glActiveTexture(GL_TEXTURE31);
-        glCheckError();
-        glBindTexture(GL_TEXTURE_2D, directionalShadowMap->getTextureID());
-        glCheckError();
-        entityShader->loadValue("directionalShadowCaster", directionalShadowCaster);
-        entityShader->loadValue("directionalShadowMap", 31);
         for (int i = 0; i < directionalLights.size(); i++)
-            directionalLights[i].loadUniforms(entityShader, i);
+            directionalLights[i].first.loadUniforms(entityShader, i);
         for (int i = 0; i < pointLights.size(); i++)
             pointLights[i].loadUniforms(entityShader, i);
         for (int i = 0; i < spotLights.size(); i++)
             spotLights[i].loadUniforms(entityShader, i);
-
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         for (auto &pair : entities)
             renderModels(pair.first);
     }
@@ -127,16 +121,17 @@ namespace gps
         }
     }
 
-    void Renderer::renderDirectionalLightShadowMapEntities()
+    void Renderer::renderDirectionalLightShadowMapEntities(DirectionalLight &light, ShadowMap *map)
     {
+        light.calculateLightMatrices();
         directionalShadowShader->useShaderProgram();
-        directionalShadowShader->loadMatrix("lightSpaceMatrix", directionalLights[directionalShadowCaster].lightSpaceMatrix);
-        glViewport(0, 0, directionalShadowMap->shadowWidth, directionalShadowMap->shadowHeight);
-        directionalShadowMap->bindFrameBufferObject();
-        glClear(GL_DEPTH_BUFFER_BIT);
+        directionalShadowShader->loadMatrix("lightSpaceMatrix", light.lightSpaceMatrix);
+        glViewport(0, 0, map->shadowWidth, map->shadowHeight);
+        map->bindFrameBufferObject();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         for (auto &pair : entities)
             renderShadowMapModels(pair.first, directionalShadowShader);
-        directionalShadowMap->unbindFrameBufferObject();
+        map->unbindFrameBufferObject();
     }
 
     void Renderer::getEntityAnimationMatrices(Animation<Entity> *animation, glm::mat4 &translate, glm::mat4 &rotate, glm::mat4 &scale)
@@ -150,23 +145,61 @@ namespace gps
             scale = glm::scale(scale, animation->interpolatedKeyFrame.scale);
         }
     }
-    
+
     void Renderer::__renderShadowMap(Entity *quad, ShadowMap *shadowMap)
     {
         glViewport(0, 0, window->getWindowDimensions().width, window->getWindowDimensions().height);
-		glClear(GL_COLOR_BUFFER_BIT);
-		shadowMapShader->useShaderProgram();
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, shadowMap->getTextureID());
+        glClear(GL_COLOR_BUFFER_BIT);
+        shadowMapShader->useShaderProgram();
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, shadowMap->getTextureID());
         shadowMapShader->loadValue("shadowMap", 0);
-		glDisable(GL_DEPTH_TEST);
-	    quad->getModel()->Draw(shadowMapShader);
-		glEnable(GL_DEPTH_TEST);
+        glDisable(GL_DEPTH_TEST);
+        quad->getModel()->Draw(shadowMapShader);
+        glEnable(GL_DEPTH_TEST);
     }
 
-    void Renderer::renderDirectionalShadowMap(Entity *quad)
+    void Renderer::renderDirectionalShadowMap(Entity *quad, int i)
     {
-        renderDirectionalLightShadowMapEntities();
-        __renderShadowMap(quad, directionalShadowMap);
+        renderDirectionalLightShadowMapEntities(directionalLights[i].first, directionalLights[i].second);
+        __renderShadowMap(quad, directionalLights[i].second);
+    }
+
+    void Renderer::renderShadowMaps()
+    {
+        for (auto &pair : directionalLights)
+        {
+            if (pair.first.isShadowCasting)
+                renderDirectionalLightShadowMapEntities(pair.first, pair.second);
+        }
+    }
+
+    void Renderer::loadShadowMaps(Shader *shader)
+    {
+        GLuint val = 31;
+        for (int i = 0; i < directionalLights.size(); i++)
+        {
+            if (directionalLights[i].first.isShadowCasting) {
+                glActiveTexture(GL_TEXTURE0 + val);
+                glBindTexture(GL_TEXTURE_2D, directionalLights[i].second->getTextureID());
+                shader->loadValue("directionalLightShadowMap[" + std::to_string(i) + "]", val);
+                val--;
+            }
+        }
+    }
+
+    DirectionalLight &Renderer::getDirectionalLight(int index)
+    {
+        return directionalLights[index].first;
+    }
+
+    PointLight &Renderer::gePointLight(int index)
+    {
+        return pointLights[index];
+    }
+
+    SpotLight &Renderer::getSpotLight(int index)
+    {
+        return spotLights[index];
     }
 }

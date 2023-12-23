@@ -49,27 +49,34 @@ namespace gps
 
         loader.loadEntity("models/quad/quad.obj", quadEntity);
 
-        renderer->directionalLights[0].intensity = 0.2f;
-        renderer->directionalLights[0].lightColor = glm::vec3(1, 1, 1);
-        renderer->directionalLights[0].lightDirection = glm::vec3(0, 1, 1);
+        DirectionalLight &light = renderer->getDirectionalLight(0);
+        light.intensity = 0.2f;
+        light.lightColor = glm::vec3(1, 1, 1);
+        light.lightDirection = glm::vec3(0, 1, 1);
+        light.isShadowCasting = true;
 
-        renderer->directionalLights[1].intensity = 0.0f;
-        renderer->directionalLights[1].lightColor = glm::vec3(0, 1, 0);
-        renderer->directionalLights[1].lightDirection = glm::vec3(0, -1, -1);
+        DirectionalLight &light1 = renderer->getDirectionalLight(1);
+        light1.intensity = 0.0f;
+        light1.lightColor = glm::vec3(0, 1, 0);
+        light1.lightDirection = glm::vec3(0, 2, 3);
+        // light1.isShadowCasting = true;
 
-        renderer->pointLights[0].intensity = 0.3f;
-        renderer->pointLights[0].lightColor = glm::vec3(0, 0, 1);
-        renderer->pointLights[0].lightPosition = glm::vec3(-3, 2, 0);
+        PointLight &pointLight = renderer->gePointLight(0);
+        pointLight.intensity = 0.3f;
+        pointLight.lightColor = glm::vec3(0, 0, 1);
+        pointLight.lightPosition = glm::vec3(-3, 2, 0);
 
-        renderer->pointLights[1].intensity = 0.2f;
-        renderer->pointLights[1].lightColor = glm::vec3(1, 1, 0);
-        renderer->pointLights[1].lightPosition = glm::vec3(3, 2, 0);
+        PointLight &pointLight2 = renderer->gePointLight(1);
+        pointLight2.intensity = 0.2f;
+        pointLight2.lightColor = glm::vec3(1, 1, 0);
+        pointLight2.lightPosition = glm::vec3(3, 2, 0);
 
-        renderer->spotLights[0].intensity = 2.0f;
-        renderer->spotLights[0].lightPosition = glm::vec3(0.75, 3, 0);
-        renderer->spotLights[0].lightDirection = glm::vec3(0, -1, 0);
-        renderer->spotLights[0].lightColor = glm::vec3(1, 1, 1);
-        renderer->spotLights[0].cutoff = cos(3.14f / 10);
+        SpotLight &spotLight = renderer->getSpotLight(0);
+        spotLight.intensity = 2.0f;
+        spotLight.lightPosition = glm::vec3(0.75, 3, 0);
+        spotLight.lightDirection = glm::vec3(0, -1, 0);
+        spotLight.lightColor = glm::vec3(1, 1, 1);
+        spotLight.cutoff = 3.14f / 10;
 
         projection = glm::perspective(glm::radians(45.0f),
                                       (float)window.getWindowDimensions().width / (float)window.getWindowDimensions().height,
@@ -134,7 +141,7 @@ namespace gps
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         if (keyboard->isKeyPressed(GLFW_KEY_M)) {
-            renderer->renderDirectionalShadowMap(loader.getEntity(quadEntity));
+            renderer->renderDirectionalShadowMap(loader.getEntity(quadEntity), 0);
         } else {
             renderer->renderEntities(&camera, projection);
         }
