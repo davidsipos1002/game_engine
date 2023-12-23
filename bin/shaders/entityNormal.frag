@@ -12,6 +12,8 @@ uniform mat4 viewMatrix;
 uniform vec3 directionalLightDirection[3];
 uniform vec3 directionalLightColor[3];
 uniform float directionalLightIntensity[3];
+uniform int directionalShadowCaster;
+uniform sampler2D directionalShadowMap;
 
 uniform vec3 pointLightPosition[10];
 uniform vec3 pointLightColor[10];
@@ -28,7 +30,6 @@ uniform float specularStrength;
 
 uniform sampler2D diffuseTexture;
 uniform sampler2D specularTexture;
-uniform sampler2D shadowMap;
 
 vec3 directionalAmbientTotal = vec3(0, 0, 0);
 vec3 directionalDiffuseTotal = vec3(0, 0, 0);
@@ -53,6 +54,27 @@ float quadratic = 0.0075f;
 
 in vec4 fPositionLight; 
 
+float computeDirectionalShadow() {
+    vec3 normalizedCoords = fPositionLight.xyz / fPositionLight.w;
+    normalizedCoords = normalizedCoords * 0.5 + 0.5;
+    if (normalizedCoords.z > 1.0f)
+        return 0.0f;
+    float currentDepth = normalizedCoords.z;
+    float bias = 0.005f;
+    float shadow = 0.0;
+    vec2 texelSize = 1.0 / textureSize(directionalShadowMap, 0);
+    for(int x = -1; x <= 1; ++x)
+    {
+        for(int y = -1; y <= 1; ++y)
+        {
+            float pcfDepth = texture(directionalShadowMap, normalizedCoords.xy + vec2(x, y) * texelSize).r; 
+            shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;        
+        }    
+    }   
+    shadow /= 9.0;
+    return shadow;
+}
+
 void computeDirectionalLights()
 {
     for (int i = 0; i < 3; i++)
@@ -63,10 +85,13 @@ void computeDirectionalLights()
         vec3 reflectDir = reflect(-lightDirN, normalEye);
         float specCoeff = pow(max(dot(viewDir, reflectDir), 0.0f), 32);
         vec3 specular = directionalLightIntensity[i] * specularStrength * specCoeff * directionalLightColor[i];
-
+        float shadow = 0.0f;
+        if (i == directionalShadowCaster) {
+            shadow = computeDirectionalShadow();
+        }
         directionalAmbientTotal += ambient;
-        directionalDiffuseTotal += diffuse;
-        directionalSpecularTotal += specular;
+        directionalDiffuseTotal += (1.0f - shadow) * diffuse;
+        directionalSpecularTotal += (1.0f - shadow) * specular;
     }
 }
 
@@ -119,35 +144,6 @@ void computeSpotLights()
     }
 }
 
-float computeShadow() {
-    vec3 normalizedCoords = fPositionLight.xyz / fPositionLight.w;
-    
-    normalizedCoords = normalizedCoords * 0.5 + 0.5;
-    
-    if (normalizedCoords.z > 1.0f)
-        return 0.0f;
-    
-    float closestDepth = texture(shadowMap, normalizedCoords.xy).r;
-    
-    float currentDepth = normalizedCoords.z;
-
-    float bias = 0.005f;
-
-    float shadow = 0.0;
-    vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
-    for(int x = -1; x <= 1; ++x)
-    {
-        for(int y = -1; y <= 1; ++y)
-        {
-            float pcfDepth = texture(shadowMap, normalizedCoords.xy + vec2(x, y) * texelSize).r; 
-            shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;        
-        }    
-    }   
-    shadow /= 9.0;
-
-    return shadow;
-}
-
 void main() 
 {
     normalMatrix = mat3(transpose(inverse(viewMatrix * modelMatrix)));
@@ -161,9 +157,8 @@ void main()
     vec3 diffuseTextureColor = texture(diffuseTexture, fTexCoords).rgb;
     vec3 specularTextureColor = texture(specularTexture, fTexCoords).rgb;
 
-    float shadow = computeShadow();
-    vec3 finalDirectional = min((directionalAmbientTotal + (1.0f - shadow) * directionalDiffuseTotal) * 
-                     diffuseTextureColor + (1.0f - shadow) * directionalSpecularTotal * specularTextureColor, 1.0f);
+    vec3 finalDirectional = min((directionalAmbientTotal + directionalDiffuseTotal) * 
+                     diffuseTextureColor + directionalSpecularTotal * specularTextureColor, 1.0f);
 
     vec3 finalPoint = min((pointAmbientTotal + pointDiffuseTotal) * 
                      diffuseTextureColor + pointSpecularTotal * specularTextureColor, 1.0f);

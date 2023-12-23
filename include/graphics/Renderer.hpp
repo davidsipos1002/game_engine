@@ -11,6 +11,7 @@
 #include <light/SpotLight.hpp>
 #include <graphics/ShadowMap.hpp>
 #include <graphics/Window.h>
+#include <io/Loader.hpp>
 #include <unordered_map>
 #include <array>
 
@@ -21,21 +22,28 @@ namespace gps
     private:
         std::unordered_map<Model3D *, std::vector<Entity *>> entities;
         Window *window;
+        ShadowMap *directionalShadowMap;
+        Shader *entityShader;
+        Shader *directionalShadowShader;
+        Shader *shadowMapShader;
 
-        void renderModels(Model3D *model, Shader *shader);
-        void renderDirectionalLightShadowMapModels(Model3D *model, Shader *shader);
-        void renderDirectionalLightShadowMapEntities(int index, Shader *shader, ShadowMap *shadowMap);
+        void renderModels(Model3D *model);
+        void renderShadowMapModels(Model3D *model, Shader *shader);
+        void renderDirectionalLightShadowMapEntities();
+        void __renderShadowMap(Entity *quad, ShadowMap *shadowMap);
         void getEntityAnimationMatrices(Animation<Entity> *animation, glm::mat4 &translate, glm::mat4 &rotate, glm::mat4 &scale);
 
     public:
+        int directionalShadowCaster = 0;
         std::array<DirectionalLight, 3> directionalLights;
         std::array<PointLight, 10> pointLights;
         std::array<SpotLight, 10> spotLights;
 
-        Renderer(Window *window);
+        Renderer(Window *window, Loader *loader);
+        ~Renderer();
 
         void addEntity(Entity *entity);
-        void renderEntities(Camera *camera, Shader *shader, glm::mat4 projectionMatrix, ShadowMap *shadow);
-        void renderShadowMap(Entity *quad, Shader *shader, ShadowMap *shadowMap);
+        void renderDirectionalShadowMap(Entity *quad);
+        void renderEntities(Camera *camera, glm::mat4 projectionMatrix);
     };
 }

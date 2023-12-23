@@ -3,7 +3,7 @@
 
 namespace gps
 {
-    Renderer::Renderer(Window *window) : window(window)
+    Renderer::Renderer(Window *window, Loader *loader) : window(window)
     {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glViewport(0, 0, window->getWindowDimensions().width, window->getWindowDimensions().height);
@@ -14,6 +14,15 @@ namespace gps
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
         glFrontFace(GL_CCW);
+        directionalShadowMap = new ShadowMap(window->getWindowDimensions().width, window->getWindowDimensions().height);
+        entityShader = loader->loadShader("shaders/entityNormal.vert", "shaders/entityNormal.frag");
+        directionalShadowShader = loader->loadShader("shaders/directionalShadow.vert", "shaders/directionalShadow.frag");
+        shadowMapShader = loader->loadShader("shaders/shadowMap.vert", "shaders/shadowMap.frag"); 
+    }
+
+    Renderer::~Renderer()
+    {
+        delete directionalShadowMap;
     }
 
     void Renderer::addEntity(Entity *entity)
@@ -21,7 +30,7 @@ namespace gps
         entities[entity->getModel()].push_back(entity);
     }
 
-    void Renderer::renderModels(Model3D *model, Shader *shader)
+    void Renderer::renderModels(Model3D *model)
     {
         std::vector<Entity *> &v = entities[model];
 
@@ -35,7 +44,7 @@ namespace gps
             for (GLuint i = 0; i < textures.size(); i++)
             {
                 glActiveTexture(GL_TEXTURE0 + i);
-                glUniform1i(glGetUniformLocation(shader->shaderProgram, textures[i].type.c_str()), i);
+                glUniform1i(glGetUniformLocation(entityShader->shaderProgram, textures[i].type.c_str()), i);
                 glBindTexture(GL_TEXTURE_2D, textures[i].id);
             }
             glBindVertexArray(buff.VAO);
@@ -50,9 +59,9 @@ namespace gps
                 getEntityAnimationMatrices(entity->getMainComponentAnimation(), translate, rotate, scale);
                 getEntityAnimationMatrices(entity->getSubComponentAnimation(name), translate, rotate, scale);
                 glm::mat4 modelMatrix = translate * rotate * scale;
-                shader->loadMatrix("modelMatrix", modelMatrix);
-                shader->loadValue("ambientStrength", entity->ambientStrength);
-                shader->loadValue("specularStrength", entity->specularStrength);
+                entityShader->loadMatrix("modelMatrix", modelMatrix);
+                entityShader->loadValue("ambientStrength", entity->ambientStrength);
+                entityShader->loadValue("specularStrength", entity->specularStrength);
                 glDrawElements(GL_TRIANGLES, (GLsizei)mesh->indices.size(), GL_UNSIGNED_INT, 0);
             }
 
@@ -65,31 +74,33 @@ namespace gps
         }
     }
 
-    void Renderer::renderEntities(Camera *camera, Shader *shader, glm::mat4 projectionMatrix, ShadowMap *shadow)
+    void Renderer::renderEntities(Camera *camera, glm::mat4 projectionMatrix)
     {
+        renderDirectionalLightShadowMapEntities();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        shader->useShaderProgram();
-        shader->loadMatrix("viewMatrix", camera->getViewMatrix());
-        shader->loadMatrix("projectionMatrix", projectionMatrix);
-        shader->loadMatrix("lightSpaceMatrix", directionalLights[0].lightSpaceMatrix);
+        entityShader->useShaderProgram();
+        entityShader->loadMatrix("viewMatrix", camera->getViewMatrix());
+        entityShader->loadMatrix("projectionMatrix", projectionMatrix);
+        directionalLights[directionalShadowCaster].calculateLightMatrices();
+        entityShader->loadMatrix("lightSpaceMatrix", directionalLights[directionalShadowCaster].lightSpaceMatrix);
         glActiveTexture(GL_TEXTURE31);
         glCheckError();
-        glBindTexture(GL_TEXTURE_2D, shadow->getTextureID());
+        glBindTexture(GL_TEXTURE_2D, directionalShadowMap->getTextureID());
         glCheckError();
-        shader->loadValue("shadowMap", 31);
+        entityShader->loadValue("directionalShadowCaster", directionalShadowCaster);
+        entityShader->loadValue("directionalShadowMap", 31);
         for (int i = 0; i < directionalLights.size(); i++)
-            directionalLights[i].loadUniforms(shader, i);
+            directionalLights[i].loadUniforms(entityShader, i);
         for (int i = 0; i < pointLights.size(); i++)
-            pointLights[i].loadUniforms(shader, i);
+            pointLights[i].loadUniforms(entityShader, i);
         for (int i = 0; i < spotLights.size(); i++)
-            spotLights[i].loadUniforms(shader, i);
+            spotLights[i].loadUniforms(entityShader, i);
 
         for (auto &pair : entities)
-            renderModels(pair.first, shader);
+            renderModels(pair.first);
     }
 
-    void Renderer::renderDirectionalLightShadowMapModels(Model3D *model, Shader *shader)
+    void Renderer::renderShadowMapModels(Model3D *model, Shader *shader)
     {
         std::vector<Entity *> &v = entities[model];
 
@@ -116,21 +127,16 @@ namespace gps
         }
     }
 
-    void Renderer::renderDirectionalLightShadowMapEntities(int index, Shader *shader, ShadowMap *shadowMap)
+    void Renderer::renderDirectionalLightShadowMapEntities()
     {
-        shader->useShaderProgram();
-        directionalLights[0].calculateLightSpaceMatrix();
-        shader->loadMatrix("lightSpaceMatrix", directionalLights[0].lightSpaceMatrix);
-
-        glViewport(0, 0, shadowMap->shadowWidth, shadowMap->shadowHeight);
-        shadowMap->bindFrameBufferObject();
-
+        directionalShadowShader->useShaderProgram();
+        directionalShadowShader->loadMatrix("lightSpaceMatrix", directionalLights[directionalShadowCaster].lightSpaceMatrix);
+        glViewport(0, 0, directionalShadowMap->shadowWidth, directionalShadowMap->shadowHeight);
+        directionalShadowMap->bindFrameBufferObject();
         glClear(GL_DEPTH_BUFFER_BIT);
-
         for (auto &pair : entities)
-            renderDirectionalLightShadowMapModels(pair.first, shader);
-
-        shadowMap->unbindFrameBufferObject();
+            renderShadowMapModels(pair.first, directionalShadowShader);
+        directionalShadowMap->unbindFrameBufferObject();
     }
 
     void Renderer::getEntityAnimationMatrices(Animation<Entity> *animation, glm::mat4 &translate, glm::mat4 &rotate, glm::mat4 &scale)
@@ -145,16 +151,22 @@ namespace gps
         }
     }
     
-    void Renderer::renderShadowMap(Entity *quad, Shader *shader, ShadowMap *shadowMap)
+    void Renderer::__renderShadowMap(Entity *quad, ShadowMap *shadowMap)
     {
         glViewport(0, 0, window->getWindowDimensions().width, window->getWindowDimensions().height);
 		glClear(GL_COLOR_BUFFER_BIT);
-		shader->useShaderProgram();
+		shadowMapShader->useShaderProgram();
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, shadowMap->getTextureID());
-        shader->loadValue("shadowMap", 0);
+        shadowMapShader->loadValue("shadowMap", 0);
 		glDisable(GL_DEPTH_TEST);
-	    quad->getModel()->Draw(shader);
+	    quad->getModel()->Draw(shadowMapShader);
 		glEnable(GL_DEPTH_TEST);
+    }
+
+    void Renderer::renderDirectionalShadowMap(Entity *quad)
+    {
+        renderDirectionalLightShadowMapEntities();
+        __renderShadowMap(quad, directionalShadowMap);
     }
 }

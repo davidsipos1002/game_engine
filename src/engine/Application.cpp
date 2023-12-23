@@ -21,8 +21,7 @@ namespace gps
         keyboard = Keyboard::getInstance(window);
         mouse = Mouse::getInstance(window);
 
-        renderer = new Renderer(&window);
-        shadow = new ShadowMap(window.getWindowDimensions().width, window.getWindowDimensions().height);
+        renderer = new Renderer(&window, &loader);
 
         Entity *teapot = loader.loadEntity("models/teapot/teapot20segUT.obj", teapot1);
         teapot->position = glm::vec3(0, 0, 0);
@@ -48,15 +47,11 @@ namespace gps
         teapot->specularStrength = 0.5f;
         renderer->addEntity(teapot);
 
-        loader.loadShader("shaders/entityNormal.vert", "shaders/entityNormal.frag", shader);
-        loader.loadShader("shaders/directionalShadow.vert", "shaders/directionalShadow.frag", dirShadowMap);
-        loader.loadShader("shaders/shadowMap.vert", "shaders/shadowMap.frag", quad);
         loader.loadEntity("models/quad/quad.obj", quadEntity);
 
         renderer->directionalLights[0].intensity = 0.2f;
         renderer->directionalLights[0].lightColor = glm::vec3(1, 1, 1);
         renderer->directionalLights[0].lightDirection = glm::vec3(0, 1, 1);
-        renderer->directionalLights[0].calculateLightSpaceMatrix();
 
         renderer->directionalLights[1].intensity = 0.0f;
         renderer->directionalLights[1].lightColor = glm::vec3(0, 1, 0);
@@ -139,9 +134,9 @@ namespace gps
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         if (keyboard->isKeyPressed(GLFW_KEY_M)) {
-        renderer->renderShadowMap(loader.getEntity(quadEntity), loader.getShader(quad), shadow);
+            renderer->renderDirectionalShadowMap(loader.getEntity(quadEntity));
         } else {
-        renderer->renderEntities(&camera, loader.getShader(shader), projection, shadow);
+            renderer->renderEntities(&camera, projection);
         }
     }
 

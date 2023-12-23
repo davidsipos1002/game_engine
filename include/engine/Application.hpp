@@ -22,7 +22,6 @@ namespace gps
         Mouse *mouse;
         Loader loader;
         Renderer *renderer;
-        ShadowMap *shadow;
         Animator animator;
         
         std::string teapot1;
