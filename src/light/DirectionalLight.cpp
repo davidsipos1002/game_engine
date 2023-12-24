@@ -17,7 +17,7 @@ namespace gps
         shader->loadMatrix("directionalLightSpaceMatrix[" + std::to_string(i) + "]", lightSpaceMatrix); 
     }
 
-    void DirectionalLight::calculateLightMatrices() 
+    void DirectionalLight::calculateLightMatrices(int shadowWidth, int shadowHeight) 
     {
         glm::mat4 viewMatrix = glm::lookAt(4.0f * lightDirection, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
         const GLfloat near_plane = 0.1f, far_plane = 20.0f;
@@ -25,7 +25,7 @@ namespace gps
         lightSpaceMatrix = orthographicMatrix * viewMatrix;
     }
 
-    glm::mat4 DirectionalLight::getLightMatrix(int i)
+    const glm::mat4 &DirectionalLight::getLightMatrix(int i)
     {
         return lightSpaceMatrix;
     }

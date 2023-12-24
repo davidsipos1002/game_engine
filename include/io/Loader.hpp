@@ -24,6 +24,7 @@ namespace gps
         
         Entity *__loadEntity(const std::string &filename, std::string &uuid);
         Shader *__loadShader(const std::string &vertexShader, const std::string &fragmentShader, std::string &uuid);
+        Shader *__loadShader(const std::string &vertexShader, const std::string &geometryShader, const std::string &fragmentShader, std::string &uuid);
 
     public:
         Loader();
@@ -34,6 +35,8 @@ namespace gps
         Entity* getEntity(const std::string &uuid);
         Shader* loadShader(const std::string &vertexShader, const std::string &fragmentShader);
         Shader* loadShader(const std::string &vertexShader, const std::string &fragmentShader, std::string &uuid);
+        Shader* loadShader(const std::string &vertexShader, const std::string &geometryShader, const std::string &fragmentShader);
+        Shader* loadShader(const std::string &vertexShader, const std::string &geometryShader, const std::string &fragmentShader, std::string &uuid);
         Shader* getShader(const std::string &uuid);
     };
 }

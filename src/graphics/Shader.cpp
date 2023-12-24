@@ -96,6 +96,52 @@ namespace gps
         // check linking info
         shaderLinkLog(this->shaderProgram);
     }
+    
+    void Shader::loadShader(std::string vertexShaderFileName, std::string geometryShaderFileName, std::string fragmentShaderFileName)
+    {
+        
+        // read, parse and compile the vertex shader
+        std::string v = readShaderFile(vertexShaderFileName);
+        const GLchar *vertexShaderString = v.c_str();
+        GLuint vertexShader;
+        vertexShader = glCreateShader(GL_VERTEX_SHADER);
+        glShaderSource(vertexShader, 1, &vertexShaderString, NULL);
+        glCompileShader(vertexShader);
+        // check compilation status
+        shaderCompileLog(vertexShader);
+
+        // read, parse and compile the vertex shader
+        std::string g = readShaderFile(geometryShaderFileName);
+        const GLchar *geometryShaderString = g.c_str();
+        GLuint geometryShader;
+        geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
+        glShaderSource(geometryShader, 1, &geometryShaderString, NULL);
+        glCompileShader(geometryShader);
+        // check compilation status
+        shaderCompileLog(geometryShader);
+        
+        // read, parse and compile the vertex shader
+        std::string f = readShaderFile(fragmentShaderFileName);
+        const GLchar *fragmentShaderString = f.c_str();
+        GLuint fragmentShader;
+        fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+        glShaderSource(fragmentShader, 1, &fragmentShaderString, NULL);
+        glCompileShader(fragmentShader);
+        // check compilation status
+        shaderCompileLog(fragmentShader);
+
+        // attach and link the shader programs
+        this->shaderProgram = glCreateProgram();
+        glAttachShader(this->shaderProgram, vertexShader);
+        glAttachShader(this->shaderProgram, geometryShader);
+        glAttachShader(this->shaderProgram, fragmentShader);
+        glLinkProgram(this->shaderProgram);
+        glDeleteShader(vertexShader);
+        glDeleteShader(geometryShader);
+        glDeleteShader(fragmentShader);
+        // check linking info
+        shaderLinkLog(this->shaderProgram);
+    }
 
     void Shader::useShaderProgram()
     {

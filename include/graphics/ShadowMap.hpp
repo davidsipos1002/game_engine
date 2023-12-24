@@ -14,7 +14,7 @@ namespace gps
         int shadowWidth;
         int shadowHeight;
 
-        ShadowMap(int shadowWidth, int shadowHeight);
+        ShadowMap(bool isCubeMap, int shadowWidth, int shadowHeight);
         ~ShadowMap();
 
         void bindFrameBufferObject();

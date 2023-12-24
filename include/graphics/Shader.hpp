@@ -19,6 +19,7 @@ namespace gps
         
         GLuint shaderProgram;
         void loadShader(std::string vertexShaderFileName, std::string fragmentShaderFileName);
+        void loadShader(std::string vertexShaderFileName, std::string geometryShaderFileName, std::string fragmentShaderFileName);
         void useShaderProgram();
         void loadVector(std::string uniformName, glm::vec3 vector);
         void loadVector(std::string uniformName, glm::vec4 vector);

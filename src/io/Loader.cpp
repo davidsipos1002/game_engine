@@ -59,6 +59,15 @@ namespace gps
         return shader;
     }
     
+    Shader *Loader::__loadShader(const std::string &vertexShader, const std::string &geometryShader, const std::string &fragmentShader, std::string &uuid)
+    {
+        uuid = uuids::to_string (uuids::uuid_system_generator{}());
+        Shader *shader = new Shader();
+        shader->loadShader(vertexShader, geometryShader, fragmentShader);
+        shaders[uuid] = shader;
+        return shader;
+    }
+    
     Shader *Loader::loadShader(const std::string &vertexShader, const std::string &fragmentShader) 
     {
         std::string uuid;
@@ -68,6 +77,17 @@ namespace gps
     Shader *Loader::loadShader(const std::string &vertexShader, const std::string &fragmentShader, std::string &uuid)
     {
         return __loadShader(vertexShader, fragmentShader, uuid);
+    }
+
+    Shader *Loader::loadShader(const std::string &vertexShader, const std::string &geometryShader, const std::string &fragmentShader) 
+    {
+        std::string uuid;
+        return __loadShader(vertexShader, geometryShader, fragmentShader, uuid);
+    }
+
+    Shader *Loader::loadShader(const std::string &vertexShader, const std::string &geometryShader, const std::string &fragmentShader, std::string &uuid)
+    {
+        return __loadShader(vertexShader, geometryShader, fragmentShader, uuid);
     }
     
     Shader *Loader::getShader(const std::string &uuid)

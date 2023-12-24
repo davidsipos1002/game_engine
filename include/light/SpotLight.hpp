@@ -6,7 +6,7 @@
 
 namespace gps
 {
-    class SpotLight : public Light, Animated<SpotLight> 
+    class SpotLight : public Light, Animated<SpotLight>
     {
     public:
         glm::vec3 lightPosition;
@@ -20,7 +20,7 @@ namespace gps
         SpotLight(glm::vec3 lightPosition, glm::vec3 lightDirection, glm::vec3 lightColor, float cutoff, float intensity);
         ~SpotLight(){};
         void loadUniforms(Shader *shader, int i) override;
-        void calculateLightMatrices() override;
-        glm::mat4 getLightMatrix(int i) override;
+        void calculateLightMatrices(int shadowWidth = 0, int shadowHeight = 0) override;
+        const glm::mat4 &getLightMatrix(int i = 0) override;
     };
 }

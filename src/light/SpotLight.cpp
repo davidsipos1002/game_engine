@@ -19,15 +19,18 @@ namespace gps
         shader->loadValue("spotLightIsShadowCasting[" + std::to_string(i) + "]", isShadowCasting);
         shader->loadMatrix("spotLightSpaceMatrix[" + std::to_string(i) + "]", lightSpaceMatrix);
     }
-    
-    void SpotLight::calculateLightMatrices()
+
+    void SpotLight::calculateLightMatrices(int shadowWidth, int shadowHeight)
     {
+        float aspect = 1.0f;
+        if (shadowHeight)
+            aspect = (float)shadowWidth / shadowHeight;
         glm::mat4 viewMatrix = glm::lookAt(lightPosition, lightDirection, glm::normalize(glm::cross(lightDirection, lightPosition)));
-        glm::mat projectionMatrix = glm::perspective(cutoff, 1.0f, 0.1f, 20.0f);
+        glm::mat projectionMatrix = glm::perspective(cutoff, aspect, 0.1f, 20.0f);
         lightSpaceMatrix = projectionMatrix * viewMatrix;
     }
-    
-    glm::mat4 SpotLight::getLightMatrix(int i)
+
+    const glm::mat4 &SpotLight::getLightMatrix(int i)
     {
         return lightSpaceMatrix;
     }
