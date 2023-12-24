@@ -50,7 +50,7 @@ namespace gps
         loader.loadEntity("models/quad/quad.obj", quadEntity);
 
         DirectionalLight &light = renderer->getDirectionalLight(0);
-        light.intensity = 0.2f;
+        light.intensity = 0.1f;
         light.lightColor = glm::vec3(1, 1, 1);
         light.lightDirection = glm::vec3(0, 1, 1);
         light.isShadowCasting = true;
@@ -77,6 +77,7 @@ namespace gps
         spotLight.lightDirection = glm::vec3(0, -1, 0);
         spotLight.lightColor = glm::vec3(1, 1, 1);
         spotLight.cutoff = 3.14f / 10;
+        // spotLight.isShadowCasting = true;
 
         projection = glm::perspective(glm::radians(45.0f),
                                       (float)window.getWindowDimensions().width / (float)window.getWindowDimensions().height,
@@ -93,7 +94,7 @@ namespace gps
         teapotA->addKeyFrame(KeyFrame<Entity>(1.5, glm::vec3(-5, 0, 0), glm::vec3(0, 3.14f, 0), glm::vec3(1, 1, 1)));
         teapotA->addKeyFrame(KeyFrame<Entity>(2.5, glm::vec3(-5, 3, 0), glm::vec3(0, 2 * 3.14f, 0), glm::vec3(1, 1, 1)));
         loader.getEntity(this->teapot1)->attachMainComponentAnimation(teapotA);
-        loader.getEntity(teapot2)->attachMainComponentAnimation(animation);
+        // loader.getEntity(teapot2)->attachMainComponentAnimation(animation);
         loader.getEntity(teapot2)->attachSubComponentAnimation(subComponent, "Helmet_Helmet");
         loader.getEntity(teapot2)->attachSubComponentAnimation(subComponent, "Visor_Glass");
     }
@@ -141,7 +142,7 @@ namespace gps
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         if (keyboard->isKeyPressed(GLFW_KEY_M)) {
-            renderer->renderDirectionalShadowMap(loader.getEntity(quadEntity), 0);
+            renderer->displayDirectionalAndSpotLightShadowMap(loader.getEntity(quadEntity), 0);
         } else {
             renderer->renderEntities(&camera, projection);
         }

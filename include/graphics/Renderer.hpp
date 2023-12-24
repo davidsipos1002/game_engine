@@ -23,15 +23,15 @@ namespace gps
         std::unordered_map<Model3D *, std::vector<Entity *>> entities;
         std::array<std::pair<DirectionalLight, ShadowMap *>, 3> directionalLights;
         std::array<PointLight, 10> pointLights;
-        std::array<SpotLight, 10> spotLights;
+        std::array<std::pair<SpotLight, ShadowMap *>, 10> spotLights;
         Window *window;
         Shader *entityShader;
-        Shader *directionalShadowShader;
+        Shader *directionalAndSpotShadowShader;
         Shader *shadowMapShader;
 
         void renderModels(Model3D *model);
         void renderShadowMapModels(Model3D *model, Shader *shader);
-        void renderDirectionalLightShadowMapEntities(DirectionalLight &light, ShadowMap *map);
+        void renderDirectionalAndSpotLightShadowMapEntities(Light &light, ShadowMap *map);
         void __renderShadowMap(Entity *quad, ShadowMap *shadowMap);
         void renderShadowMaps();
         void loadShadowMaps(Shader *shader);
@@ -42,7 +42,7 @@ namespace gps
         ~Renderer();
 
         void addEntity(Entity *entity);
-        void renderDirectionalShadowMap(Entity *quad, int i);
+        void displayDirectionalAndSpotLightShadowMap(Entity *quad, int i);
         void renderEntities(Camera *camera, glm::mat4 projectionMatrix);
         DirectionalLight &getDirectionalLight(int index);
         PointLight &gePointLight(int index);
