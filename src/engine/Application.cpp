@@ -39,7 +39,15 @@ namespace gps
         teapot->ambientStrength = 0.2f;
         teapot->specularStrength = 0.5f;
         renderer->addEntity(teapot);
-
+        
+        teapot = loader.loadEntity("models/ground/ground.obj", teapot2);
+        teapot->position = glm::vec3(3, 0, 0);
+        teapot->rotation = glm::vec3(0, 0, 3.14f / 2);
+        teapot->scale = glm::vec3(1, 1, 1);
+        teapot->ambientStrength = 0.2f;
+        teapot->specularStrength = 0.5f;
+        renderer->addEntity(teapot);
+        
         teapot = loader.loadEntity("models/nanosuit/nanosuit.obj", teapot2);
         teapot->position = glm::vec3(0, 0, 0);
         // teapot->rotation = glm::vec3(0, 3.14f / 2, 0);
@@ -63,7 +71,7 @@ namespace gps
         // light1.isShadowCasting = true;
 
         PointLight &pointLight = renderer->gePointLight(0);
-        pointLight.intensity = 0.3f;
+        pointLight.intensity = 1.0f;
         pointLight.lightColor = glm::vec3(0, 0, 1);
         pointLight.lightPosition = glm::vec3(-3, 2, 0);
         pointLight.isShadowCasting = true;

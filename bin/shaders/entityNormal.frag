@@ -50,6 +50,7 @@ vec3 spotDiffuseTotal = vec3(0, 0, 0);
 vec3 spotSpecularTotal = vec3(0, 0, 0);
 
 mat3 normalMatrix;
+vec4 fPosWorld;
 vec4 fPosEye;
 vec3 normalEye;
 vec3 viewDir;
@@ -100,7 +101,7 @@ float computeDirectionalAndSpotLightShadow(bool directional, int i) {
 
 float computePointLightShadow(int i)
 {
-    vec3 fragToLight = fPosition - pointLightPosition[i];
+    vec3 fragToLight = fPosWorld.xyz - pointLightPosition[i];
     float closestDepth = texture(pointLightShadowMap[i], fragToLight).r;
     float far_plane = 20.0f;
     closestDepth *= far_plane;
@@ -205,7 +206,8 @@ void computeSpotLights()
 void main() 
 {
     normalMatrix = mat3(transpose(inverse(viewMatrix * modelMatrix)));
-    fPosEye = viewMatrix * modelMatrix * vec4(fPosition, 1.0f);
+    fPosWorld = modelMatrix * vec4(fPosition, 1.0f); 
+    fPosEye = viewMatrix * fPosWorld;
     normalEye = normalize(normalMatrix * fNormal);
     viewDir = normalize(- fPosEye.xyz);
     computeDirectionalLights();
@@ -226,8 +228,8 @@ void main()
 
     vec3 color = min(finalDirectional + finalPoint + finalSpot, 1.0f);
     // float depth = computePointLightShadow(0);
-    // fColor = vec4(depth / 20.0f, depth / 20.0f, depth / 20.0f, 1.0f);
     // fColor = vec4(shadow, 0, 0, 1.0f);
     // fColor = vec4(fPositionLight.xyz / fPositionLight.w, 1.0f);
+    // fColor = vec4(vec3(computePointLightShadow(0) / 20.0f), 1.0f);
     fColor = vec4(color, 1.0f);
 }

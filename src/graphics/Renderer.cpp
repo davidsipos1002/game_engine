@@ -18,7 +18,7 @@ namespace gps
         for (auto &pair : directionalLights)
             pair.second = new ShadowMap(false, window->getWindowDimensions().width, window->getWindowDimensions().height);
         for (auto &pair : pointLights)
-            pair.second = new ShadowMap(true, 1024, 1024);
+            pair.second = new ShadowMap(true,  2048, 2048);
         for (auto &pair : spotLights)
             pair.second = new ShadowMap(false, window->getWindowDimensions().width, window->getWindowDimensions().height);
         entityShader = loader->loadShader("shaders/entityNormal.vert", "shaders/entityNormal.frag");
