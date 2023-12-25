@@ -3,7 +3,7 @@
 
 namespace gps
 {
-    Renderer::Renderer(Window *window, Loader *loader) : window(window)
+    Renderer::Renderer(Window *window, Loader *loader, const std::string &skyBox) : window(window)
     {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glViewport(0, 0, window->getWindowDimensions().width, window->getWindowDimensions().height);
@@ -26,7 +26,8 @@ namespace gps
         pointShadowShader = loader->loadShader("shaders/pointShadow.vert", "shaders/pointShadow.geom", "shaders/pointShadow.frag");
         shadowMapShader = loader->loadShader("shaders/shadowMap.vert", "shaders/shadowMap.frag");
         skyboxShader = loader->loadShader("shaders/skybox.vert", "shaders/skybox.frag");
-        skybox = loader->loadSkyBox("skybox");
+        facesShader = loader->loadShader("shaders/faces.vert", "shaders/faces.geom", "shaders/faces.frag");
+        this->skyBox = loader->loadSkyBox(skyBox);
     }
 
     Renderer::~Renderer()
@@ -116,9 +117,19 @@ namespace gps
         glViewport(0, 0, window->getWindowDimensions().width, window->getWindowDimensions().height);
         for (auto &pair : entities)
             renderModels(pair.first);
-        glCheckError();
-        skybox->render(skyboxShader, camera->getViewMatrix(), projectionMatrix);
-        glCheckError();
+        if (enableSkyBox)
+            skyBox->render(skyboxShader, camera->getViewMatrix(), projectionMatrix);
+    }
+    
+    void Renderer::renderFaceEntities(Camera *camera, glm::mat4 projectionMatrix)
+    {
+        facesShader->useShaderProgram();
+        facesShader->loadMatrix("viewMatrix", camera->getViewMatrix());
+        facesShader->loadMatrix("projectionMatrix", projectionMatrix); 
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glViewport(0, 0, window->getWindowDimensions().width, window->getWindowDimensions().height);
+        for (auto &pair : entities)
+            renderShadowMapModels(pair.first, facesShader);
     }
 
     void Renderer::renderShadowMapModels(Model3D *model, Shader *shader)

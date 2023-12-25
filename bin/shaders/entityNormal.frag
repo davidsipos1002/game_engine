@@ -209,7 +209,7 @@ void main()
     fPosWorld = modelMatrix * vec4(fPosition, 1.0f); 
     fPosEye = viewMatrix * fPosWorld;
     normalEye = normalize(normalMatrix * fNormal);
-    viewDir = normalize(- fPosEye.xyz);
+    viewDir = normalize(-fPosEye.xyz);
     computeDirectionalLights();
     computePointLights();
     computeSpotLights();

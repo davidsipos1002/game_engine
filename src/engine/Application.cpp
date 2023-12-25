@@ -21,7 +21,7 @@ namespace gps
         keyboard = Keyboard::getInstance(window);
         mouse = Mouse::getInstance(window);
 
-        renderer = new Renderer(&window, &loader);
+        renderer = new Renderer(&window, &loader, "skybox");
         glCheckError();
 
         Entity *teapot = loader.loadEntity("models/teapot/teapot20segUT.obj", teapot1);
@@ -39,7 +39,7 @@ namespace gps
         teapot->ambientStrength = 0.2f;
         teapot->specularStrength = 0.5f;
         renderer->addEntity(teapot);
-        
+
         teapot = loader.loadEntity("models/ground/ground.obj", teapot2);
         teapot->position = glm::vec3(3, 0, 0);
         teapot->rotation = glm::vec3(0, 0, 3.14f / 2);
@@ -47,7 +47,7 @@ namespace gps
         teapot->ambientStrength = 0.2f;
         teapot->specularStrength = 0.5f;
         renderer->addEntity(teapot);
-        
+
         teapot = loader.loadEntity("models/nanosuit/nanosuit.obj", teapot2);
         teapot->position = glm::vec3(0, 0, 0);
         // teapot->rotation = glm::vec3(0, 3.14f / 2, 0);
@@ -109,6 +109,7 @@ namespace gps
         loader.getEntity(teapot2)->attachMainComponentAnimation(animation);
         loader.getEntity(teapot2)->attachSubComponentAnimation(subComponent, "Helmet_Helmet");
         loader.getEntity(teapot2)->attachSubComponentAnimation(subComponent, "Visor_Glass");
+        renderer->enableSkyBox = false;
     }
 
     void Application::update(double delta)
@@ -124,15 +125,11 @@ namespace gps
 
         if (keyboard->isKeyPressed(GLFW_KEY_D))
             camera.move(gps::MOVE_RIGHT, delta * cameraSpeed);
-        
-        if (keyboard->isKeyPressed(GLFW_KEY_T))
-        {
-            if (displayMode == 0)
-                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-            else if (displayMode == 1)
-                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            displayMode = (displayMode + 1) % 3;
-        }
+
+        if (keyboard->getDisplayMode() == 1)
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        else
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         animator.updateAnimations(delta);
 
@@ -155,7 +152,10 @@ namespace gps
         }
         else
         {
-            renderer->renderEntities(&camera, projection);
+            if (keyboard->getDisplayMode() == 2)
+                renderer->renderFaceEntities(&camera, projection);
+            else
+                renderer->renderEntities(&camera, projection);
         }
     }
 

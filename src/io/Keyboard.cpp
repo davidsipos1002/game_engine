@@ -4,6 +4,7 @@ namespace gps
 {
     Keyboard *Keyboard::instance = nullptr;
     bool Keyboard::pressedKeys[1024] = {};
+    int Keyboard::displayMode = 0;
 
     Keyboard::Keyboard(Window &window)
     {
@@ -22,6 +23,8 @@ namespace gps
             else if (action == GLFW_RELEASE)
                 pressedKeys[key] = false;
         }
+        if (pressedKeys[GLFW_KEY_T])
+            displayMode = (displayMode + 1) % 3;
     }
 
     Keyboard *Keyboard::getInstance(Window &window)
@@ -30,17 +33,22 @@ namespace gps
             instance = new Keyboard(window);
         return instance;
     }
-    
+
     void Keyboard::freeInstance()
     {
         delete instance;
         instance = nullptr;
-    } 
-    
-    bool Keyboard::isKeyPressed(int key) {
+    }
+
+    bool Keyboard::isKeyPressed(int key)
+    {
         if (0 <= key && key < 1024)
             return pressedKeys[key];
         return false;
     }
 
+    int Keyboard::getDisplayMode()
+    {
+        return displayMode;
+    }
 }

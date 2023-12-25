@@ -31,7 +31,8 @@ namespace gps
         Shader *pointShadowShader;
         Shader *shadowMapShader;
         Shader *skyboxShader;
-        SkyBox *skybox;
+        Shader *facesShader;
+        SkyBox *skyBox;
 
         void renderModels(Model3D *model);
         void renderShadowMapModels(Model3D *model, Shader *shader);
@@ -43,12 +44,15 @@ namespace gps
         void getEntityAnimationMatrices(Animation<Entity> *animation, glm::mat4 &translate, glm::mat4 &rotate, glm::mat4 &scale);
 
     public:
-        Renderer(Window *window, Loader *loader);
+        bool enableSkyBox = true;
+
+        Renderer(Window *window, Loader *loader, const std::string &skyBox);
         ~Renderer();
 
         void addEntity(Entity *entity);
         void displayDirectionalAndSpotLightShadowMap(Entity *quad, int i);
         void renderEntities(Camera *camera, glm::mat4 projectionMatrix);
+        void renderFaceEntities(Camera *camera, glm::mat4 projectionMatrix);
         DirectionalLight &getDirectionalLight(int index);
         PointLight &gePointLight(int index);
         SpotLight &getSpotLight(int index);
