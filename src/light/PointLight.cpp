@@ -11,7 +11,6 @@ namespace gps
         shader->loadVector("pointLightPosition[" + std::to_string(i) + "]", lightPosition);
         shader->loadVector("pointLightColor[" + std::to_string(i) + "]", lightColor);
         shader->loadValue("pointLightIntensity[" + std::to_string(i) + "]", intensity);
-        shader->loadValue("pointLightIsShadowCasting[" + std::to_string(i) + "]", isShadowCasting);
     }
 
     void PointLight::calculateLightMatrices(int shadowWidth, int shadowHeight)

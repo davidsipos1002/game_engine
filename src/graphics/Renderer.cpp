@@ -102,7 +102,11 @@ namespace gps
             directionalLights[i].first.loadUniforms(entityShader, i);
         glCheckError();
         for (int i = 0; i < pointLights.size(); i++)
+        {
+            if (i < 5) 
+                entityShader->loadValue("pointLightIsShadowCasting[" + std::to_string(i) + "]", pointLights[i].first.isShadowCasting);
             pointLights[i].first.loadUniforms(entityShader, i);
+        }
         glCheckError();
         for (int i = 0; i < spotLights.size(); i++) 
         {
@@ -202,8 +206,8 @@ namespace gps
 
     void Renderer::displayDirectionalAndSpotLightShadowMap(Entity *quad, int i)
     {
-        renderDirectionalAndSpotLightShadowMapEntities(spotLights[i].first, spotLights[i].second);
-        __renderShadowMap(quad, spotLights[i].second);
+        renderDirectionalAndSpotLightShadowMapEntities(directionalLights[i].first, directionalLights[i].second);
+        __renderShadowMap(quad, directionalLights[i].second);
     }
 
     void Renderer::renderShadowMaps()
@@ -211,6 +215,9 @@ namespace gps
         for (auto &pair : directionalLights)
             if (pair.first.isShadowCasting)
                 renderDirectionalAndSpotLightShadowMapEntities(pair.first, pair.second);
+        for (int i = 0;i < pointLights.size() / 2; i++)
+            if (pointLights[i].first.isShadowCasting)
+                renderPointLightShadowMapEntities(pointLights[i].first, pointLights[i].second);
         for (int i = 0;i < spotLights.size() / 2; i++)
             if (spotLights[i].first.isShadowCasting)
                 renderDirectionalAndSpotLightShadowMapEntities(spotLights[i].first, spotLights[i].second);
@@ -226,6 +233,16 @@ namespace gps
                 glActiveTexture(GL_TEXTURE0 + val);
                 glBindTexture(GL_TEXTURE_2D, directionalLights[i].second->getTextureID());
                 shader->loadValue("directionalLightShadowMap[" + std::to_string(i) + "]", val);
+                val--;
+            }
+        }
+        for (int i = 0;i < pointLights.size() / 2; i++)
+        {
+            if (pointLights[i].first.isShadowCasting)
+            {
+                glActiveTexture(GL_TEXTURE0 + val);
+                glBindTexture(GL_TEXTURE_CUBE_MAP, pointLights[i].second->getTextureID());
+                shader->loadValue("pointLightShadowMap[" + std::to_string(i) + "]", val);
                 val--;
             }
         }
