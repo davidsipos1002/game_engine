@@ -3,7 +3,7 @@
 namespace gps
 {
 
-    SkyBox::SkyBox(const std::vector<std::string> &skyboxFaces)
+    SkyBox::SkyBox(const std::vector<std::string> &skyBoxFaces)
     {
         GLfloat skyboxVertices[] = {
             -1.0f, 1.0f, -1.0f,
@@ -63,12 +63,12 @@ namespace gps
         unsigned char *image;
         int force_channels = 3;
         glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-        for (GLuint i = 0; i < skyboxFaces.size(); i++)
+        for (GLuint i = 0; i < skyBoxFaces.size(); i++)
         {
-            image = stbi_load(skyboxFaces[i].c_str(), &width, &height, &n, force_channels);
+            image = stbi_load(skyBoxFaces[i].c_str(), &width, &height, &n, force_channels);
             if (!image)
             {
-                fprintf(stdout, "ERROR: could not load %s\n", skyboxFaces[i].c_str());
+                fprintf(stdout, "ERROR: could not load %s\n", skyBoxFaces[i].c_str());
                 exit(-1);
             }
             glTexImage2D(

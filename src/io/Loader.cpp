@@ -25,7 +25,7 @@ namespace gps
         if (models.find(filename) == models.end())
         {
             model = new Model3D();
-            model->LoadModel(filename);
+            model->loadModel(filename);
             models[filename] = model;
         }
         else

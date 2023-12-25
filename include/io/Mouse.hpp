@@ -2,7 +2,7 @@
 
 #include <engine/GeneralIncludes.hpp>
 
-#include <graphics/Window.h>
+#include <engine/Window.hpp>
 
 namespace gps
 {
@@ -31,7 +31,7 @@ namespace gps
         static Mouse *getInstance(Window &window);
         static void freeInstance();
 
-        void getPosition(double &x, double &y);
-        void getPreviousPosition(double &x, double &y);
+        void getPosition(double x, double y);
+        void getPreviousPosition(double x, double y);
     };
 }

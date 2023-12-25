@@ -2,8 +2,8 @@
 
 namespace gps
 {
-    PointLight::PointLight(glm::vec3 lightPosition,
-                           glm::vec3 lightColor, float intensity) : lightPosition(lightPosition),
+    PointLight::PointLight(const glm::vec3 &lightPosition,
+                          const glm::vec3 &lightColor, float intensity) : lightPosition(lightPosition),
                                                                     lightColor(lightColor), intensity(intensity) {}
 
     void PointLight::loadUniforms(Shader *shader, int i)

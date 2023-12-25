@@ -1,14 +1,12 @@
-#include <graphics/Window.h>
+#include <engine/Window.hpp>
 
 namespace gps
 {
 
-    void Window::Create(int width, int height, const char *title)
+    void Window::createWindow(bool fullScreen, int width, int height, const char *title)
     {
         if (!glfwInit())
-        {
             throw std::runtime_error("Could not start GLFW3!");
-        }
 
         // window hints
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -32,14 +30,19 @@ namespace gps
         glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
         glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 
-        this->window = glfwCreateWindow(mode->width, mode->height, "", glfwGetPrimaryMonitor(), NULL);
+        if (fullScreen)
+            this->window = glfwCreateWindow(mode->width, mode->height, title, glfwGetPrimaryMonitor(), NULL);
+        else  
+            this->window = glfwCreateWindow(width, height, title, NULL, NULL);
+
         if (!this->window)
-        {
             throw std::runtime_error("Could not create GLFW3 window!");
-        }
 
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-        glfwSetCursorPos(window, width / 2, height / 2);
+        if (fullScreen)
+            glfwSetCursorPos(window, mode->width / 2, mode->height / 2);
+        else
+            glfwSetCursorPos(window, width / 2, height / 2);
 
         glfwMakeContextCurrent(window);
 
@@ -61,7 +64,7 @@ namespace gps
         glfwGetFramebufferSize(window, &this->dimensions.width, &this->dimensions.height);
     }
 
-    void Window::Delete()
+    void Window::deleteWindow()
     {
         if (window)
             glfwDestroyWindow(window);
@@ -79,7 +82,7 @@ namespace gps
         return this->dimensions;
     }
 
-    void Window::setWindowDimensions(WindowDimensions dimensions)
+    void Window::setWindowDimensions(const WindowDimensions &dimensions)
     {
         this->dimensions = dimensions;
     }

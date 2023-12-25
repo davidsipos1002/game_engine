@@ -1,5 +1,4 @@
-#ifndef Camera_hpp
-#define Camera_hpp
+#pragma once
 
 #include <engine/GeneralIncludes.hpp>
 
@@ -18,15 +17,9 @@ namespace gps
     {
 
     public:
-        // Camera constructor
-        Camera(glm::vec3 cameraPosition, glm::vec3 cameraTarget, glm::vec3 cameraUp);
-        // return the view matrix, using the glm::lookAt() function
+        Camera(const glm::vec3 &cameraPosition, const glm::vec3 &cameraTarget, const glm::vec3 &cameraUp);
         glm::mat4 getViewMatrix();
-        // update the camera internal parameters following a camera move event
         void move(MOVE_DIRECTION direction, float speed);
-        // update the camera internal parameters following a camera rotate event
-        // yaw - camera rotation around the y axis
-        // pitch - camera rotation around the x axis
         void rotate(float pitch, float yaw);
 
     private:
@@ -37,5 +30,3 @@ namespace gps
         glm::vec3 cameraUpDirection;
     };
 }
-
-#endif /* Camera_hpp */

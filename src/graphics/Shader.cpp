@@ -9,36 +9,23 @@ namespace gps
         glDeleteProgram(shaderProgram);
     }
 
-    std::string Shader::readShaderFile(std::string fileName)
+    std::string Shader::readShaderFile(const std::string &fileName)
     {
         std::ifstream shaderFile;
         std::string shaderString;
-
-        // open shader file
         shaderFile.open(fileName);
-
         std::stringstream shaderStringStream;
-
-        // read shader content into stream
         shaderStringStream << shaderFile.rdbuf();
-
-        // close shader file
         shaderFile.close();
-
-        // convert stream into GLchar array
         shaderString = shaderStringStream.str();
         return shaderString;
     }
 
     void Shader::shaderCompileLog(GLuint shaderId)
     {
-
         GLint success;
         GLchar infoLog[512];
-
-        // check compilation info
         glGetShaderiv(shaderId, GL_COMPILE_STATUS, &success);
-
         if (!success)
         {
             glGetShaderInfoLog(shaderId, 512, NULL, infoLog);
@@ -49,11 +36,8 @@ namespace gps
 
     void Shader::shaderLinkLog(GLuint shaderProgramId)
     {
-
         GLint success;
         GLchar infoLog[512];
-
-        // check linking info
         glGetProgramiv(shaderProgramId, GL_LINK_STATUS, &success);
         if (!success)
         {
@@ -63,74 +47,59 @@ namespace gps
         }
     }
 
-    void Shader::loadShader(std::string vertexShaderFileName, std::string fragmentShaderFileName)
+    void Shader::loadShader(const std::string &vertexShaderFileName, const std::string &fragmentShaderFileName)
     {
-
-        // read, parse and compile the vertex shader
         std::string v = readShaderFile(vertexShaderFileName);
         const GLchar *vertexShaderString = v.c_str();
         GLuint vertexShader;
         vertexShader = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vertexShader, 1, &vertexShaderString, NULL);
         glCompileShader(vertexShader);
-        // check compilation status
         shaderCompileLog(vertexShader);
 
-        // read, parse and compile the vertex shader
         std::string f = readShaderFile(fragmentShaderFileName);
         const GLchar *fragmentShaderString = f.c_str();
         GLuint fragmentShader;
         fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
         glShaderSource(fragmentShader, 1, &fragmentShaderString, NULL);
         glCompileShader(fragmentShader);
-        // check compilation status
         shaderCompileLog(fragmentShader);
 
-        // attach and link the shader programs
         this->shaderProgram = glCreateProgram();
         glAttachShader(this->shaderProgram, vertexShader);
         glAttachShader(this->shaderProgram, fragmentShader);
         glLinkProgram(this->shaderProgram);
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
-        // check linking info
         shaderLinkLog(this->shaderProgram);
     }
     
-    void Shader::loadShader(std::string vertexShaderFileName, std::string geometryShaderFileName, std::string fragmentShaderFileName)
+    void Shader::loadShader(const std::string &vertexShaderFileName, const std::string &geometryShaderFileName, const std::string &fragmentShaderFileName)
     {
-        
-        // read, parse and compile the vertex shader
         std::string v = readShaderFile(vertexShaderFileName);
         const GLchar *vertexShaderString = v.c_str();
         GLuint vertexShader;
         vertexShader = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vertexShader, 1, &vertexShaderString, NULL);
         glCompileShader(vertexShader);
-        // check compilation status
         shaderCompileLog(vertexShader);
 
-        // read, parse and compile the vertex shader
         std::string g = readShaderFile(geometryShaderFileName);
         const GLchar *geometryShaderString = g.c_str();
         GLuint geometryShader;
         geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
         glShaderSource(geometryShader, 1, &geometryShaderString, NULL);
         glCompileShader(geometryShader);
-        // check compilation status
         shaderCompileLog(geometryShader);
         
-        // read, parse and compile the vertex shader
         std::string f = readShaderFile(fragmentShaderFileName);
         const GLchar *fragmentShaderString = f.c_str();
         GLuint fragmentShader;
         fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
         glShaderSource(fragmentShader, 1, &fragmentShaderString, NULL);
         glCompileShader(fragmentShader);
-        // check compilation status
         shaderCompileLog(fragmentShader);
 
-        // attach and link the shader programs
         this->shaderProgram = glCreateProgram();
         glAttachShader(this->shaderProgram, vertexShader);
         glAttachShader(this->shaderProgram, geometryShader);
@@ -139,7 +108,6 @@ namespace gps
         glDeleteShader(vertexShader);
         glDeleteShader(geometryShader);
         glDeleteShader(fragmentShader);
-        // check linking info
         shaderLinkLog(this->shaderProgram);
     }
 
@@ -148,37 +116,37 @@ namespace gps
         glUseProgram(this->shaderProgram);
     }
 
-    void Shader::loadVector(std::string uniformName, glm::vec3 vector)
+    void Shader::loadVector(const std::string &uniformName, const glm::vec3 &vector)
     {
         glUniform3fv(GET_LOC(uniformName), 1, glm::value_ptr(vector));
     }
 
-    void Shader::loadVector(std::string uniformName, glm::vec4 vector)
+    void Shader::loadVector(const std::string &uniformName, const glm::vec4 &vector)
     {
         glUniform4fv(GET_LOC(uniformName), 1, glm::value_ptr(vector));
     }
     
-    void Shader::loadMatrix(std::string uniformName, glm::mat3 matrix) 
+    void Shader::loadMatrix(const std::string &uniformName, const glm::mat3 &matrix) 
     {
         glUniformMatrix3fv(GET_LOC(uniformName), 1, GL_FALSE, glm::value_ptr(matrix));
     }
     
-    void Shader::loadMatrix(std::string uniformName, glm::mat4 matrix)
+    void Shader::loadMatrix(const std::string &uniformName, const glm::mat4 &matrix)
     {
         glUniformMatrix4fv(GET_LOC(uniformName), 1, GL_FALSE, glm::value_ptr(matrix));
     }
 
-    void Shader::loadValue(std::string uniformName, int value)
+    void Shader::loadValue(const std::string &uniformName, int value)
     {
         glUniform1i(GET_LOC(uniformName), value);
     }
 
-    void Shader::loadValue(std::string uniformName, float value)
+    void Shader::loadValue(const std::string &uniformName, float value)
     {
         glUniform1f(GET_LOC(uniformName), value);
     }
 
-    void Shader::loadValue(std::string uniformName, GLuint value)
+    void Shader::loadValue(const std::string &uniformName, GLuint value)
     {
         glUniform1i(GET_LOC(uniformName), value);
     }

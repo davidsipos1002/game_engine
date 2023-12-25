@@ -1,7 +1,7 @@
 #pragma once
 
 #include <engine/GeneralIncludes.hpp>
-#include <graphics/Window.h>
+#include <engine/Window.hpp>
 #include <io/Keyboard.hpp>
 #include <io/Mouse.hpp>
 #include <object/Entity.hpp>
@@ -38,9 +38,9 @@ namespace gps
             glm::vec3(0.0f, 0.0f, -10.0f),
             glm::vec3(0.0f, 1.0f, 0.0f));
 
-        GLfloat cameraSpeed = 1.5f;
+        GLfloat cameraSpeed = 5.0f;
 
-        float pitch = -3.14f;
+        float pitch = 3.14f;
         float yaw = 0;
         int displayMode = 0;
 

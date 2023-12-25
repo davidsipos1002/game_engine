@@ -1,7 +1,7 @@
 #pragma once
 
 #include <engine/GeneralIncludes.hpp>
-#include <graphics/Window.h>
+#include <engine/Window.hpp>
 
 namespace gps
 {

@@ -5,6 +5,13 @@ namespace gps
 {
     Renderer::Renderer(Window *window, Loader *loader, const std::string &skyBox) : window(window)
     {
+        initOpenGL();
+        initLights();
+        loadShadersAndSkyBox(loader, skyBox);
+    }
+
+    void Renderer::initOpenGL()
+    {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glViewport(0, 0, window->getWindowDimensions().width, window->getWindowDimensions().height);
         glEnable(GL_FRAMEBUFFER_SRGB);
@@ -15,12 +22,20 @@ namespace gps
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
         glFrontFace(GL_CCW);
+    }
+    
+    void Renderer::initLights()
+    {
         for (auto &pair : directionalLights)
             pair.second = new ShadowMap(false, window->getWindowDimensions().width, window->getWindowDimensions().height);
         for (auto &pair : pointLights)
             pair.second = new ShadowMap(true,  2048, 2048);
         for (auto &pair : spotLights)
             pair.second = new ShadowMap(false, window->getWindowDimensions().width, window->getWindowDimensions().height);
+    }
+    
+    void Renderer::loadShadersAndSkyBox(Loader *loader, const std::string &skyBox)
+    {
         entityShader = loader->loadShader("shaders/entityNormal.vert", "shaders/entityNormal.frag");
         directionalAndSpotShadowShader = loader->loadShader("shaders/directionalAndSpotShadow.vert", "shaders/directionalAndSpotShadow.frag");
         pointShadowShader = loader->loadShader("shaders/pointShadow.vert", "shaders/pointShadow.geom", "shaders/pointShadow.frag");
@@ -63,7 +78,6 @@ namespace gps
                 glBindTexture(GL_TEXTURE_2D, textures[i].id);
             }
             glBindVertexArray(buff.VAO);
-
             for (auto entity : v)
             {
                 glm::mat4 scale = glm::scale(glm::mat4(1), entity->scale);
@@ -79,7 +93,6 @@ namespace gps
                 entityShader->loadValue("specularStrength", entity->specularStrength);
                 glDrawElements(GL_TRIANGLES, (GLsizei)mesh->indices.size(), GL_UNSIGNED_INT, 0);
             }
-
             glBindVertexArray(0);
             for (GLuint i = 0; i < textures.size(); i++)
             {
@@ -98,6 +111,17 @@ namespace gps
         entityShader->loadMatrix("projectionMatrix", projectionMatrix);
         entityShader->loadValue("fogDensity", fogDensity);
         entityShader->loadVector("fogColor", fogColor);
+        loadLightsToShader();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glViewport(0, 0, window->getWindowDimensions().width, window->getWindowDimensions().height);
+        for (auto &pair : entities)
+            renderModels(pair.first);
+        if (enableSkyBox)
+            skyBox->render(skyboxShader, camera->getViewMatrix(), projectionMatrix);
+    }
+    
+    void Renderer::loadLightsToShader()
+    {
         for (int i = 0; i < directionalLights.size(); i++)
             directionalLights[i].first.loadUniforms(entityShader, i);
         for (int i = 0; i < pointLights.size(); i++)
@@ -115,15 +139,9 @@ namespace gps
             }
             spotLights[i].first.loadUniforms(entityShader, i);
         }
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glViewport(0, 0, window->getWindowDimensions().width, window->getWindowDimensions().height);
-        for (auto &pair : entities)
-            renderModels(pair.first);
-        if (enableSkyBox)
-            skyBox->render(skyboxShader, camera->getViewMatrix(), projectionMatrix);
     }
     
-    void Renderer::renderFaceEntities(Camera *camera, glm::mat4 projectionMatrix)
+    void Renderer::renderEntitiesWithFaces(Camera *camera, glm::mat4 projectionMatrix)
     {
         facesShader->useShaderProgram();
         facesShader->loadMatrix("viewMatrix", camera->getViewMatrix());
@@ -163,10 +181,10 @@ namespace gps
 
     void Renderer::renderDirectionalAndSpotLightShadowMapEntities(Light &light, ShadowMap *map)
     {
-        light.calculateLightMatrices(map->shadowWidth, map->shadowHeight);
+        light.calculateLightMatrices(map->getShadowWidth(), map->getShadowHeight());
         directionalAndSpotShadowShader->useShaderProgram();
         directionalAndSpotShadowShader->loadMatrix("lightSpaceMatrix", light.getLightMatrix());
-        glViewport(0, 0, map->shadowWidth, map->shadowHeight);
+        glViewport(0, 0, map->getShadowWidth(), map->getShadowHeight());
         map->bindFrameBufferObject();
         glClear(GL_DEPTH_BUFFER_BIT);
         for (auto &pair : entities)
@@ -176,12 +194,12 @@ namespace gps
 
     void Renderer::renderPointLightShadowMapEntities(PointLight &light, ShadowMap *map)
     {
-        light.calculateLightMatrices(map->shadowWidth, map->shadowHeight);
+        light.calculateLightMatrices(map->getShadowWidth(), map->getShadowHeight());
         pointShadowShader->useShaderProgram();
         pointShadowShader->loadVector("lightPosition", light.lightPosition);
         for (int i = 0; i < 6; i++)
             pointShadowShader->loadMatrix("lightSpaceMatrices[" + std::to_string(i) + "]", light.getLightMatrix(i));
-        glViewport(0, 0, map->shadowWidth, map->shadowHeight);
+        glViewport(0, 0, map->getShadowWidth(), map->getShadowHeight());
         map->bindFrameBufferObject();
         glClear(GL_DEPTH_BUFFER_BIT);
         for (auto &pair : entities)
@@ -210,14 +228,22 @@ namespace gps
         glBindTexture(GL_TEXTURE_2D, shadowMap->getTextureID());
         shadowMapShader->loadValue("shadowMap", 0);
         glDisable(GL_DEPTH_TEST);
-        quad->getModel()->Draw(shadowMapShader);
+        quad->getModel()->draw(shadowMapShader);
         glEnable(GL_DEPTH_TEST);
     }
 
-    void Renderer::displayDirectionalAndSpotLightShadowMap(Entity *quad, int i)
+    void Renderer::displayDirectionalAndSpotLightShadowMap(bool spotLight, Entity *quad, int index)
     {
-        renderDirectionalAndSpotLightShadowMapEntities(directionalLights[i].first, directionalLights[i].second);
-        __renderShadowMap(quad, directionalLights[i].second);
+        if (spotLight)
+        {
+            renderDirectionalAndSpotLightShadowMapEntities(spotLights[index].first, spotLights[index].second);
+            __renderShadowMap(quad, spotLights[index].second);
+        }
+        else 
+        {
+            renderDirectionalAndSpotLightShadowMapEntities(directionalLights[index].first, directionalLights[index].second);
+            __renderShadowMap(quad, directionalLights[index].second);
+        }
     }
 
     void Renderer::renderShadowMaps()

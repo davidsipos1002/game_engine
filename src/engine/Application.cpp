@@ -16,7 +16,7 @@ namespace gps
 
     void Application::init()
     {
-        window.Create(1024, 768, "OpenGL Project");
+        window.createWindow(true, 1024, 768, "OpenGL Project");
         window.setResizeCallback(windowResizeCallback);
         keyboard = Keyboard::getInstance(window);
         mouse = Mouse::getInstance(window);
@@ -110,7 +110,6 @@ namespace gps
         loader.getEntity(teapot2)->attachSubComponentAnimation(subComponent, "Visor_Glass");
         renderer->enableSkyBox = true;
         renderer->fogDensity = 0.02f;
-        cameraSpeed = 4.0f;
     }
 
     void Application::update(double delta)
@@ -149,12 +148,12 @@ namespace gps
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         if (keyboard->isKeyPressed(GLFW_KEY_M))
         {
-            renderer->displayDirectionalAndSpotLightShadowMap(loader.getEntity(quadEntity), 0);
+            renderer->displayDirectionalAndSpotLightShadowMap(false, loader.getEntity(quadEntity), 0);
         }
         else
         {
             if (keyboard->getDisplayMode() == 2)
-                renderer->renderFaceEntities(&camera, projection);
+                renderer->renderEntitiesWithFaces(&camera, projection);
             else
                 renderer->renderEntities(&camera, projection);
         }
@@ -183,7 +182,7 @@ namespace gps
 
     void Application::cleanup()
     {
-        window.Delete();
+        window.deleteWindow();
     }
 
     void Application::windowResizeCallback(GLFWwindow *window, int width, int height)

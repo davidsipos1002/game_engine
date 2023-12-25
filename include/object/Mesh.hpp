@@ -1,5 +1,4 @@
-#ifndef Mesh_hpp
-#define Mesh_hpp
+#pragma once
 
 #include <engine/GeneralIncludes.hpp>
 #include <graphics/Shader.hpp>
@@ -50,11 +49,10 @@ namespace gps
         std::vector<GLuint> indices;
         std::vector<Texture> textures;
 
-        Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures);
+        Mesh(const std::vector<Vertex> &vertices, const std::vector<GLuint> &indices, const std::vector<Texture> &textures);
 
         Buffers getBuffers();
-
-        void Draw(gps::Shader *shader);
+        void draw(gps::Shader *shader);
 
     private:
         Buffers buffers;
@@ -63,4 +61,3 @@ namespace gps
     };
 
 }
-#endif /* Mesh_hpp */

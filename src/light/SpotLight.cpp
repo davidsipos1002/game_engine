@@ -3,11 +3,11 @@
 namespace gps
 {
 
-    SpotLight::SpotLight(glm::vec3 lightPosition, glm::vec3 lightDirection,
-                         glm::vec3 lightColor, float cutoff, float intensity) : lightPosition(lightPosition),
-                                                                                lightDirection(lightDirection),
-                                                                                lightColor(lightColor), cutoff(cutoff),
-                                                                                intensity(intensity) {}
+    SpotLight::SpotLight(const glm::vec3 &lightPosition, const glm::vec3 &lightDirection,
+                         const glm::vec3 &lightColor, float cutoff, float intensity) : lightPosition(lightPosition),
+                                                                                       lightDirection(lightDirection),
+                                                                                       lightColor(lightColor), cutoff(cutoff),
+                                                                                       intensity(intensity) {}
 
     void SpotLight::loadUniforms(Shader *shader, int i)
     {

@@ -3,14 +3,11 @@
 namespace gps
 {
 
-	/* Mesh Constructor */
-	Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures)
+	Mesh::Mesh(const std::vector<Vertex> &vertices, const std::vector<GLuint> &indices, const std::vector<Texture> &textures)
 	{
-
 		this->vertices = vertices;
 		this->indices = indices;
 		this->textures = textures;
-
 		this->setupMesh();
 	}
 
@@ -19,16 +16,11 @@ namespace gps
 		return this->buffers;
 	}
 
-	/* Mesh drawing function - also applies associated textures */
-	void Mesh::Draw(Shader *shader)
+	void Mesh::draw(Shader *shader)
 	{
-
 		shader->useShaderProgram();
-
-		// set textures
 		for (GLuint i = 0; i < textures.size(); i++)
 		{
-
 			glActiveTexture(GL_TEXTURE0 + i);
 			glUniform1i(glGetUniformLocation(shader->shaderProgram, this->textures[i].type.c_str()), i);
 			glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
@@ -40,7 +32,6 @@ namespace gps
 
 		for (GLuint i = 0; i < this->textures.size(); i++)
 		{
-
 			glActiveTexture(GL_TEXTURE0 + i);
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}

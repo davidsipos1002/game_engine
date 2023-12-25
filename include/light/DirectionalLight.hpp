@@ -15,7 +15,7 @@ namespace gps
         float intensity = 0;
 
         DirectionalLight() {}
-        DirectionalLight(glm::vec3 lightDirection, glm::vec3 lightColor, float intensity);
+        DirectionalLight(const glm::vec3 &lightDirection, const glm::vec3 &lightColor, float intensity);
         ~DirectionalLight();
         void loadUniforms(Shader *shader, int i) override;
         void calculateLightMatrices(int shadowWidth = 0, int shadowHeight = 0) override;

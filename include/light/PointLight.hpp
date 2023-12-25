@@ -15,7 +15,7 @@ namespace gps
         std::array<glm::mat4, 6> lightSpaceMatrices;
 
         PointLight() {}
-        PointLight(glm::vec3 lightPosition, glm::vec3 lightColor, float intensity);
+        PointLight(const glm::vec3 &lightPosition, const glm::vec3 &lightColor, float intensity);
         ~PointLight(){};
         void loadUniforms(Shader *shader, int i) override;
         void calculateLightMatrices(int shadowWidth = 0, int shadowHeight = 0) override;

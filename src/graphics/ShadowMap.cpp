@@ -63,4 +63,14 @@ namespace gps
     {
         return texture;
     }
+    
+    int ShadowMap::getShadowWidth()
+    {
+        return shadowWidth;
+    }
+    
+    int ShadowMap::getShadowHeight()
+    {
+        return shadowHeight;
+    }
 }

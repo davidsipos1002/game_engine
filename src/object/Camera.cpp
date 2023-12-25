@@ -3,9 +3,7 @@
 
 namespace gps
 {
-
-    // Camera constructor
-    Camera::Camera(glm::vec3 cameraPosition, glm::vec3 cameraTarget, glm::vec3 cameraUp)
+    Camera::Camera(const glm::vec3 &cameraPosition, const glm::vec3 &cameraTarget, const glm::vec3 &cameraUp)
     {
         this->cameraPosition = cameraPosition;
         this->cameraTarget = glm::normalize(cameraTarget);
@@ -14,13 +12,11 @@ namespace gps
         this->cameraRightDirection = glm::normalize(glm::cross(cameraFrontDirection, this->cameraUpDirection));
     }
 
-    // return the view matrix, using the glm::lookAt() function
     glm::mat4 Camera::getViewMatrix()
     {
         return glm::lookAt(cameraPosition, cameraPosition + cameraTarget, this->cameraUpDirection);
     }
 
-    // update the camera internal parameters following a camera move event
     void Camera::move(MOVE_DIRECTION direction, float speed)
     {
         switch (direction)
@@ -42,9 +38,6 @@ namespace gps
         }
     }
 
-    // update the camera internal parameters following a camera rotate event
-    // yaw - camera rotation around the y axis
-    // pitch - camera rotation around the x axis
     void Camera::rotate(float pitch, float yaw)
     {
         glm::vec3 dir(

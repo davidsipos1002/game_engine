@@ -19,7 +19,7 @@ namespace gps
         ~Animator();
 
         template <class T>
-        Animation<T> *createTriggeredAnimation(std::function<bool()> trigger)
+        Animation<T> *createTriggeredAnimation(const std::function<bool()> &trigger)
         {
             Animation<T> *animation = new Animation<T>();
             triggeredAnimations.push_back(std::make_pair(trigger, animation));

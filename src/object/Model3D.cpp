@@ -2,20 +2,19 @@
 namespace gps
 {
 
-	void Model3D::LoadModel(std::string fileName)
+	void Model3D::loadModel(const std::string &fileName)
 	{
 		std::string basePath = fileName.substr(0, fileName.find_last_of('/')) + "/";
-		ReadOBJ(fileName, basePath);
+		readOBJ(fileName, basePath);
 	}
 
-	// Draw each mesh from the model
-	void Model3D::Draw(Shader *shaderProgram) {
-
+	void Model3D::draw(Shader *shaderProgram)
+	{
 		for (auto &pair : meshes)
-			pair.second->Draw(shaderProgram);
+			pair.second->draw(shaderProgram);
 	}
 
-	void Model3D::ReadOBJ(std::string fileName, std::string basePath)
+	void Model3D::readOBJ(const std::string &fileName, const std::string &basePath)
 	{
 		std::cout << "Loading : " << fileName << std::endl;
 		tinyobj::attrib_t attrib;
@@ -101,7 +100,7 @@ namespace gps
 					if (!ambientTexturePath.empty())
 					{
 						gps::Texture currentTexture;
-						currentTexture = LoadTexture(basePath + ambientTexturePath, "ambientTexture");
+						currentTexture = loadTexture(basePath + ambientTexturePath, "ambientTexture");
 						textures.push_back(currentTexture);
 					}
 
@@ -110,7 +109,7 @@ namespace gps
 					if (!diffuseTexturePath.empty())
 					{
 						gps::Texture currentTexture;
-						currentTexture = LoadTexture(basePath + diffuseTexturePath, "diffuseTexture");
+						currentTexture = loadTexture(basePath + diffuseTexturePath, "diffuseTexture");
 						textures.push_back(currentTexture);
 					}
 
@@ -119,7 +118,7 @@ namespace gps
 					if (!specularTexturePath.empty())
 					{
 						gps::Texture currentTexture;
-						currentTexture = LoadTexture(basePath + specularTexturePath, "specularTexture");
+						currentTexture = loadTexture(basePath + specularTexturePath, "specularTexture");
 						textures.push_back(currentTexture);
 					}
 				}
@@ -128,21 +127,16 @@ namespace gps
 		}
 	}
 
-	// Retrieves a texture associated with the object - by its name and type
-	gps::Texture Model3D::LoadTexture(std::string path, std::string type)
+	gps::Texture Model3D::loadTexture(const std::string &path, const std::string &type)
 	{
-
 		for (int i = 0; i < loadedTextures.size(); i++)
 		{
 			if (loadedTextures[i].path == path)
-			{
-				// already loaded texture
 				return loadedTextures[i];
-			}
 		}
 
 		gps::Texture currentTexture;
-		currentTexture.id = ReadTextureFromFile(path.c_str());
+		currentTexture.id = readTextureFromFile(path.c_str());
 		currentTexture.type = std::string(type);
 		currentTexture.path = path;
 
@@ -151,10 +145,8 @@ namespace gps
 		return currentTexture;
 	}
 
-	// Reads the pixel data from an image file and loads it into the video memory
-	GLuint Model3D::ReadTextureFromFile(const char *file_name)
+	GLuint Model3D::readTextureFromFile(const char *file_name)
 	{
-
 		int x, y, n;
 		int force_channels = 4;
 		unsigned char *image_data = stbi_load(file_name, &x, &y, &n, force_channels);
@@ -166,10 +158,8 @@ namespace gps
 		}
 
 		if ((x & (x - 1)) != 0 || (y & (y - 1)) != 0)
-		{
 			fprintf(
 				stderr, "WARNING: texture %s is not power-of-2 dimensions\n", file_name);
-		}
 
 		int width_in_bytes = x * 4;
 		unsigned char *top = NULL;
@@ -217,11 +207,8 @@ namespace gps
 
 	Model3D::~Model3D()
 	{
-
 		for (size_t i = 0; i < loadedTextures.size(); i++)
-		{
 			glDeleteTextures(1, &loadedTextures.at(i).id);
-		}
 
 		for (auto pair : meshes)
 		{

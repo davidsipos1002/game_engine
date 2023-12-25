@@ -17,7 +17,7 @@ namespace gps
         glm::mat4 lightSpaceMatrix;
 
         SpotLight() {}
-        SpotLight(glm::vec3 lightPosition, glm::vec3 lightDirection, glm::vec3 lightColor, float cutoff, float intensity);
+        SpotLight(const glm::vec3 &lightPosition, const glm::vec3 &lightDirection, const glm::vec3 &lightColor, float cutoff, float intensity);
         ~SpotLight(){};
         void loadUniforms(Shader *shader, int i) override;
         void calculateLightMatrices(int shadowWidth = 0, int shadowHeight = 0) override;

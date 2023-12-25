@@ -10,7 +10,7 @@
 #include <light/PointLight.hpp>
 #include <light/SpotLight.hpp>
 #include <graphics/ShadowMap.hpp>
-#include <graphics/Window.h>
+#include <engine/Window.hpp>
 #include <io/Loader.hpp>
 #include <object/SkyBox.hpp>
 #include <unordered_map>
@@ -34,6 +34,10 @@ namespace gps
         Shader *facesShader;
         SkyBox *skyBox;
 
+        void initOpenGL();
+        void initLights();
+        void loadShadersAndSkyBox(Loader *loader, const std::string &skyBox);
+        void loadLightsToShader();
         void renderModels(Model3D *model);
         void renderShadowMapModels(Model3D *model, Shader *shader);
         void renderDirectionalAndSpotLightShadowMapEntities(Light &light, ShadowMap *map);
@@ -52,9 +56,9 @@ namespace gps
         ~Renderer();
 
         void addEntity(Entity *entity);
-        void displayDirectionalAndSpotLightShadowMap(Entity *quad, int i);
+        void displayDirectionalAndSpotLightShadowMap(bool isSpotLight, Entity *quad, int index);
         void renderEntities(Camera *camera, glm::mat4 projectionMatrix);
-        void renderFaceEntities(Camera *camera, glm::mat4 projectionMatrix);
+        void renderEntitiesWithFaces(Camera *camera, glm::mat4 projectionMatrix);
         DirectionalLight &getDirectionalLight(int index);
         PointLight &gePointLight(int index);
         SpotLight &getSpotLight(int index);

@@ -2,8 +2,8 @@
 
 namespace gps
 {
-    DirectionalLight::DirectionalLight(glm::vec3 lightDirection,
-                                       glm::vec3 lightColor, float intensity) : lightDirection(lightDirection),
+    DirectionalLight::DirectionalLight(const glm::vec3 &lightDirection,
+                                       const glm::vec3 &lightColor, float intensity) : lightDirection(lightDirection),
                                                                lightColor(lightColor), intensity(intensity) {}
     
     DirectionalLight::~DirectionalLight() {}

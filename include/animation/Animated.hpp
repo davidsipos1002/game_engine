@@ -17,7 +17,7 @@ namespace gps
             Animated() {};
             virtual ~Animated() {};
 
-            Animation<T> *getAnimation()
+            Animation<T> *getAnimation() const
             {
                 return animation;
             }
@@ -39,12 +39,12 @@ namespace gps
     public:
         virtual ~Animated() {}
 
-        Animation<Entity> *getMainComponentAnimation()
+        Animation<Entity> *getMainComponentAnimation() const
         {
             return mainComponentAnimation;
         }
 
-        Animation<Entity> *getSubComponentAnimation(const std::string &subComponentName)
+        Animation<Entity> *getSubComponentAnimation(const std::string &subComponentName) const
         {
             if (subComponentAnimations.find(subComponentName) != subComponentAnimations.end())
                 return subComponentAnimations.at(subComponentName);

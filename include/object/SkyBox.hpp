@@ -13,7 +13,7 @@ namespace gps
     class SkyBox
     {
     public:
-        SkyBox(const std::vector<std::string> &skyboxPath);
+        SkyBox(const std::vector<std::string> &skyBoxPath);
         ~SkyBox();
         void render(Shader *shader, const glm::mat4 &viewMatrix, const glm::mat4 &projectionMatrix);
 

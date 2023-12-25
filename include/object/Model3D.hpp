@@ -1,5 +1,4 @@
-#ifndef Model3D_hpp
-#define Model3D_hpp
+#pragma once
 
 #include <object/Mesh.hpp>
 
@@ -23,19 +22,14 @@ namespace gps
 
 		~Model3D();
 
-		void LoadModel(std::string fileName);
-
-		void Draw(gps::Shader *shaderProgram);
+		void loadModel(const std::string &fileName);
+		void draw(gps::Shader *shaderProgram);
 
 	private:
 		std::vector<gps::Texture> loadedTextures;
 
-		void ReadOBJ(std::string fileName, std::string basePath);
-
-		gps::Texture LoadTexture(std::string path, std::string type);
-
-		GLuint ReadTextureFromFile(const char *file_name);
+		void readOBJ(const std::string &fileName, const std::string &basePath);
+		gps::Texture loadTexture(const std::string &path, const std::string &type);
+		GLuint readTextureFromFile(const char *file_name);
 	};
 }
-
-#endif /* Model3D_hpp */

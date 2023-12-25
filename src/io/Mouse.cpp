@@ -39,13 +39,13 @@ namespace gps
         instance = nullptr;
     }
 
-    void Mouse::getPosition(double &x, double &y)
+    void Mouse::getPosition(double x, double y)
     {
         x = xpos;
         y = ypos;
     }
 
-    void Mouse::getPreviousPosition(double &x, double &y)
+    void Mouse::getPreviousPosition(double x, double y)
     {
         x = prev_xpos;
         y = prev_ypos;

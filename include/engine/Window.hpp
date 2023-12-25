@@ -1,5 +1,4 @@
-#ifndef WINDOW_H
-#define WINDOW_H
+#pragma once
 
 #include <engine/GeneralIncludes.hpp>
 
@@ -14,25 +13,22 @@ struct WindowDimensions
 
 namespace gps
 {
-
     class Window
     {
 
     public:
-        void Create(int width = 800, int height = 600, const char *title = "OpenGL Project");
-        void Delete();
+        void createWindow(bool fullScreen, int width = 800, int height = 600, const char *title = "OpenGL Project");
+        void deleteWindow();
         void setResizeCallback(GLFWwindowsizefun callback);
         void setKeyCallback(GLFWkeyfun callback);
         void setMouseCallback(GLFWcursorposfun callback);
 
         GLFWwindow *getWindow();
         WindowDimensions getWindowDimensions();
-        void setWindowDimensions(WindowDimensions dimensions);
+        void setWindowDimensions(const WindowDimensions &dimensions);
 
     private:
         WindowDimensions dimensions;
         GLFWwindow *window;
     };
 }
-
-#endif // WINDOW_H

@@ -9,10 +9,10 @@ namespace gps
     private:
         GLuint fbo;
         GLuint texture;
-
-    public:
         int shadowWidth;
         int shadowHeight;
+
+    public:
 
         ShadowMap(bool isCubeMap, int shadowWidth, int shadowHeight);
         ~ShadowMap();
@@ -20,5 +20,7 @@ namespace gps
         void bindFrameBufferObject();
         void unbindFrameBufferObject();
         GLuint getTextureID();
+        int getShadowWidth();
+        int getShadowHeight();
     };
 }
