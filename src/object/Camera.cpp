@@ -17,7 +17,7 @@ namespace gps
     // return the view matrix, using the glm::lookAt() function
     glm::mat4 Camera::getViewMatrix()
     {
-        return glm::lookAt(cameraPosition, cameraTarget, this->cameraUpDirection);
+        return glm::lookAt(cameraPosition, cameraPosition + cameraTarget, this->cameraUpDirection);
     }
 
     // update the camera internal parameters following a camera move event
@@ -48,18 +48,12 @@ namespace gps
     void Camera::rotate(float pitch, float yaw)
     {
         glm::vec3 dir(
-            cos(yaw) * sin(pitch),
+            cos(pitch) * cos(yaw),
             sin(yaw),
-            cos(yaw) * cos(pitch));
-        glm::vec3 right = glm::vec3(
-            sin(pitch - 3.14f / 2.0f),
-            0,
-            cos(pitch - 3.14f / 2.0f));
-        glm::vec3 up = glm::cross(right, dir);
+            -sin(pitch) * cos(yaw));
 
-        this->cameraTarget = this->cameraPosition + dir;
-        this->cameraUpDirection = up;
-        this->cameraRightDirection = right;
-        this->cameraFrontDirection = -this->cameraTarget;
+        this->cameraTarget = glm::normalize(dir);
+        this->cameraRightDirection = glm::normalize(glm::cross(dir, cameraUpDirection));
+        this->cameraFrontDirection = this->cameraTarget;
     }
 }

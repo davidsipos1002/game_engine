@@ -22,7 +22,6 @@ namespace gps
         mouse = Mouse::getInstance(window);
 
         renderer = new Renderer(&window, &loader, "skybox");
-        glCheckError();
 
         Entity *teapot = loader.loadEntity("models/teapot/teapot20segUT.obj", teapot1);
         teapot->position = glm::vec3(0, 0, 0);
@@ -110,6 +109,8 @@ namespace gps
         loader.getEntity(teapot2)->attachSubComponentAnimation(subComponent, "Helmet_Helmet");
         loader.getEntity(teapot2)->attachSubComponentAnimation(subComponent, "Visor_Glass");
         renderer->enableSkyBox = true;
+        renderer->fogDensity = 0.02f;
+        cameraSpeed = 4.0f;
     }
 
     void Application::update(double delta)
