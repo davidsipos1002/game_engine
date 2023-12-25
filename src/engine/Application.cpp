@@ -51,35 +51,35 @@ namespace gps
         loader.loadEntity("models/quad/quad.obj", quadEntity);
 
         DirectionalLight &light = renderer->getDirectionalLight(0);
-        light.intensity = 0.1f;
+        light.intensity = 0.0f;
         light.lightColor = glm::vec3(1, 1, 1);
         light.lightDirection = glm::vec3(0, 1, 1);
-        light.isShadowCasting = true;
+        // light.isShadowCasting = true;
 
         DirectionalLight &light1 = renderer->getDirectionalLight(1);
         light1.intensity = 0.0f;
         light1.lightColor = glm::vec3(0, 1, 0);
         light1.lightDirection = glm::vec3(0, 2, 3);
-        light1.isShadowCasting = true;
+        // light1.isShadowCasting = true;
 
         PointLight &pointLight = renderer->gePointLight(0);
         pointLight.intensity = 0.3f;
         pointLight.lightColor = glm::vec3(0, 0, 1);
         pointLight.lightPosition = glm::vec3(-3, 2, 0);
-        // pointLight.isShadowCasting = true;
+        pointLight.isShadowCasting = true;
 
         PointLight &pointLight2 = renderer->gePointLight(1);
-        pointLight2.intensity = 0.2f;
+        pointLight2.intensity = 0.0f;
         pointLight2.lightColor = glm::vec3(1, 1, 0);
         pointLight2.lightPosition = glm::vec3(3, 2, 0);
 
         SpotLight &spotLight = renderer->getSpotLight(0);
-        spotLight.intensity = 2.0f;
+        spotLight.intensity = 0.0f;
         spotLight.lightPosition = glm::vec3(0.75, 3, 0);
         spotLight.lightDirection = glm::vec3(0, -1, 0);
         spotLight.lightColor = glm::vec3(1, 1, 1);
         spotLight.cutoff = 3.14f / 10;
-        spotLight.isShadowCasting = true;
+        // spotLight.isShadowCasting = true;
 
         projection = glm::perspective(glm::radians(45.0f),
                                       (float)window.getWindowDimensions().width / (float)window.getWindowDimensions().height,

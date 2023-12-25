@@ -101,8 +101,7 @@ float computeDirectionalAndSpotLightShadow(bool directional, int i) {
 float computePointLightShadow(int i)
 {
     vec3 fragToLight = fPosition - pointLightPosition[i];
-    float closestDepth = texture(pointLightShadowMap[i], vec3(0, 0, 0)).r;
-    // float closestDepth = 1.0f;
+    float closestDepth = texture(pointLightShadowMap[i], fragToLight).r;
     float far_plane = 20.0f;
     closestDepth *= far_plane;
     float currentDepth = length(fragToLight);
@@ -156,8 +155,8 @@ void computePointLights()
             if (i < 5 && pointLightIsShadowCasting[i] != 0)
             {
                 float shadow = computePointLightShadow(i);
-                // diffuse *= 1.0f - shadow;
-                // specular *= 1.0f - shadow; 
+                diffuse *= 1.0f - shadow;
+                specular *= 1.0f - shadow; 
             }
             pointAmbientTotal += ambient;
             pointDiffuseTotal += diffuse;
