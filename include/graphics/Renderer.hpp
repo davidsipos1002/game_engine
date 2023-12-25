@@ -22,16 +22,18 @@ namespace gps
     private:
         std::unordered_map<Model3D *, std::vector<Entity *>> entities;
         std::array<std::pair<DirectionalLight, ShadowMap *>, 3> directionalLights;
-        std::array<PointLight, 10> pointLights;
+        std::array<std::pair<PointLight, ShadowMap *>, 10> pointLights;
         std::array<std::pair<SpotLight, ShadowMap *>, 10> spotLights;
         Window *window;
         Shader *entityShader;
         Shader *directionalAndSpotShadowShader;
+        Shader *pointShadowShader;
         Shader *shadowMapShader;
 
         void renderModels(Model3D *model);
         void renderShadowMapModels(Model3D *model, Shader *shader);
         void renderDirectionalAndSpotLightShadowMapEntities(Light &light, ShadowMap *map);
+        void renderPointLightShadowMapEntities(PointLight &light, ShadowMap *map);
         void __renderShadowMap(Entity *quad, ShadowMap *shadowMap);
         void renderShadowMaps();
         void loadShadowMaps(Shader *shader);

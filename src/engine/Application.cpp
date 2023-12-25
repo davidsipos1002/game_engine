@@ -22,6 +22,7 @@ namespace gps
         mouse = Mouse::getInstance(window);
 
         renderer = new Renderer(&window, &loader);
+        glCheckError();
 
         Entity *teapot = loader.loadEntity("models/teapot/teapot20segUT.obj", teapot1);
         teapot->position = glm::vec3(0, 0, 0);
@@ -65,6 +66,7 @@ namespace gps
         pointLight.intensity = 0.3f;
         pointLight.lightColor = glm::vec3(0, 0, 1);
         pointLight.lightPosition = glm::vec3(-3, 2, 0);
+        // pointLight.isShadowCasting = true;
 
         PointLight &pointLight2 = renderer->gePointLight(1);
         pointLight2.intensity = 0.2f;
@@ -77,15 +79,17 @@ namespace gps
         spotLight.lightDirection = glm::vec3(0, -1, 0);
         spotLight.lightColor = glm::vec3(1, 1, 1);
         spotLight.cutoff = 3.14f / 10;
-        // spotLight.isShadowCasting = true;
+        spotLight.isShadowCasting = true;
 
         projection = glm::perspective(glm::radians(45.0f),
                                       (float)window.getWindowDimensions().width / (float)window.getWindowDimensions().height,
                                       0.1f, 20.0f);
-        
-        Animation<Entity> *animation = animator.createTriggeredAnimation<Entity>([&] () {return keyboard->isKeyPressed(GLFW_KEY_P);});
+
+        Animation<Entity> *animation = animator.createTriggeredAnimation<Entity>([&]()
+                                                                                 { return keyboard->isKeyPressed(GLFW_KEY_P); });
         Animation<Entity> *teapotA = animator.createPeriodicAnimation<Entity>(3, 3);
-        Animation<Entity> *subComponent = animator.createTriggeredAnimation<Entity>([&] () {return keyboard->isKeyPressed(GLFW_KEY_P);});
+        Animation<Entity> *subComponent = animator.createTriggeredAnimation<Entity>([&]()
+                                                                                    { return keyboard->isKeyPressed(GLFW_KEY_P); });
         animation->addKeyFrame(KeyFrame<Entity>());
         animation->addKeyFrame(KeyFrame<Entity>(1.5, glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1)));
         subComponent->addKeyFrame(KeyFrame<Entity>());
@@ -94,7 +98,7 @@ namespace gps
         teapotA->addKeyFrame(KeyFrame<Entity>(1.5, glm::vec3(-5, 0, 0), glm::vec3(0, 3.14f, 0), glm::vec3(1, 1, 1)));
         teapotA->addKeyFrame(KeyFrame<Entity>(2.5, glm::vec3(-5, 3, 0), glm::vec3(0, 2 * 3.14f, 0), glm::vec3(1, 1, 1)));
         loader.getEntity(this->teapot1)->attachMainComponentAnimation(teapotA);
-        // loader.getEntity(teapot2)->attachMainComponentAnimation(animation);
+        loader.getEntity(teapot2)->attachMainComponentAnimation(animation);
         loader.getEntity(teapot2)->attachSubComponentAnimation(subComponent, "Helmet_Helmet");
         loader.getEntity(teapot2)->attachSubComponentAnimation(subComponent, "Visor_Glass");
     }
@@ -126,7 +130,7 @@ namespace gps
         }
 
         animator.updateAnimations(delta);
-            
+
         static float mouseSpeed = 0.02f;
         double xpos, ypos;
         glfwGetCursorPos(window.getWindow(), &xpos, &ypos);
@@ -141,9 +145,12 @@ namespace gps
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        if (keyboard->isKeyPressed(GLFW_KEY_M)) {
+        if (keyboard->isKeyPressed(GLFW_KEY_M))
+        {
             renderer->displayDirectionalAndSpotLightShadowMap(loader.getEntity(quadEntity), 0);
-        } else {
+        }
+        else
+        {
             renderer->renderEntities(&camera, projection);
         }
     }

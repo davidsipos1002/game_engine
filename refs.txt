@@ -3,4 +3,7 @@ UUID: https://github.com/mariusbancila/stduuid
 Light: https://learnopengl.com/Lighting/Light-casters
 SpotLight: https://ogldev.org/www/tutorial21/tutorial21.html
 Camera: https://learnopengl.com/Getting-started/Camera
+Directional and spot shadows: https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping
+Geometry shader: https://learnopengl.com/Advanced-OpenGL/Geometry-Shader
+Point shadows: https://learnopengl.com/Advanced-Lighting/Shadows/Point-Shadows
 Laboratories

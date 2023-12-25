@@ -15,17 +15,22 @@ namespace gps
         glCullFace(GL_BACK);
         glFrontFace(GL_CCW);
         for (auto &pair : directionalLights)
-            pair.second = new ShadowMap(window->getWindowDimensions().width, window->getWindowDimensions().height);
+            pair.second = new ShadowMap(false, window->getWindowDimensions().width, window->getWindowDimensions().height);
+        for (auto &pair: pointLights)
+            pair.second = new ShadowMap(true, 1024, 1024);
         for (auto &pair : spotLights)
-            pair.second = new ShadowMap(window->getWindowDimensions().width, window->getWindowDimensions().height);
+            pair.second = new ShadowMap(false, window->getWindowDimensions().width, window->getWindowDimensions().height);
         entityShader = loader->loadShader("shaders/entityNormal.vert", "shaders/entityNormal.frag");
         directionalAndSpotShadowShader = loader->loadShader("shaders/directionalAndSpotShadow.vert", "shaders/directionalAndSpotShadow.frag");
+        pointShadowShader = loader->loadShader("shaders/pointShadow.vert", "shaders/pointShadow.geom", "shaders/pointShadow.frag");
         shadowMapShader = loader->loadShader("shaders/shadowMap.vert", "shaders/shadowMap.frag");
     }
 
     Renderer::~Renderer()
     {
         for (auto &pair : directionalLights)
+            delete pair.second;
+        for (auto &pair : pointLights)
             delete pair.second;
         for (auto &pair : spotLights)
             delete pair.second;
@@ -49,11 +54,16 @@ namespace gps
 
             for (GLuint i = 0; i < textures.size(); i++)
             {
+                glCheckError();
                 glActiveTexture(GL_TEXTURE0 + i);
+                glCheckError();
                 glUniform1i(glGetUniformLocation(entityShader->shaderProgram, textures[i].type.c_str()), i);
+                glCheckError();
                 glBindTexture(GL_TEXTURE_2D, textures[i].id);
+                glCheckError();
             }
             glBindVertexArray(buff.VAO);
+            glCheckError();
 
             for (auto entity : v)
             {
@@ -87,15 +97,27 @@ namespace gps
         loadShadowMaps(entityShader);
         entityShader->loadMatrix("viewMatrix", camera->getViewMatrix());
         entityShader->loadMatrix("projectionMatrix", projectionMatrix);
+        glCheckError();
         for (int i = 0; i < directionalLights.size(); i++)
             directionalLights[i].first.loadUniforms(entityShader, i);
+        glCheckError();
         for (int i = 0; i < pointLights.size(); i++)
-            pointLights[i].loadUniforms(entityShader, i);
-        for (int i = 0; i < spotLights.size(); i++)
+            pointLights[i].first.loadUniforms(entityShader, i);
+        glCheckError();
+        for (int i = 0; i < spotLights.size(); i++) 
+        {
+            if (i < 5)
+            {
+                entityShader->loadValue("spotLightIsShadowCasting[" + std::to_string(i) + "]", spotLights[i].first.isShadowCasting);
+                entityShader->loadMatrix("spotLightSpaceMatrix[" + std::to_string(i) + "]", spotLights[i].first.getLightMatrix());
+            }
             spotLights[i].first.loadUniforms(entityShader, i);
+        }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glCheckError();
         for (auto &pair : entities)
             renderModels(pair.first);
+        glCheckError();
     }
 
     void Renderer::renderShadowMapModels(Model3D *model, Shader *shader)
@@ -127,14 +149,29 @@ namespace gps
 
     void Renderer::renderDirectionalAndSpotLightShadowMapEntities(Light &light, ShadowMap *map)
     {
-        light.calculateLightMatrices();
+        light.calculateLightMatrices(map->shadowWidth, map->shadowHeight);
         directionalAndSpotShadowShader->useShaderProgram();
         directionalAndSpotShadowShader->loadMatrix("lightSpaceMatrix", light.getLightMatrix());
         glViewport(0, 0, map->shadowWidth, map->shadowHeight);
         map->bindFrameBufferObject();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_DEPTH_BUFFER_BIT);
         for (auto &pair : entities)
             renderShadowMapModels(pair.first, directionalAndSpotShadowShader);
+        map->unbindFrameBufferObject();
+    }
+    
+    void Renderer::renderPointLightShadowMapEntities(PointLight &light, ShadowMap *map)
+    {
+        light.calculateLightMatrices(map->shadowWidth, map->shadowHeight);
+        pointShadowShader->useShaderProgram();
+        pointShadowShader->loadVector("lightPosition", light.lightPosition);
+        for (int i = 0; i < 6; i++)
+            pointShadowShader->loadMatrix("lightSpaceMatrices[" + std::to_string(i) + "]", light.getLightMatrix(i));
+        glViewport(0, 0, map->shadowWidth, map->shadowHeight);
+        map->bindFrameBufferObject();
+        glClear(GL_DEPTH_BUFFER_BIT);
+        for (auto &pair : entities)
+            renderShadowMapModels(pair.first, pointShadowShader);
         map->unbindFrameBufferObject();
     }
 
@@ -172,15 +209,11 @@ namespace gps
     void Renderer::renderShadowMaps()
     {
         for (auto &pair : directionalLights)
-        {
             if (pair.first.isShadowCasting)
                 renderDirectionalAndSpotLightShadowMapEntities(pair.first, pair.second);
-        }
-        for (auto &pair : spotLights)
-        {
-            if (pair.first.isShadowCasting)
-                renderDirectionalAndSpotLightShadowMapEntities(pair.first, pair.second);
-        }
+        for (int i = 0;i < spotLights.size() / 2; i++)
+            if (spotLights[i].first.isShadowCasting)
+                renderDirectionalAndSpotLightShadowMapEntities(spotLights[i].first, spotLights[i].second);
     }
 
     void Renderer::loadShadowMaps(Shader *shader)
@@ -188,16 +221,18 @@ namespace gps
         GLuint val = 31;
         for (int i = 0; i < directionalLights.size(); i++)
         {
-            if (directionalLights[i].first.isShadowCasting) {
+            if (directionalLights[i].first.isShadowCasting)
+            {
                 glActiveTexture(GL_TEXTURE0 + val);
                 glBindTexture(GL_TEXTURE_2D, directionalLights[i].second->getTextureID());
                 shader->loadValue("directionalLightShadowMap[" + std::to_string(i) + "]", val);
                 val--;
             }
         }
-        for (int i = 0;i < spotLights.size(); i++)
+        for (int i = 0; i < spotLights.size() / 2; i++)
         {
-            if (spotLights[i].first.isShadowCasting) {
+            if (spotLights[i].first.isShadowCasting)
+            {
                 glActiveTexture(GL_TEXTURE0 + val);
                 glBindTexture(GL_TEXTURE_2D, spotLights[i].second->getTextureID());
                 shader->loadValue("spotLightShadowMap[" + std::to_string(i) + "]", val);
@@ -213,7 +248,7 @@ namespace gps
 
     PointLight &Renderer::gePointLight(int index)
     {
-        return pointLights[index];
+        return pointLights[index].first;
     }
 
     SpotLight &Renderer::getSpotLight(int index)
