@@ -25,6 +25,8 @@ namespace gps
         directionalAndSpotShadowShader = loader->loadShader("shaders/directionalAndSpotShadow.vert", "shaders/directionalAndSpotShadow.frag");
         pointShadowShader = loader->loadShader("shaders/pointShadow.vert", "shaders/pointShadow.geom", "shaders/pointShadow.frag");
         shadowMapShader = loader->loadShader("shaders/shadowMap.vert", "shaders/shadowMap.frag");
+        skyboxShader = loader->loadShader("shaders/skybox.vert", "shaders/skybox.frag");
+        skybox = loader->loadSkyBox("skybox");
     }
 
     Renderer::~Renderer()
@@ -114,6 +116,9 @@ namespace gps
         glViewport(0, 0, window->getWindowDimensions().width, window->getWindowDimensions().height);
         for (auto &pair : entities)
             renderModels(pair.first);
+        glCheckError();
+        skybox->render(skyboxShader, camera->getViewMatrix(), projectionMatrix);
+        glCheckError();
     }
 
     void Renderer::renderShadowMapModels(Model3D *model, Shader *shader)

@@ -59,10 +59,10 @@ namespace gps
         loader.loadEntity("models/quad/quad.obj", quadEntity);
 
         DirectionalLight &light = renderer->getDirectionalLight(0);
-        light.intensity = 0.0f;
+        light.intensity = 0.3f;
         light.lightColor = glm::vec3(1, 1, 1);
         light.lightDirection = glm::vec3(0, 1, 1);
-        // light.isShadowCasting = true;
+        light.isShadowCasting = true;
 
         DirectionalLight &light1 = renderer->getDirectionalLight(1);
         light1.intensity = 0.0f;

@@ -12,6 +12,7 @@
 #include <graphics/ShadowMap.hpp>
 #include <graphics/Window.h>
 #include <io/Loader.hpp>
+#include <object/SkyBox.hpp>
 #include <unordered_map>
 #include <array>
 
@@ -29,6 +30,8 @@ namespace gps
         Shader *directionalAndSpotShadowShader;
         Shader *pointShadowShader;
         Shader *shadowMapShader;
+        Shader *skyboxShader;
+        SkyBox *skybox;
 
         void renderModels(Model3D *model);
         void renderShadowMapModels(Model3D *model, Shader *shader);

@@ -9,12 +9,14 @@ namespace gps
 
     Loader::~Loader()
     {
-        for (auto shaderPair : shaders)
+        for (auto &shaderPair : shaders)
             delete shaderPair.second;
-        for (auto entityPair : entities)
+        for (auto &entityPair : entities)
                 delete entityPair.second;
-        for (auto modelPair : models)
+        for (auto &modelPair : models)
             delete modelPair.second;
+        for (auto &skyBox : skyBoxes)
+            delete skyBox;
     }
     
     Entity *Loader::__loadEntity(const std::string &filename, std::string &uuid)
@@ -93,5 +95,17 @@ namespace gps
     Shader *Loader::getShader(const std::string &uuid)
     {
         return shaders[uuid];
+    }
+    
+    SkyBox *Loader::loadSkyBox(const std::string &basePath)
+    {
+        std::vector<std::string> filenames;
+        filenames.push_back(basePath + "/right.tga");
+        filenames.push_back(basePath + "/left.tga");
+        filenames.push_back(basePath + "/top.tga");
+        filenames.push_back(basePath + "/bottom.tga");
+        filenames.push_back(basePath + "/back.tga");
+        filenames.push_back(basePath + "/front.tga");
+        return new SkyBox(filenames);
     }
 }

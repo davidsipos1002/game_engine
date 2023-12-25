@@ -1,6 +1,7 @@
 #pragma once
 
 #include <object/Entity.hpp>
+#include <object/SkyBox.hpp>
 #include <graphics/Shader.hpp>
 #include <unordered_map>
 
@@ -21,6 +22,7 @@ namespace gps
         std::unordered_map<std::string, Model3D *> models;
         std::unordered_map<std::string, Entity *> entities;
         std::unordered_map<std::string, Shader *> shaders;
+        std::vector<SkyBox *> skyBoxes;
         
         Entity *__loadEntity(const std::string &filename, std::string &uuid);
         Shader *__loadShader(const std::string &vertexShader, const std::string &fragmentShader, std::string &uuid);
@@ -38,5 +40,6 @@ namespace gps
         Shader* loadShader(const std::string &vertexShader, const std::string &geometryShader, const std::string &fragmentShader);
         Shader* loadShader(const std::string &vertexShader, const std::string &geometryShader, const std::string &fragmentShader, std::string &uuid);
         Shader* getShader(const std::string &uuid);
+        SkyBox* loadSkyBox(const std::string &basePath);
     };
 }
