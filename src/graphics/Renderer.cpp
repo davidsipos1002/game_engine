@@ -96,6 +96,8 @@ namespace gps
         loadShadowMaps(entityShader);
         entityShader->loadMatrix("viewMatrix", camera->getViewMatrix());
         entityShader->loadMatrix("projectionMatrix", projectionMatrix);
+        entityShader->loadValue("fogDensity", fogDensity);
+        entityShader->loadVector("fogColor", fogColor);
         for (int i = 0; i < directionalLights.size(); i++)
             directionalLights[i].first.loadUniforms(entityShader, i);
         for (int i = 0; i < pointLights.size(); i++)

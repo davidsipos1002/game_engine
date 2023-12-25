@@ -45,6 +45,8 @@ namespace gps
 
     public:
         bool enableSkyBox = true;
+        float fogDensity = 0.03f;
+        glm::vec3 fogColor = glm::vec3(0.5f, 0.5f, 0.5f);
 
         Renderer(Window *window, Loader *loader, const std::string &skyBox);
         ~Renderer();

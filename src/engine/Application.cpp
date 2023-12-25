@@ -91,7 +91,7 @@ namespace gps
 
         projection = glm::perspective(glm::radians(45.0f),
                                       (float)window.getWindowDimensions().width / (float)window.getWindowDimensions().height,
-                                      0.1f, 20.0f);
+                                      0.1f, 100.0f);
 
         Animation<Entity> *animation = animator.createTriggeredAnimation<Entity>([&]()
                                                                                  { return keyboard->isKeyPressed(GLFW_KEY_P); });
@@ -109,7 +109,7 @@ namespace gps
         loader.getEntity(teapot2)->attachMainComponentAnimation(animation);
         loader.getEntity(teapot2)->attachSubComponentAnimation(subComponent, "Helmet_Helmet");
         loader.getEntity(teapot2)->attachSubComponentAnimation(subComponent, "Visor_Glass");
-        renderer->enableSkyBox = false;
+        renderer->enableSkyBox = true;
     }
 
     void Application::update(double delta)

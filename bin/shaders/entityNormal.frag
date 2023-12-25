@@ -37,6 +37,9 @@ uniform float specularStrength;
 uniform sampler2D diffuseTexture;
 uniform sampler2D specularTexture;
 
+uniform float fogDensity;
+uniform vec3 fogColor;
+
 vec3 directionalAmbientTotal = vec3(0, 0, 0);
 vec3 directionalDiffuseTotal = vec3(0, 0, 0);
 vec3 directionalSpecularTotal = vec3(0, 0, 0);
@@ -203,6 +206,13 @@ void computeSpotLights()
     }
 }
 
+float computeFog()
+{
+    float dist = length(fPosEye);
+    float fogFactor = exp(-pow(dist * fogDensity, 2));
+    return clamp(fogFactor, 0.0f, 1.0f); 
+}
+
 void main() 
 {
     normalMatrix = mat3(transpose(inverse(viewMatrix * modelMatrix)));
@@ -227,6 +237,8 @@ void main()
                     diffuseTextureColor + spotSpecularTotal * specularTextureColor, 1.0f);
 
     vec3 color = min(finalDirectional + finalPoint + finalSpot, 1.0f);
+    float fogFactor = computeFog();
+    color = mix(fogColor, color, fogFactor);
     // float depth = computePointLightShadow(0);
     // fColor = vec4(shadow, 0, 0, 1.0f);
     // fColor = vec4(fPositionLight.xyz / fPositionLight.w, 1.0f);
