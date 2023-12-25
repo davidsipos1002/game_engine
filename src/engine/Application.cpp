@@ -60,7 +60,7 @@ namespace gps
         light1.intensity = 0.0f;
         light1.lightColor = glm::vec3(0, 1, 0);
         light1.lightDirection = glm::vec3(0, 2, 3);
-        // light1.isShadowCasting = true;
+        light1.isShadowCasting = true;
 
         PointLight &pointLight = renderer->gePointLight(0);
         pointLight.intensity = 0.3f;

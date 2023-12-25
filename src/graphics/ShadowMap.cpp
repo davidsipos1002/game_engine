@@ -20,6 +20,7 @@ namespace gps
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
             glBindFramebuffer(GL_FRAMEBUFFER, fbo);
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture, 0);
+            glBindTexture(GL_TEXTURE_2D, 0);
         }
         else
         {
@@ -34,6 +35,7 @@ namespace gps
             glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
             glBindFramebuffer(GL_FRAMEBUFFER, fbo);
             glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture, 0);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
         }
         glDrawBuffer(GL_NONE);
         glReadBuffer(GL_NONE);

@@ -98,6 +98,19 @@ float computeDirectionalAndSpotLightShadow(bool directional, int i) {
     return shadow;
 }
 
+float computePointLightShadow(int i)
+{
+    vec3 fragToLight = fPosition - pointLightPosition[i];
+    float closestDepth = texture(pointLightShadowMap[i], vec3(0, 0, 0)).r;
+    // float closestDepth = 1.0f;
+    float far_plane = 20.0f;
+    closestDepth *= far_plane;
+    float currentDepth = length(fragToLight);
+    float bias = 0.05; 
+    float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+    return shadow;
+} 
+
 void computeDirectionalLights()
 {
     for (int i = 0; i < 3; i++)
@@ -140,7 +153,12 @@ void computePointLights()
             vec3 reflectDir = reflect(-lightVector, normalEye);
             float specCoeff = pow(max(dot(viewDir, reflectDir), 0.0f), 32);
             vec3 specular = pointLightIntensity[i] * attenuation * specularStrength * specCoeff * pointLightColor[i]; 
-
+            if (i < 5 && pointLightIsShadowCasting[i] != 0)
+            {
+                float shadow = computePointLightShadow(i);
+                // diffuse *= 1.0f - shadow;
+                // specular *= 1.0f - shadow; 
+            }
             pointAmbientTotal += ambient;
             pointDiffuseTotal += diffuse;
             pointSpecularTotal += specular;

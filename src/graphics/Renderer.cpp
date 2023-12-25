@@ -10,6 +10,7 @@ namespace gps
         glEnable(GL_FRAMEBUFFER_SRGB);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_MULTISAMPLE);
+        glEnable(GL_TEXTURE_CUBE_MAP);
         glDepthFunc(GL_LESS);
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
@@ -52,14 +53,14 @@ namespace gps
             Buffers buff = mesh->getBuffers();
             std::vector<Texture> &textures = mesh->textures;
 
-            for (GLuint i = 0; i < textures.size(); i++)
+            for (GLuint i = 1; i <= textures.size(); i++)
             {
                 glCheckError();
                 glActiveTexture(GL_TEXTURE0 + i);
                 glCheckError();
-                glUniform1i(glGetUniformLocation(entityShader->shaderProgram, textures[i].type.c_str()), i);
+                glUniform1i(glGetUniformLocation(entityShader->shaderProgram, textures[i - 1].type.c_str()), i);
                 glCheckError();
-                glBindTexture(GL_TEXTURE_2D, textures[i].id);
+                glBindTexture(GL_TEXTURE_2D, textures[i - 1].id);
                 glCheckError();
             }
             glBindVertexArray(buff.VAO);
@@ -79,10 +80,11 @@ namespace gps
                 entityShader->loadValue("ambientStrength", entity->ambientStrength);
                 entityShader->loadValue("specularStrength", entity->specularStrength);
                 glDrawElements(GL_TRIANGLES, (GLsizei)mesh->indices.size(), GL_UNSIGNED_INT, 0);
+                glCheckError();
             }
 
             glBindVertexArray(0);
-            for (GLuint i = 0; i < textures.size(); i++)
+            for (GLuint i = 1; i <= textures.size(); i++)
             {
                 glActiveTexture(GL_TEXTURE0 + i);
                 glBindTexture(GL_TEXTURE_2D, 0);
@@ -146,6 +148,7 @@ namespace gps
                 glm::mat4 modelMatrix = translate * rotate * scale;
                 shader->loadMatrix("modelMatrix", modelMatrix);
                 glDrawElements(GL_TRIANGLES, (GLsizei)mesh->indices.size(), GL_UNSIGNED_INT, 0);
+                glCheckError();
             }
             glBindVertexArray(0);
         }
