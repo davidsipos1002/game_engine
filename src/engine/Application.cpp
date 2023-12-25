@@ -124,17 +124,14 @@ namespace gps
 
         if (keyboard->isKeyPressed(GLFW_KEY_D))
             camera.move(gps::MOVE_RIGHT, delta * cameraSpeed);
-
-        if (keyboard->isKeyPressed(GLFW_KEY_Q))
+        
+        if (keyboard->isKeyPressed(GLFW_KEY_T))
         {
-            angle -= 1.0f;
-            loader.getEntity(teapot1)->rotation.y = glm::radians(angle);
-        }
-
-        if (keyboard->isKeyPressed(GLFW_KEY_E))
-        {
-            angle += 1.0f;
-            loader.getEntity(teapot1)->rotation.y = glm::radians(angle);
+            if (displayMode == 0)
+                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            else if (displayMode == 1)
+                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            displayMode = (displayMode + 1) % 3;
         }
 
         animator.updateAnimations(delta);
@@ -152,7 +149,6 @@ namespace gps
     void Application::render()
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         if (keyboard->isKeyPressed(GLFW_KEY_M))
         {
             renderer->displayDirectionalAndSpotLightShadowMap(loader.getEntity(quadEntity), 0);

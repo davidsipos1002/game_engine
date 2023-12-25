@@ -33,8 +33,6 @@ namespace gps
 
         glm::mat4 projection;
 
-        GLfloat angle;
-
         Camera camera = Camera(
             glm::vec3(0.0f, 0.0f, 3.0f),
             glm::vec3(0.0f, 0.0f, -10.0f),
@@ -44,6 +42,7 @@ namespace gps
 
         float pitch = -3.14f;
         float yaw = 0;
+        int displayMode = 0;
 
     public:
         Application();
