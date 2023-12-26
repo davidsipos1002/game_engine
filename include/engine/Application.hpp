@@ -15,6 +15,7 @@
 #include <particles/ParticleManager.hpp>
 #include <particles/ParticleRenderer.hpp>
 #include <particles/ParticleEmitter.hpp>
+#include <particles/ParticleTexture.hpp>
 #include <cmath>
 namespace gps
 {

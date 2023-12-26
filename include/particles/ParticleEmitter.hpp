@@ -3,6 +3,7 @@
 #include <engine/GeneralIncludes.hpp>
 #include <particles/Particle.hpp>
 #include <particles/ParticleManager.hpp>
+#include <particles/ParticleTexture.hpp>
 #include <random>
 
 namespace gps
@@ -11,19 +12,21 @@ namespace gps
     {
     private:
         ParticleManager *manager;
+        ParticleTexture *texture;
         glm::vec3 position;
         float particlesPerSecond;
         glm::vec3 speed;
         float gravity;
         float lifeLength;
+        bool additive;
         std::mt19937 engine;
         std::uniform_real_distribution<float> distribution;
 
         void generateParticle();
 
     public:
-        ParticleEmitter(ParticleManager *manager, const glm::vec3 &position,
-                        float particlesPerSecond, const glm::vec3 &speed, float gravity, float lifeLength);
+        ParticleEmitter(ParticleManager *manager, ParticleTexture *texture, const glm::vec3 &position,
+                        float particlesPerSecond, const glm::vec3 &speed, float gravity, float lifeLength, bool additive);
         void emitParticles(double delta);
     };
 }

@@ -30,7 +30,12 @@ namespace gps
         
         particleManager = new ParticleManager();
         particleRenderer = new ParticleRenderer(particleManager, &loader); 
-        emitter = new ParticleEmitter(particleManager, glm::vec3(-2, 0, 0), 250, glm::vec3(1.5, 3, 1.5), -5, 3);
+        std::vector<std::string> filenames;
+        filenames.push_back("models/particleStar.png");
+        filenames.push_back("models/star1.png");
+        filenames.push_back("models/star2.png");
+        ParticleTexture *texture = loader.loadParticleTexture(filenames);
+        emitter = new ParticleEmitter(particleManager, texture, glm::vec3(-2, 2, 0), 250, glm::vec3(1.5, 3, 1.5), -5, 3, false);
 
         Entity *teapot = loader.loadEntity("models/teapot/teapot20segUT.obj", teapot1);
         teapot->position = glm::vec3(0, 0, 0);

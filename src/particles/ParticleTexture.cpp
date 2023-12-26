@@ -12,11 +12,9 @@ namespace gps
             GLuint tex;
             glGenTextures(1, &tex);
             glBindTexture(GL_TEXTURE_2D, tex);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB, std::get<1>(imageData[i]),
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB_ALPHA, std::get<1>(imageData[i]),
                          std::get<2>(imageData[i]), 0, GL_RGBA, GL_UNSIGNED_BYTE, std::get<0>(imageData[i]));
             glGenerateMipmap(GL_TEXTURE_2D);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glBindTexture(GL_TEXTURE_2D, 0);
@@ -36,5 +34,10 @@ namespace gps
         if (i >= textures.size())
             throw std::runtime_error("Invalid index");
         return textures[i];
+    }
+    
+    int ParticleTexture::getCount()
+    {
+        return textures.size();
     }
 }

@@ -1,7 +1,8 @@
 #pragma once
 
 #include <particles/Particle.hpp>
-#include <vector>
+#include <particles/ParticleTexture.hpp>
+#include <unordered_map>
 
 namespace gps
 {
@@ -11,10 +12,10 @@ namespace gps
     {
     private:
         friend class ParticleRenderer;
-        std::vector<Particle> particles;
+        std::unordered_map<ParticleTexture *, std::vector<Particle>> particles;
 
     public:
         void update(double delta);
-        void addParticle(const Particle &particle);
+        void addParticle(ParticleTexture *texture, const Particle &particle);
     };
 }

@@ -3,6 +3,7 @@
 #include <engine/GeneralIncludes.hpp>
 #include <particles/Particle.hpp>
 #include <particles/ParticleManager.hpp>
+#include <particles/ParticleTexture.hpp>
 #include <io/Loader.hpp>
 #include <graphics/Shader.hpp>
 #include <objects/Camera.hpp>
@@ -18,6 +19,9 @@ namespace gps
         GLuint vaoID;
         GLuint vboID;
 
+        void loadParticleTexture(ParticleTexture *texture);
+        void unloadParticleTexture(ParticleTexture *texture);
+        void getTextureData(ParticleTexture *texture, const Particle &particle, int &i, int &j, float &blendFactor);
         void loadModelMatrix(const Particle &particle, Camera *camera);
 
     public:

@@ -1,4 +1,5 @@
 #include <particles/ParticleRenderer.hpp>
+#include <cmath>
 
 namespace gps
 {
@@ -29,13 +30,31 @@ namespace gps
         glBindVertexArray(vaoID);
         glEnableVertexAttribArray(0);
         glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         glDepthMask(false);
 
-        for (const auto &particle : manager->particles)
+        for (auto &particlePair : manager->particles)
         {
-            loadModelMatrix(particle, camera);
-            glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+            loadParticleTexture(particlePair.first); 
+            for (auto &particle : particlePair.second)
+            {
+                loadModelMatrix(particle, camera);
+    
+                if (particle.additive)
+                    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+                else
+                    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                
+                int i, j;
+                float blendFactor;
+                getTextureData(particlePair.first, particle, i, j, blendFactor);
+                particleShader->loadValue("i", i);
+                particleShader->loadValue("j", j);
+                particleShader->loadValue("blendFactor", blendFactor);
+
+                glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+            }
+            unloadParticleTexture(particlePair.first);
         }
 
         glDisableVertexAttribArray(0);
@@ -43,6 +62,25 @@ namespace gps
         glDisable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glDepthMask(true);
+    }
+    
+    void ParticleRenderer::loadParticleTexture(ParticleTexture *texture)
+    {
+        for (int i = 0;i < texture->getCount(); i++)
+        {
+            glActiveTexture(GL_TEXTURE0 + i);
+            particleShader->loadValue("particleTexture[" + std::to_string(i) + "]", i);
+            glBindTexture(GL_TEXTURE_2D, texture->getTexture(i)); 
+        }
+    }
+    
+    void ParticleRenderer::unloadParticleTexture(ParticleTexture *texture)
+    {
+        for (int i = 0;i < texture->getCount(); i++)
+        {
+            glActiveTexture(GL_TEXTURE0 + i);
+            glBindTexture(GL_TEXTURE_2D, 0);
+        }
     }
 
     void ParticleRenderer::loadModelMatrix(const Particle &particle, Camera *camera)
@@ -62,5 +100,14 @@ namespace gps
         glm::mat scale = glm::scale(glm::mat4(1), glm::vec3(particle.scale, particle.scale, particle.scale));
         modelMatrix = translate * scale * rotate * modelMatrix;
         particleShader->loadMatrix("modelMatrix", modelMatrix);
+    }
+    
+    void ParticleRenderer::getTextureData(ParticleTexture *texture, const Particle &particle, int &i, int &j, float &blendFactor)
+    {
+        float life = particle.elapsedTime / particle.lifeLength;
+        float progress = texture->getCount() * life;
+        i = std::floor(progress);
+        j = i < texture->getCount() - 1 ? i + 1 : i;
+        blendFactor = progress - i;
     }
 }

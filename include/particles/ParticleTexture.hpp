@@ -16,5 +16,6 @@ namespace gps
         ~ParticleTexture();
 
         GLuint getTexture(int i = 0);
+        int getCount();
     };
 }
