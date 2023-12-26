@@ -17,12 +17,11 @@ namespace gps
         float lifeLength;
         float rotation;
         float scale;
-        bool additive;
         double elapsedTime;
 
     public:
         Particle(const glm::vec3 &position, const glm::vec3 &velocity, float gravity,
-                 float lifeLength, float rotation, float scale, bool additive);
+                 float lifeLength, float rotation, float scale);
 
         bool update(double delta);
     };

@@ -150,11 +150,11 @@ namespace gps
         return std::make_tuple(image_data, x, y); 
     }
 
-    ParticleTexture *Loader::loadParticleTexture(const std::vector<std::string> &filenames)
+    ParticleTexture *Loader::loadParticleTexture(const std::vector<std::string> &filenames, bool additive)
     {
         std::vector<std::tuple<uint8_t*, int, int>> imageData;
         for (auto &filename : filenames)
             imageData.push_back(loadImageData(filename));
-        return new ParticleTexture(imageData);  
+        return new ParticleTexture(imageData, additive);  
     }
 }

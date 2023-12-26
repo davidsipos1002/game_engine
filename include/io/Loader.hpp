@@ -45,6 +45,6 @@ namespace gps
         Shader* loadShader(const std::string &vertexShader, const std::string &geometryShader, const std::string &fragmentShader, std::string &uuid);
         Shader* getShader(const std::string &uuid);
         SkyBox* loadSkyBox(const std::string &basePath);
-        ParticleTexture* loadParticleTexture(const std::vector<std::string> &filenames);
+        ParticleTexture* loadParticleTexture(const std::vector<std::string> &filenames, bool additive);
     };
 }

@@ -17,8 +17,8 @@ namespace gps
         float particlesPerSecond;
         glm::vec3 speed;
         float gravity;
+        float scale;
         float lifeLength;
-        bool additive;
         std::mt19937 engine;
         std::uniform_real_distribution<float> distribution;
 
@@ -26,7 +26,7 @@ namespace gps
 
     public:
         ParticleEmitter(ParticleManager *manager, ParticleTexture *texture, const glm::vec3 &position,
-                        float particlesPerSecond, const glm::vec3 &speed, float gravity, float lifeLength, bool additive);
+                        float particlesPerSecond, const glm::vec3 &speed, float gravity, float scale, float lifeLength);
         void emitParticles(double delta);
     };
 }

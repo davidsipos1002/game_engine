@@ -34,8 +34,8 @@ namespace gps
         filenames.push_back("models/particleStar.png");
         filenames.push_back("models/star1.png");
         filenames.push_back("models/star2.png");
-        ParticleTexture *texture = loader.loadParticleTexture(filenames);
-        emitter = new ParticleEmitter(particleManager, texture, glm::vec3(-2, 2, 0), 250, glm::vec3(1.5, 3, 1.5), -5, 3, false);
+        ParticleTexture *texture = loader.loadParticleTexture(filenames, false);
+        emitter = new ParticleEmitter(particleManager, texture, glm::vec3(-2, 2, 0), 500, glm::vec3(1.5, 3, 1.5), -5, 1, 3);
 
         Entity *teapot = loader.loadEntity("models/teapot/teapot20segUT.obj", teapot1);
         teapot->position = glm::vec3(0, 0, 0);
@@ -118,7 +118,7 @@ namespace gps
         loader.getEntity(teapot2)->attachMainComponentAnimation(animation);
         loader.getEntity(teapot2)->attachSubComponentAnimation(subComponent, "Helmet_Helmet");
         loader.getEntity(teapot2)->attachSubComponentAnimation(subComponent, "Visor_Glass");
-        renderer->enableSkyBox = true;
+        renderer->enableSkyBox = false;
         renderer->fogDensity = 0.02f;
         particleRenderer->init();
     }

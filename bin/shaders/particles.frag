@@ -3,15 +3,14 @@
 out vec4 fColor;
 
 in vec2 textureCoordinates;
+in vec2 fIndex;
+in float fBlendFactor;
 
-uniform int i;
-uniform int j;
-uniform float blendFactor;
 uniform sampler2D particleTexture[8];
 
 void main()
 {
-    vec4 colorI = texture(particleTexture[i], textureCoordinates);
-    vec4 colorJ = texture(particleTexture[j], textureCoordinates);
-    fColor = mix(colorI, colorJ, blendFactor);
+    vec4 colorI = texture(particleTexture[int(fIndex.x)], textureCoordinates);
+    vec4 colorJ = texture(particleTexture[int(fIndex.y)], textureCoordinates);
+    fColor = mix(colorI, colorJ, fBlendFactor);
 }

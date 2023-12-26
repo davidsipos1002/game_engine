@@ -4,7 +4,7 @@
 
 namespace gps
 {
-    ParticleTexture::ParticleTexture(const std::vector<std::tuple<uint8_t *, int, int>> &imageData)
+    ParticleTexture::ParticleTexture(const std::vector<std::tuple<uint8_t *, int, int>> &imageData, bool additive) : additive(additive)
     {
         int count = imageData.size() > 8 ? 8 : imageData.size();
         for (int i = 0; i < count; i++)
@@ -39,5 +39,10 @@ namespace gps
     int ParticleTexture::getCount()
     {
         return textures.size();
+    }
+    
+    bool ParticleTexture::isAdditive()
+    {
+        return additive;
     }
 }

@@ -4,10 +4,10 @@ namespace gps
 {
     Particle::Particle(const glm::vec3 &position, const glm::vec3 &velocity,
                        float gravity, float lifeLength,
-                       float rotation, float scale, bool additive) : position(position),
+                       float rotation, float scale) : position(position),
                                                                      velocity(velocity), gravity(gravity),
                                                                      lifeLength(lifeLength), rotation(rotation),
-                                                                     scale(scale), additive(additive), elapsedTime(0) {}
+                                                                     scale(scale), elapsedTime(0) {}
 
     bool Particle::update(double delta)
     {

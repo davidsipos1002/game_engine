@@ -14,15 +14,28 @@ namespace gps
     class ParticleRenderer
     {
     private:
+        struct __attribute__((packed)) ParticleInstanceData {
+            float col0[4];
+            float col1[4];
+            float col2[4];
+            float col3[4];
+            int i;
+            int j;
+            float blendFactor;
+        };
+
         ParticleManager *manager;
         Shader *particleShader;
         GLuint vaoID;
-        GLuint vboID;
+        GLuint vertexVboID;
+        GLuint instanceVboID;
 
         void loadParticleTexture(ParticleTexture *texture);
         void unloadParticleTexture(ParticleTexture *texture);
         void getTextureData(ParticleTexture *texture, const Particle &particle, int &i, int &j, float &blendFactor);
-        void loadModelMatrix(const Particle &particle, Camera *camera);
+        void updateModelMatrix(const Particle &particle, Camera *camera, glm::mat4 &modelMatrix);
+        ParticleInstanceData *getInstanceVboContents(ParticleTexture *texture, const std::vector<Particle> &particles, Camera *camera);
+        void updateInstanceVboContents(ParticleInstanceData *data, int size);
 
     public:
         ParticleRenderer(ParticleManager *manager, Loader *loader);

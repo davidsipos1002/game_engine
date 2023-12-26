@@ -6,10 +6,10 @@ namespace gps
 {
     ParticleEmitter::ParticleEmitter(ParticleManager *manager, ParticleTexture *texture, const glm::vec3 &position,
                                      float particlesPerSecond, const glm::vec3 &speed,
-                                     float gravity, float lifeLength, bool additive) : manager(manager), texture(texture), position(position),
+                                     float gravity, float scale, float lifeLength) : manager(manager), texture(texture), position(position),
                                                                                        particlesPerSecond(particlesPerSecond),
                                                                                        speed(speed), gravity(gravity),
-                                                                                       lifeLength(lifeLength), additive(additive)
+                                                                                       scale(scale), lifeLength(lifeLength)
 
     {
         std::random_device rd;
@@ -36,6 +36,6 @@ namespace gps
         v *= speed;
         float rotation = distribution(engine) * M_PI;
         float scale = distribution(engine) / 5;
-        manager->addParticle(texture, Particle(position, v, gravity, lifeLength, rotation, scale, additive));
+        manager->addParticle(texture, Particle(position, v, gravity, lifeLength, rotation, this->scale * scale));
     }
 }
