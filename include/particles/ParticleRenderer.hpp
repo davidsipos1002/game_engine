@@ -38,6 +38,9 @@ namespace gps
         void updateInstanceVboContents(ParticleInstanceData *data, int size);
 
     public:
+        float fogDensity = 0.03f;
+        glm::vec3 fogColor = glm::vec3(0.5f, 0.5f, 0.5f);
+
         ParticleRenderer(ParticleManager *manager, Loader *loader);
 
         void init();

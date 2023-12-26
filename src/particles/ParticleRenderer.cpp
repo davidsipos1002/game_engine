@@ -54,6 +54,8 @@ namespace gps
         particleShader->useShaderProgram();
         particleShader->loadMatrix("projectionMatrix", camera->getProjectionMatrix());
         particleShader->loadMatrix("viewMatrix", camera->getViewMatrix());
+        particleShader->loadValue("fogDensity", fogDensity);
+        particleShader->loadVector("fogColor", fogColor);
         glBindVertexArray(vaoID);
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);

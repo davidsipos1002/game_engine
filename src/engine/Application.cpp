@@ -34,7 +34,7 @@ namespace gps
         filenames.push_back("models/particleStar.png");
         filenames.push_back("models/star1.png");
         filenames.push_back("models/star2.png");
-        ParticleTexture *texture = loader.loadParticleTexture(filenames, false);
+        ParticleTexture *texture = loader.loadParticleTexture(filenames, true);
         emitter = new ParticleEmitter(particleManager, texture, glm::vec3(-2, 2, 0), 500, glm::vec3(1.5, 3, 1.5), -5, 1, 3);
 
         Entity *teapot = loader.loadEntity("models/teapot/teapot20segUT.obj", teapot1);
@@ -121,6 +121,7 @@ namespace gps
         renderer->enableSkyBox = false;
         renderer->fogDensity = 0.02f;
         particleRenderer->init();
+        particleRenderer->fogDensity = 0.02f;
     }
 
     void Application::update(double delta)
@@ -142,9 +143,6 @@ namespace gps
         else
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         
-        // if (keyboard->isKeyPressed(GLFW_KEY_F))
-            // particleManager->addParticle(Particle(glm::vec3(0, 3, 0), glm::vec3(rand() % 10, rand() % 10, rand() % 10), -10.0f, 3, 0, 0.1));
-
         animator.updateAnimations(delta);
         particleManager->update(delta);
         emitter->emitParticles(delta);

@@ -12,6 +12,7 @@ layout(location=7) in float blendFactor;
 out vec2 textureCoordinates;
 out vec2 fIndex;
 out float fBlendFactor;
+out vec4 fPosEye;
 
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
@@ -28,5 +29,6 @@ void main()
     fBlendFactor = blendFactor;
     textureCoordinates = vPosition + vec2(0.5f, 0.5f);
     textureCoordinates.y = 1.0f - textureCoordinates.y;
-    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(vPosition, 0.0, 1.0f);
+    fPosEye = viewMatrix * modelMatrix * vec4(vPosition, 0.0f, 1.0f);
+    gl_Position = projectionMatrix * fPosEye;
 }
