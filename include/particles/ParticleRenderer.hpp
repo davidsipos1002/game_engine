@@ -42,6 +42,7 @@ namespace gps
         glm::vec3 fogColor = glm::vec3(0.5f, 0.5f, 0.5f);
 
         ParticleRenderer(ParticleManager *manager, Loader *loader);
+        ~ParticleRenderer();
 
         void init();
         void render(Camera *camera);

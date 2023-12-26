@@ -1,5 +1,4 @@
 #include <particles/ParticleRenderer.hpp>
-#include <engine/ErrorCheck.hpp>
 #include <cmath>
 
 namespace gps
@@ -7,6 +6,15 @@ namespace gps
     ParticleRenderer::ParticleRenderer(ParticleManager *manager, Loader *loader) : manager(manager)
     {
         particleShader = loader->loadShader("shaders/particles.vert", "shaders/particles.frag");
+    }
+    
+    ParticleRenderer::~ParticleRenderer()
+    {
+        glBindVertexArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glDeleteBuffers(1, &vertexVboID);
+        glDeleteBuffers(1, &instanceVboID);
+        glDeleteVertexArrays(1, &vaoID);
     }
 
     void ParticleRenderer::init()
