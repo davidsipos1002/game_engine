@@ -1,4 +1,4 @@
-#include <object/SkyBox.hpp>
+#include <objects/SkyBox.hpp>
 
 namespace gps
 {

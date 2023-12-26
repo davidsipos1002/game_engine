@@ -1,4 +1,4 @@
-#include <light/DirectionalLight.hpp>
+#include <lights/DirectionalLight.hpp>
 
 namespace gps
 {

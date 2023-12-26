@@ -1,4 +1,4 @@
-#include <object/Entity.hpp>
+#include <objects/Entity.hpp>
 
 namespace gps
 {

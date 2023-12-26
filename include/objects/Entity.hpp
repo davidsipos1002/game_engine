@@ -1,7 +1,7 @@
 #pragma once
 
 #include <engine/GeneralIncludes.hpp>
-#include <object/Model3D.hpp>
+#include <objects/Model3D.hpp>
 #include <animation/Animated.hpp>
 
 namespace gps

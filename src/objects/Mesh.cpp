@@ -1,4 +1,4 @@
-#include <object/Mesh.hpp>
+#include <objects/Mesh.hpp>
 
 namespace gps
 {

@@ -1,18 +1,18 @@
 #pragma once
 
 #include <engine/GeneralIncludes.hpp>
-#include <object/Model3D.hpp>
+#include <objects/Model3D.hpp>
 #include <animation/Animation.hpp>
-#include <object/Entity.hpp>
+#include <objects/Entity.hpp>
 #include <graphics/Shader.hpp>
-#include <object/Camera.hpp>
-#include <light/DirectionalLight.hpp>
-#include <light/PointLight.hpp>
-#include <light/SpotLight.hpp>
+#include <objects/Camera.hpp>
+#include <lights/DirectionalLight.hpp>
+#include <lights/PointLight.hpp>
+#include <lights/SpotLight.hpp>
 #include <graphics/ShadowMap.hpp>
 #include <engine/Window.hpp>
 #include <io/Loader.hpp>
-#include <object/SkyBox.hpp>
+#include <objects/SkyBox.hpp>
 #include <unordered_map>
 #include <array>
 

@@ -2,7 +2,7 @@
 
 #include <engine/GeneralIncludes.hpp>
 #include <animation/Animated.hpp>
-#include <light/Light.hpp>
+#include <lights/Light.hpp>
 
 namespace gps
 {

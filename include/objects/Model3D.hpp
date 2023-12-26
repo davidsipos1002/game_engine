@@ -1,6 +1,6 @@
 #pragma once
 
-#include <object/Mesh.hpp>
+#include <objects/Mesh.hpp>
 
 #include <io/tiny_obj_loader.h>
 #include <io/stb_image.h>

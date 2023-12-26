@@ -1,7 +1,7 @@
 #pragma once
 
-#include <object/Entity.hpp>
-#include <object/SkyBox.hpp>
+#include <objects/Entity.hpp>
+#include <objects/SkyBox.hpp>
 #include <graphics/Shader.hpp>
 #include <unordered_map>
 

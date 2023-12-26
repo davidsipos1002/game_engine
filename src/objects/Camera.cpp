@@ -1,4 +1,4 @@
-#include <object/Camera.hpp>
+#include <objects/Camera.hpp>
 #include <iostream>
 
 namespace gps

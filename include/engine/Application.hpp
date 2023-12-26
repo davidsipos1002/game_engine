@@ -4,10 +4,10 @@
 #include <engine/Window.hpp>
 #include <io/Keyboard.hpp>
 #include <io/Mouse.hpp>
-#include <object/Entity.hpp>
+#include <objects/Entity.hpp>
 #include <graphics/Renderer.hpp>
 #include <graphics/Shader.hpp>
-#include <object/Camera.hpp>
+#include <objects/Camera.hpp>
 #include <io/Loader.hpp>
 #include <animation/Animation.hpp>
 #include <animation/Animator.hpp>

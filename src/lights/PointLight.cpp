@@ -1,4 +1,4 @@
-#include <light/PointLight.hpp>
+#include <lights/PointLight.hpp>
 
 namespace gps
 {
