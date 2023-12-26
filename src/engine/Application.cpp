@@ -13,6 +13,9 @@ namespace gps
     {
         delete renderer;
         delete camera;
+        delete emitter;
+        delete particleRenderer;
+        delete particleManager;
     }
 
     void Application::init()
@@ -24,6 +27,10 @@ namespace gps
 
         renderer = new Renderer(&window, &loader, "skybox");
         camera = new Camera(glm::vec3(0, 0, 3), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0), &window);
+        
+        particleManager = new ParticleManager();
+        particleRenderer = new ParticleRenderer(particleManager, &loader); 
+        emitter = new ParticleEmitter(particleManager, glm::vec3(-2, 0, 0), 250, glm::vec3(1.5, 3, 1.5), -5, 3);
 
         Entity *teapot = loader.loadEntity("models/teapot/teapot20segUT.obj", teapot1);
         teapot->position = glm::vec3(0, 0, 0);
@@ -60,7 +67,7 @@ namespace gps
         loader.loadEntity("models/quad/quad.obj", quadEntity);
 
         DirectionalLight &light = renderer->getDirectionalLight(0);
-        light.intensity = 0.3f;
+        light.intensity = 1.0f;
         light.lightColor = glm::vec3(1, 1, 1);
         light.lightDirection = glm::vec3(0, 1, 1);
         light.isShadowCasting = true;
@@ -108,6 +115,7 @@ namespace gps
         loader.getEntity(teapot2)->attachSubComponentAnimation(subComponent, "Visor_Glass");
         renderer->enableSkyBox = true;
         renderer->fogDensity = 0.02f;
+        particleRenderer->init();
     }
 
     void Application::update(double delta)
@@ -128,8 +136,13 @@ namespace gps
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         else
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        
+        // if (keyboard->isKeyPressed(GLFW_KEY_F))
+            // particleManager->addParticle(Particle(glm::vec3(0, 3, 0), glm::vec3(rand() % 10, rand() % 10, rand() % 10), -10.0f, 3, 0, 0.1));
 
         animator.updateAnimations(delta);
+        particleManager->update(delta);
+        emitter->emitParticles(delta);
 
         static float mouseSpeed = 0.02f;
         double xpos, ypos;
@@ -152,8 +165,10 @@ namespace gps
         {
             if (keyboard->getDisplayMode() == 2)
                 renderer->renderEntitiesWithFaces(camera);
-            else
+            else {
                 renderer->renderEntities(camera);
+                particleRenderer->render(camera);
+            }
         }
     }
 

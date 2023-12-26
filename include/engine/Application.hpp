@@ -11,6 +11,10 @@
 #include <io/Loader.hpp>
 #include <animation/Animation.hpp>
 #include <animation/Animator.hpp>
+#include <particles/Particle.hpp>
+#include <particles/ParticleManager.hpp>
+#include <particles/ParticleRenderer.hpp>
+#include <particles/ParticleEmitter.hpp>
 #include <cmath>
 namespace gps
 {
@@ -38,6 +42,10 @@ namespace gps
         int displayMode = 0;
         float pitch = -M_PI;
         float yaw = 0; 
+        
+        ParticleManager *particleManager;
+        ParticleRenderer *particleRenderer;
+        ParticleEmitter *emitter;
 
     public:
         Application();
