@@ -3,18 +3,17 @@
 
 namespace gps
 {
-    Camera::Camera(const glm::vec3 &cameraPosition, const glm::vec3 &cameraTarget, const glm::vec3 &cameraUp)
+    Camera::Camera(const glm::vec3 &cameraPosition, const glm::vec3 &cameraTarget, const glm::vec3 &cameraUp, Window *window)
     {
         this->cameraPosition = cameraPosition;
         this->cameraTarget = glm::normalize(cameraTarget);
         this->cameraUpDirection = glm::normalize(cameraUp);
         this->cameraFrontDirection = this->cameraTarget;
         this->cameraRightDirection = glm::normalize(glm::cross(cameraFrontDirection, this->cameraUpDirection));
-    }
-
-    glm::mat4 Camera::getViewMatrix()
-    {
-        return glm::lookAt(cameraPosition, cameraPosition + cameraTarget, this->cameraUpDirection);
+        projectionMatrix = glm::perspective(glm::radians(45.0f),
+                                      (float)window->getWindowDimensions().width / (float)window->getWindowDimensions().height,
+                                      0.1f, 100.0f);
+        viewMatrix = glm::lookAt(cameraPosition, cameraPosition + cameraTarget, this->cameraUpDirection);
     }
 
     void Camera::move(MOVE_DIRECTION direction, float speed)
@@ -36,6 +35,7 @@ namespace gps
             cameraTarget += cameraRightDirection * speed;
             break;
         }
+        viewMatrix = glm::lookAt(cameraPosition, cameraPosition + cameraTarget, this->cameraUpDirection);
     }
 
     void Camera::rotate(float pitch, float yaw)
@@ -48,5 +48,16 @@ namespace gps
         this->cameraTarget = glm::normalize(dir);
         this->cameraRightDirection = glm::normalize(glm::cross(dir, cameraUpDirection));
         this->cameraFrontDirection = this->cameraTarget;
+        viewMatrix = glm::lookAt(cameraPosition, cameraPosition + cameraTarget, this->cameraUpDirection);
+    }
+
+    const glm::mat4 &Camera::getViewMatrix()
+    {
+        return viewMatrix;
+    }
+    
+    const glm::mat4 &Camera::getProjectionMatrix()
+    {
+        return projectionMatrix;
     }
 }

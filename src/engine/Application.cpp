@@ -12,6 +12,7 @@ namespace gps
     Application::~Application()
     {
         delete renderer;
+        delete camera;
     }
 
     void Application::init()
@@ -22,6 +23,7 @@ namespace gps
         mouse = Mouse::getInstance(window);
 
         renderer = new Renderer(&window, &loader, "skybox");
+        camera = new Camera(glm::vec3(0, 0, 3), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0), &window);
 
         Entity *teapot = loader.loadEntity("models/teapot/teapot20segUT.obj", teapot1);
         teapot->position = glm::vec3(0, 0, 0);
@@ -88,10 +90,6 @@ namespace gps
         spotLight.cutoff = 3.14f / 10;
         // spotLight.isShadowCasting = true;
 
-        projection = glm::perspective(glm::radians(45.0f),
-                                      (float)window.getWindowDimensions().width / (float)window.getWindowDimensions().height,
-                                      0.1f, 100.0f);
-
         Animation<Entity> *animation = animator.createTriggeredAnimation<Entity>([&]()
                                                                                  { return keyboard->isKeyPressed(GLFW_KEY_P); });
         Animation<Entity> *teapotA = animator.createPeriodicAnimation<Entity>(3, 3);
@@ -115,16 +113,16 @@ namespace gps
     void Application::update(double delta)
     {
         if (keyboard->isKeyPressed(GLFW_KEY_W))
-            camera.move(gps::MOVE_FORWARD, delta * cameraSpeed);
+            camera->move(gps::MOVE_FORWARD, delta * cameraSpeed);
 
         if (keyboard->isKeyPressed(GLFW_KEY_S))
-            camera.move(gps::MOVE_BACKWARD, delta * cameraSpeed);
+            camera->move(gps::MOVE_BACKWARD, delta * cameraSpeed);
 
         if (keyboard->isKeyPressed(GLFW_KEY_A))
-            camera.move(gps::MOVE_LEFT, delta * cameraSpeed);
+            camera->move(gps::MOVE_LEFT, delta * cameraSpeed);
 
         if (keyboard->isKeyPressed(GLFW_KEY_D))
-            camera.move(gps::MOVE_RIGHT, delta * cameraSpeed);
+            camera->move(gps::MOVE_RIGHT, delta * cameraSpeed);
 
         if (keyboard->getDisplayMode() == 1)
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -139,7 +137,7 @@ namespace gps
         WindowDimensions dim = window.getWindowDimensions();
         pitch += delta * mouseSpeed * float(dim.width / 2 - xpos);
         yaw += delta * mouseSpeed * float(dim.height / 2 - ypos);
-        camera.rotate(pitch, yaw);
+        camera->rotate(pitch, yaw);
         glfwSetCursorPos(window.getWindow(), dim.width / 2, dim.height / 2);
     }
 
@@ -153,9 +151,9 @@ namespace gps
         else
         {
             if (keyboard->getDisplayMode() == 2)
-                renderer->renderEntitiesWithFaces(&camera, projection);
+                renderer->renderEntitiesWithFaces(camera);
             else
-                renderer->renderEntities(&camera, projection);
+                renderer->renderEntities(camera);
         }
     }
 

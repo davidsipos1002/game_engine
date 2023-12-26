@@ -102,13 +102,13 @@ namespace gps
         }
     }
 
-    void Renderer::renderEntities(Camera *camera, glm::mat4 projectionMatrix)
+    void Renderer::renderEntities(Camera *camera)
     {
         renderShadowMaps();
         entityShader->useShaderProgram();
         loadShadowMaps(entityShader);
         entityShader->loadMatrix("viewMatrix", camera->getViewMatrix());
-        entityShader->loadMatrix("projectionMatrix", projectionMatrix);
+        entityShader->loadMatrix("projectionMatrix", camera->getProjectionMatrix());
         entityShader->loadValue("fogDensity", fogDensity);
         entityShader->loadVector("fogColor", fogColor);
         loadLightsToShader();
@@ -117,7 +117,7 @@ namespace gps
         for (auto &pair : entities)
             renderModels(pair.first);
         if (enableSkyBox)
-            skyBox->render(skyboxShader, camera->getViewMatrix(), projectionMatrix);
+            skyBox->render(skyboxShader, camera->getViewMatrix(), camera->getProjectionMatrix());
     }
     
     void Renderer::loadLightsToShader()
@@ -141,11 +141,11 @@ namespace gps
         }
     }
     
-    void Renderer::renderEntitiesWithFaces(Camera *camera, glm::mat4 projectionMatrix)
+    void Renderer::renderEntitiesWithFaces(Camera *camera)
     {
         facesShader->useShaderProgram();
         facesShader->loadMatrix("viewMatrix", camera->getViewMatrix());
-        facesShader->loadMatrix("projectionMatrix", projectionMatrix); 
+        facesShader->loadMatrix("projectionMatrix", camera->getProjectionMatrix()); 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glViewport(0, 0, window->getWindowDimensions().width, window->getWindowDimensions().height);
         for (auto &pair : entities)

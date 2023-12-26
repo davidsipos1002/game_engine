@@ -57,8 +57,8 @@ namespace gps
 
         void addEntity(Entity *entity);
         void displayDirectionalAndSpotLightShadowMap(bool isSpotLight, Entity *quad, int index);
-        void renderEntities(Camera *camera, glm::mat4 projectionMatrix);
-        void renderEntitiesWithFaces(Camera *camera, glm::mat4 projectionMatrix);
+        void renderEntities(Camera *camera);
+        void renderEntitiesWithFaces(Camera *camera);
         DirectionalLight &getDirectionalLight(int index);
         PointLight &gePointLight(int index);
         SpotLight &getSpotLight(int index);

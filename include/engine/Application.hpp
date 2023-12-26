@@ -11,7 +11,7 @@
 #include <io/Loader.hpp>
 #include <animation/Animation.hpp>
 #include <animation/Animator.hpp>
-
+#include <cmath>
 namespace gps
 {
     class Application
@@ -31,18 +31,13 @@ namespace gps
         std::string quad;
         std::string quadEntity;
 
-        glm::mat4 projection;
-
-        Camera camera = Camera(
-            glm::vec3(0.0f, 0.0f, 3.0f),
-            glm::vec3(0.0f, 0.0f, -10.0f),
-            glm::vec3(0.0f, 1.0f, 0.0f));
+        Camera *camera;
 
         GLfloat cameraSpeed = 5.0f;
 
-        float pitch = 3.14f;
-        float yaw = 0;
         int displayMode = 0;
+        float pitch = -M_PI;
+        float yaw = 0; 
 
     public:
         Application();
