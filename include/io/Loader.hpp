@@ -3,7 +3,9 @@
 #include <objects/Entity.hpp>
 #include <objects/SkyBox.hpp>
 #include <graphics/Shader.hpp>
+#include <particles/ParticleTexture.hpp>
 #include <unordered_map>
+#include <tuple>
 
 namespace gps
 {
@@ -23,10 +25,12 @@ namespace gps
         std::unordered_map<std::string, Entity *> entities;
         std::unordered_map<std::string, Shader *> shaders;
         std::vector<SkyBox *> skyBoxes;
+        std::vector<ParticleTexture *> particleTextures;
         
         Entity *__loadEntity(const std::string &filename, std::string &uuid);
         Shader *__loadShader(const std::string &vertexShader, const std::string &fragmentShader, std::string &uuid);
         Shader *__loadShader(const std::string &vertexShader, const std::string &geometryShader, const std::string &fragmentShader, std::string &uuid);
+        std::tuple<uint8_t *, int, int> loadImageData(const std::string &filename); 
 
     public:
         Loader();
@@ -41,5 +45,6 @@ namespace gps
         Shader* loadShader(const std::string &vertexShader, const std::string &geometryShader, const std::string &fragmentShader, std::string &uuid);
         Shader* getShader(const std::string &uuid);
         SkyBox* loadSkyBox(const std::string &basePath);
+        ParticleTexture* loadParticleTexture(const std::vector<std::string> &filenames);
     };
 }

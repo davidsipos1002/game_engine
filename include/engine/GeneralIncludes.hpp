@@ -14,3 +14,5 @@
 #include <glm/gtc/matrix_transform.hpp> //glm extension for generating common transformation matrices
 #include <glm/gtc/matrix_inverse.hpp>   //glm extension for computing inverse matrices
 #include <glm/gtc/type_ptr.hpp>         //glm extension for accessing the internal data structure of glm types
+
+#include <cstdint>
