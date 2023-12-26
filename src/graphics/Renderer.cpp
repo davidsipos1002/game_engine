@@ -1,5 +1,4 @@
 #include <graphics/Renderer.hpp>
-#include <engine/ErrorCheck.hpp>
 
 namespace gps
 {
@@ -17,7 +16,7 @@ namespace gps
         glEnable(GL_FRAMEBUFFER_SRGB);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_MULTISAMPLE);
-        glEnable(GL_TEXTURE_CUBE_MAP);
+        glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
         glDepthFunc(GL_LESS);
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);

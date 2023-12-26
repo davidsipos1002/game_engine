@@ -118,7 +118,7 @@ namespace gps
         loader.getEntity(teapot2)->attachMainComponentAnimation(animation);
         loader.getEntity(teapot2)->attachSubComponentAnimation(subComponent, "Helmet_Helmet");
         loader.getEntity(teapot2)->attachSubComponentAnimation(subComponent, "Visor_Glass");
-        renderer->enableSkyBox = false;
+        renderer->enableSkyBox = true;
         renderer->fogDensity = 0.02f;
         particleRenderer->init();
         particleRenderer->fogDensity = 0.02f;
