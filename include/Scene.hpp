@@ -7,15 +7,6 @@ using namespace gps;
 class Scene : public Application
 {
    private:
-        std::string teapot1;
-        std::string teapot2;
-        std::string shader;
-        std::string dirShadowMap;
-        std::string quad;
-        std::string quadEntity;
-
-        ParticleEmitter *emitter;
-
         void init() override;
         void update(double delta) override;
         bool doCustomRender() override;

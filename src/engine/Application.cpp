@@ -1,5 +1,4 @@
 #include <engine/Application.hpp>
-#include <engine/ErrorCheck.hpp>
 #include <chrono>
 #include <tuple>
 
@@ -100,7 +99,6 @@ namespace gps
     void Application::run()
     {
         __init();
-        glCheckError();
         std::chrono::high_resolution_clock::time_point last = std::chrono::high_resolution_clock::now();
         while (!glfwWindowShouldClose(window.getWindow()))
         {
@@ -109,11 +107,8 @@ namespace gps
             last = now;
             __update(delta);
             __render();
-
             glfwPollEvents();
             glfwSwapBuffers(window.getWindow());
-
-            glCheckError();
         }
         __cleanup();
     }
