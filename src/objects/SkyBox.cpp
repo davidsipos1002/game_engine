@@ -90,12 +90,13 @@ namespace gps
         glDeleteTextures(1, &cubemapTexture);
     }
 
-    void SkyBox::render(Shader *shader, const glm::mat4 &viewMatrix, const glm::mat4 &projectionMatrix)
+    void SkyBox::render(Shader *shader, const glm::mat4 &viewMatrix, const glm::mat4 &projectionMatrix, const glm::vec3 &colorModifier)
     {
         shader->useShaderProgram();
         glm::mat4 transformedView = glm::mat4(glm::mat3(viewMatrix));
         shader->loadMatrix("viewMatrix", transformedView);
         shader->loadMatrix("projectionMatrix", projectionMatrix);
+        shader->loadVector("colorModifier", colorModifier);
         glDepthFunc(GL_LEQUAL);
         glBindVertexArray(skyboxVAO);
         glActiveTexture(GL_TEXTURE0);

@@ -6,7 +6,7 @@ Scene::Scene(bool fullScreen, int width, int height, const std::string &title) :
 
 void Scene::init()
 {
-    skyBox = loader->loadSkyBox("skybox"); 
+    skyBox = loader->loadSkyBox("nightsky"); 
     std::vector<std::string> filenames;
     filenames.push_back("models/particleStar.png");
     filenames.push_back("models/star1.png");
@@ -98,9 +98,10 @@ void Scene::init()
     loader->getEntity(teapot2)->attachSubComponentAnimation(subComponent, "Helmet_Helmet");
     loader->getEntity(teapot2)->attachSubComponentAnimation(subComponent, "Visor_Glass");
     renderer->enableSkyBox = true;
-    renderer->fogDensity = 0.02f;
+    renderer->fogDensity = 0.0f;
+    renderer->skyBoxColorModifier = glm::vec3(0.3f, 0.3f, 0.3f);
     particleRenderer->init();
-    particleRenderer->fogDensity = 0.02f;
+    particleRenderer->fogDensity = 0.0f;
     Animation<Camera> *camAnim = animator->createTriggeredAnimation<Camera>([&]()
                                                                            { return keyboard->isKeyPressed(GLFW_KEY_Z); },
                                                                            false);

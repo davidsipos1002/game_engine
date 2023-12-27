@@ -51,6 +51,7 @@ namespace gps
         bool enableSkyBox = true;
         float fogDensity = 0.03f;
         glm::vec3 fogColor = glm::vec3(0.5f, 0.5f, 0.5f);
+        glm::vec3 skyBoxColorModifier = glm::vec3(1.0f);
 
         Renderer(Window *window, Loader *loader, SkyBox **skyBox);
         ~Renderer();

@@ -115,7 +115,7 @@ namespace gps
         for (auto &pair : entities)
             renderModels(pair.first);
         if (enableSkyBox)
-            (*skyBox)->render(skyboxShader, camera->getViewMatrix(), camera->getProjectionMatrix());
+            (*skyBox)->render(skyboxShader, camera->getViewMatrix(), camera->getProjectionMatrix(), skyBoxColorModifier);
     }
     
     void Renderer::loadLightsToShader()

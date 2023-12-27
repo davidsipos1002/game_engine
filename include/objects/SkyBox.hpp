@@ -15,7 +15,7 @@ namespace gps
     public:
         SkyBox(const std::vector<std::string> &skyBoxPath);
         ~SkyBox();
-        void render(Shader *shader, const glm::mat4 &viewMatrix, const glm::mat4 &projectionMatrix);
+        void render(Shader *shader, const glm::mat4 &viewMatrix, const glm::mat4 &projectionMatrix, const glm::vec3 &colorModifier);
 
     private:
         GLuint skyboxVAO;
