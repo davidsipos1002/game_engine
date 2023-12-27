@@ -2,8 +2,8 @@
 
 #include <engine/GeneralIncludes.hpp>
 
-#include <iostream>
 #include <set>
+#include <cmath>
 
 namespace gps
 {
@@ -16,6 +16,7 @@ namespace gps
     class DirectionalLight;
     class PointLight;
     class SpotLight;
+    class Camera;
 
     template <>
     class KeyFrame<Entity>
@@ -47,104 +48,134 @@ namespace gps
             return ret;
         }
     };
-    
+
     template <>
     class KeyFrame<DirectionalLight>
     {
-        public:
-            float offset;
-            glm::vec3 direction;
-            glm::vec3 color;
-            float intensity;
-            
-            KeyFrame() : offset(0), direction(glm::vec3(0, 0, 0)), color(glm::vec3(0, 0, 0)), intensity(0) {}
-            KeyFrame(float offset, glm::vec3 direction, glm::vec3 color, float intensity) : offset(offset), direction(direction), color(color), intensity(intensity) {}
+    public:
+        float offset;
+        glm::vec3 direction;
+        glm::vec3 color;
+        float intensity;
 
-            KeyFrame operator*(float other) const
-            {
-                KeyFrame ret = *this;
-                ret.direction *= other;
-                ret.color *= other;
-                ret.intensity *= other;
-                return ret;
-            }
-            
-            KeyFrame operator+(const KeyFrame &other) const
-            {
-                KeyFrame ret = *this;
-                ret.direction += other.direction;
-                ret.color += other.color;
-                ret.intensity += other.intensity;
-                return ret;
-            }
+        KeyFrame() : offset(0), direction(glm::vec3(0, 0, 0)), color(glm::vec3(0, 0, 0)), intensity(0) {}
+        KeyFrame(float offset, glm::vec3 direction, glm::vec3 color, float intensity) : offset(offset), direction(direction), color(color), intensity(intensity) {}
+
+        KeyFrame operator*(float other) const
+        {
+            KeyFrame ret = *this;
+            ret.direction *= other;
+            ret.color *= other;
+            ret.intensity *= other;
+            return ret;
+        }
+
+        KeyFrame operator+(const KeyFrame &other) const
+        {
+            KeyFrame ret = *this;
+            ret.direction += other.direction;
+            ret.color += other.color;
+            ret.intensity += other.intensity;
+            return ret;
+        }
     };
 
     template <>
     class KeyFrame<PointLight>
     {
-        public:
-            float offset;
-            glm::vec3 position;
-            glm::vec3 color;
-            float intensity;
-            
-            KeyFrame() : offset(0), position(glm::vec3(0, 0, 0)), color(glm::vec3(0, 0, 0)), intensity(0) {}
-            KeyFrame(float offset, glm::vec3 position, glm::vec3 color, float intensity) : offset(offset), position(position), color(color), intensity(intensity) {}
+    public:
+        float offset;
+        glm::vec3 position;
+        glm::vec3 color;
+        float intensity;
 
-            KeyFrame operator*(float other) const
-            {
-                KeyFrame ret = *this;
-                ret.position *= other;
-                ret.color *= other;
-                ret.intensity *= other;
-                return ret;
-            }
-            
-            KeyFrame operator+(const KeyFrame &other) const
-            {
-                KeyFrame ret = *this;
-                ret.position += other.position;
-                ret.color += other.color;
-                ret.intensity += other.intensity;
-                return ret;
-            }
+        KeyFrame() : offset(0), position(glm::vec3(0, 0, 0)), color(glm::vec3(0, 0, 0)), intensity(0) {}
+        KeyFrame(float offset, glm::vec3 position, glm::vec3 color, float intensity) : offset(offset), position(position), color(color), intensity(intensity) {}
+
+        KeyFrame operator*(float other) const
+        {
+            KeyFrame ret = *this;
+            ret.position *= other;
+            ret.color *= other;
+            ret.intensity *= other;
+            return ret;
+        }
+
+        KeyFrame operator+(const KeyFrame &other) const
+        {
+            KeyFrame ret = *this;
+            ret.position += other.position;
+            ret.color += other.color;
+            ret.intensity += other.intensity;
+            return ret;
+        }
     };
-    
+
     template <>
     class KeyFrame<SpotLight>
     {
-        public:
-            float offset;
-            glm::vec3 position;
-            glm::vec3 direction;
-            glm::vec3 color;
-            float cutoff;
-            float intensity;
-            
-            KeyFrame() : offset(0), position(glm::vec3(0, 0, 0)), direction(glm::vec3(0, 0, 0)), color(glm::vec3(0, 0, 0)), cutoff(0), intensity(0) {}
-            KeyFrame(float offset, glm::vec3 position, glm::vec3 direction, glm::vec3 color, float cutoff, float intensity) : offset(offset), position(position), direction(direction), color(color), cutoff(cutoff), intensity(intensity) {}
+    public:
+        float offset;
+        glm::vec3 position;
+        glm::vec3 direction;
+        glm::vec3 color;
+        float cutoff;
+        float intensity;
 
-            KeyFrame operator*(float other) const
-            {
-                KeyFrame ret = *this;
-                ret.position *= other;
-                ret.direction *= other;
-                ret.color *= other;
-                ret.cutoff *= other;
-                ret.intensity *= other;
-                return ret;
-            }
-            
-            KeyFrame operator+(const KeyFrame &other) const
-            {
-                KeyFrame ret = *this;
-                ret.position += other.position;
-                ret.direction += other.direction;
-                ret.color += other.color;
-                ret.cutoff += other.cutoff;
-                ret.intensity += other.intensity;
-                return ret;
-            }
+        KeyFrame() : offset(0), position(glm::vec3(0, 0, 0)), direction(glm::vec3(0, 0, 0)), color(glm::vec3(0, 0, 0)), cutoff(0), intensity(0) {}
+        KeyFrame(float offset, glm::vec3 position, glm::vec3 direction, glm::vec3 color, float cutoff, float intensity) : offset(offset), position(position), direction(direction), color(color), cutoff(cutoff), intensity(intensity) {}
+
+        KeyFrame operator*(float other) const
+        {
+            KeyFrame ret = *this;
+            ret.position *= other;
+            ret.direction *= other;
+            ret.color *= other;
+            ret.cutoff *= other;
+            ret.intensity *= other;
+            return ret;
+        }
+
+        KeyFrame operator+(const KeyFrame &other) const
+        {
+            KeyFrame ret = *this;
+            ret.position += other.position;
+            ret.direction += other.direction;
+            ret.color += other.color;
+            ret.cutoff += other.cutoff;
+            ret.intensity += other.intensity;
+            return ret;
+        }
+    };
+
+    template <>
+    class KeyFrame<Camera>
+    {
+    public:
+        float offset;
+        int direction;
+        float speed;
+        float pitch;
+        float yaw;
+
+        KeyFrame() : offset(0), direction(0), speed(0), pitch(-M_PI), yaw(0) {}
+        KeyFrame(float offset, int direction, float speed, float pitch, float yaw) : offset(offset), direction(direction), speed(speed), pitch(pitch), yaw(yaw) {}
+
+        KeyFrame operator*(float other) const
+        {
+            KeyFrame ret = *this;
+            ret.pitch *= other;
+            ret.yaw *= other;
+            return ret;
+        }
+
+        KeyFrame operator+(const KeyFrame &other) const
+        {
+            KeyFrame ret = *this;
+            ret.pitch += other.pitch;
+            ret.yaw += other.yaw;
+            return ret;
+        }
     };
 
     template <class T>
@@ -165,6 +196,7 @@ namespace gps
         virtual void start() = 0;
         virtual void stop() = 0;
         virtual bool isRunning() = 0;
+        virtual bool hasEnded() = 0;
         virtual void update(double delta) = 0;
     };
 
@@ -175,15 +207,14 @@ namespace gps
         std::set<KeyFrame<T>, KeyFrameComparator<T>> keyframes;
         std::set<KeyFrame<T>, KeyFrameComparator<T>>::iterator previous;
         std::set<KeyFrame<T>, KeyFrameComparator<T>>::iterator current;
-        float elapsed = 0;
+        float elapsed;
         bool running;
+        bool ended;
 
     public:
         KeyFrame<T> interpolatedKeyFrame;
 
-        Animation() : running(false)
-        {
-        };
+        Animation() : elapsed(0), running(false), ended(false) {};
 
         void start() override
         {
@@ -204,6 +235,11 @@ namespace gps
         {
             return running;
         }
+        
+        bool hasEnded() override
+        {
+            return ended;
+        }
 
         void addKeyFrame(const KeyFrame<T> &keyframe)
         {
@@ -221,6 +257,7 @@ namespace gps
                 if (current == keyframes.end())
                 {
                     running = false;
+                    ended = true;
                     return;
                 }
             }

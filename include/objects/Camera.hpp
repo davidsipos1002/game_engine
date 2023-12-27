@@ -2,6 +2,7 @@
 
 #include <engine/GeneralIncludes.hpp>
 #include <engine/Window.hpp>
+#include <animation/Animated.hpp>
 
 namespace gps
 {
@@ -14,7 +15,7 @@ namespace gps
         MOVE_LEFT
     };
 
-    class Camera
+    class Camera : public Animated<Camera>
     {
 
     public:

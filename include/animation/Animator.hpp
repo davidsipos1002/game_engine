@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <functional>
+#include <tuple>
 
 namespace gps
 {
@@ -11,7 +12,7 @@ namespace gps
     {
     private:
         float elapsed = 0;
-        std::vector<std::pair<std::function<bool()>, AnimationBase *>> triggeredAnimations;
+        std::vector<std::tuple<std::function<bool()>, bool, AnimationBase *>> triggeredAnimations;
         std::vector<std::tuple<float, float, AnimationBase *>> periodicAnimations;
 
     public:
@@ -19,10 +20,10 @@ namespace gps
         ~Animator();
 
         template <class T>
-        Animation<T> *createTriggeredAnimation(const std::function<bool()> &trigger)
+        Animation<T> *createTriggeredAnimation(const std::function<bool()> &trigger, bool oneTime)
         {
             Animation<T> *animation = new Animation<T>();
-            triggeredAnimations.push_back(std::make_pair(trigger, animation));
+            triggeredAnimations.push_back(std::make_tuple(trigger, oneTime, animation));
             return animation;
         }
 

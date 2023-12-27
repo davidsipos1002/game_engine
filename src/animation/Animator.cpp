@@ -9,8 +9,8 @@ namespace gps
 
     Animator::~Animator()
     {
-        for (auto &pair : triggeredAnimations)
-            delete pair.second;
+        for (auto &tuple : triggeredAnimations)
+            delete std::get<2>(tuple);
         for (auto &tuple : periodicAnimations)
             delete std::get<2>(tuple);
     }
@@ -18,10 +18,17 @@ namespace gps
     void Animator::updateAnimations(double delta)
     {
         elapsed += delta;
-        for (auto &pair : triggeredAnimations)
+        for (std::vector<std::tuple<std::function<bool()>, bool, AnimationBase *>>::iterator it = triggeredAnimations.begin(); it != triggeredAnimations.end();)
         {
-            std::function<bool()> &trigger = pair.first;
-            AnimationBase *animation = pair.second;
+            std::function<bool()> &trigger = std::get<0>(*it);
+            bool oneTime = std::get<1>(*it);
+            AnimationBase *animation = std::get<2>(*it);
+
+            if (animation->hasEnded()) 
+            {
+                it = triggeredAnimations.erase(it);
+                continue;
+            }
 
             if (!animation->isRunning())
             {
@@ -30,6 +37,7 @@ namespace gps
             }
             else
                 animation->update(delta);
+            it++;
         }
         for (auto &tuple : periodicAnimations)
         {
