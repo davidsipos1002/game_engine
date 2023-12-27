@@ -20,28 +20,20 @@ void Scene::init()
     teapot->scale = glm::vec3(1, 1, 1);
     teapot->ambientStrength = 0.2f;
     teapot->specularStrength = 0.5f;
-    renderer->addEntity(teapot);
+    // renderer->addEntity(teapot);
 
     teapot = loader->loadEntity("models/ground/ground.obj", teapot2);
     teapot->position = glm::vec3(0, -1, 0);
     teapot->rotation = glm::vec3(0, 3.14f / 2, 0);
-    teapot->scale = glm::vec3(1, 1, 1);
+    teapot->scale = glm::vec3(0.25, 0.25, 0.25);
     teapot->ambientStrength = 0.2f;
     teapot->specularStrength = 0.5f;
     renderer->addEntity(teapot);
 
-    teapot = loader->loadEntity("models/ground/ground.obj", teapot2);
-    teapot->position = glm::vec3(3, 0, 0);
-    teapot->rotation = glm::vec3(0, 0, 3.14f / 2);
-    teapot->scale = glm::vec3(1, 1, 1);
-    teapot->ambientStrength = 0.2f;
-    teapot->specularStrength = 0.5f;
-    renderer->addEntity(teapot);
-
-    teapot = loader->loadEntity("models/nanosuit/nanosuit.obj", teapot2);
-    teapot->position = glm::vec3(0, 0, 0);
+    teapot = loader->loadEntity("models/tree/tree.obj", teapot2);
+    teapot->position = glm::vec3(0, -1, 0);
     // teapot->rotation = glm::vec3(0, 3.14f / 2, 0);
-    teapot->scale = glm::vec3(1, 1, 1);
+    teapot->scale = glm::vec3(0.1, 0.1, 0.1);
     teapot->ambientStrength = 0.2f;
     teapot->specularStrength = 0.5f;
     renderer->addEntity(teapot);
@@ -61,10 +53,10 @@ void Scene::init()
     // light1.isShadowCasting = true;
 
     PointLight &pointLight = renderer->gePointLight(0);
-    pointLight.intensity = 1.0f;
-    pointLight.lightColor = glm::vec3(0, 0, 1);
+    pointLight.intensity = 0.3f;
+    pointLight.lightColor = glm::vec3(0, 0.2, 1);
     pointLight.lightPosition = glm::vec3(-3, 2, 0);
-    pointLight.isShadowCasting = true;
+    // pointLight.isShadowCasting = true;
 
     PointLight &pointLight2 = renderer->gePointLight(1);
     pointLight2.intensity = 0.0f;
@@ -72,12 +64,12 @@ void Scene::init()
     pointLight2.lightPosition = glm::vec3(3, 2, 0);
 
     SpotLight &spotLight = renderer->getSpotLight(0);
-    spotLight.intensity = 0.0f;
-    spotLight.lightPosition = glm::vec3(0.75, 3, 0);
+    spotLight.intensity = 1.0f;
+    spotLight.lightPosition = glm::vec3(-0.5, 2, 0);
     spotLight.lightDirection = glm::vec3(0, -1, 0);
     spotLight.lightColor = glm::vec3(1, 1, 1);
-    spotLight.cutoff = 3.14f / 10;
-    // spotLight.isShadowCasting = true;
+    spotLight.cutoff = 3.14f / 6;
+    spotLight.isShadowCasting = true;
 
     Animation<Entity> *animation = animator->createTriggeredAnimation<Entity>([&]()
                                                                              { return keyboard->isKeyPressed(GLFW_KEY_P); },
@@ -112,7 +104,7 @@ void Scene::init()
 
 void Scene::update(double delta)
 {
-    emitter->emitParticles(delta);
+    // emitter->emitParticles(delta);
 }
 
 bool Scene::doCustomRender()
@@ -122,7 +114,7 @@ bool Scene::doCustomRender()
 
 void Scene::render()
 {
-    renderer->displayDirectionalAndSpotLightShadowMap(false, loader->getEntity(quadEntity), 0);
+    renderer->displayDirectionalAndSpotLightShadowMap(true, loader->getEntity(quadEntity), 0);
 }
 
 void Scene::cleanup()

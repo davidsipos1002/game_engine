@@ -1,0 +1,90 @@
+# Blender 3.6.0 MTL File: 'tree.blend'
+# www.blender.org
+
+newmtl branch_big__wood_Flattened_Diffuse_tif
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.141000 0.058400 0.027300
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+map_Kd tree_branch_big__wood_Flattened_Diffuse_tif_BaseColor.png
+illum 2
+
+newmtl branches_ground
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.512000 0.512000 0.512000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+map_Kd tree_branches_ground_BaseColor.png
+illum 2
+
+newmtl oak_old1_001
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.401600 0.401600 0.401600
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+map_Kd tree_oak_old1_001_BaseColor.png
+illum 2
+
+newmtl rock_big
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.401600 0.401600 0.401600
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+map_Kd tree_rock_big_BaseColor.png
+illum 2
+
+newmtl rockpile
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+map_Kd tree_rockpile_BaseColor.png
+illum 2
+
+newmtl rocks
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.401600 0.401600 0.401600
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+map_Kd tree_rocks_BaseColor.png
+illum 2
+
+newmtl tree_old_branches
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+map_Kd tree_tree_old_branches_BaseColor.png
+illum 2
+
+newmtl unnamed
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+map_Kd tree_unnamed_BaseColor.png
+illum 2
