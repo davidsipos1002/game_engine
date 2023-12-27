@@ -13,25 +13,25 @@ void Scene::init()
     filenames.push_back("fire_particles/3.png");
     filenames.push_back("fire_particles/4.png");
 
-    renderer->getDirectionalLight(0).intensity = 0.0f;
+    renderer->getDirectionalLight(0).intensity = 0.4f;
     renderer->getDirectionalLight(0).lightColor = glm::vec3(1);
     renderer->getDirectionalLight(0).lightDirection = glm::vec3(0, 1, 1);
-    renderer->getDirectionalLight(0).isShadowCasting = false;
+    renderer->getDirectionalLight(0).isShadowCasting = true;
     
     renderer->getSpotLight(0).intensity = 0.0f;
     renderer->getSpotLight(0).lightPosition = glm::vec3(-3, 1.5, 2);
     renderer->getSpotLight(0).lightColor = glm::vec3(1, 0, 0);
     renderer->getSpotLight(0).lightDirection = glm::vec3(0, -1, 0);
     renderer->getSpotLight(0).cutoff = M_PI / 6;
-    renderer->getSpotLight(0).isShadowCasting = true;
+    renderer->getSpotLight(0).isShadowCasting = false;
     
-    renderer->getPointLight(0).intensity = 2.0f;
+    renderer->getPointLight(0).intensity = 0.0f;
     renderer->getPointLight(0).lightPosition = glm::vec3(-3, 1, 2);
     renderer->getPointLight(0).lightColor = glm::vec3(0, 0, 1);
-    renderer->getPointLight(0).isShadowCasting = true;
+    renderer->getPointLight(0).isShadowCasting = false;
 
-    generateGround(5, 5);
-    generateTreesAndMushrooms(5, 5);
+    generateGround(10, 10);
+    generateTreesAndMushrooms(10, 10);
     Entity *cabin = loader->loadEntity("models/forest_cabin/forest_cabin.obj");
     cabin->position = glm::vec3(0, -1, 0);
     cabin->scale = glm::vec3(0.1, 0.1, 0.1);
@@ -77,19 +77,12 @@ void Scene::generateTreesAndMushrooms(int x, int y)
             if (i != 0 && j != 0)
             {
                 std::uniform_real_distribution<> pos(-1, 1);
-                Entity *tree = loader->loadEntity("models/tree/treePBR.obj");
+                Entity *tree = loader->loadEntity("models/deadtree/deadtree1.obj");
                 tree->position = glm::vec3(i * 2 + pos(gen), -1, j * 2 + pos(gen));
-                tree->scale = glm::vec3(0.1, 0.1, 0.1);
+                tree->scale = glm::vec3(0.01, 0.01, 0.01);
                 tree->ambientStrength = 0.2f;
                 tree->specularStrength = 0.5f;
                 renderer->addEntity(tree, true);
-
-                Entity *mushroom = loader->loadEntity("models/mushrooms/Pilz.obj");
-                mushroom->position = glm::vec3(i * 2, -1, j * 2);
-                mushroom->scale = glm::vec3(0.1, 0.1, 0.1);
-                mushroom->ambientStrength = 0.2f;
-                mushroom->specularStrength = 0.5f;
-                renderer->addEntity(mushroom, true);
             }
         }
     }

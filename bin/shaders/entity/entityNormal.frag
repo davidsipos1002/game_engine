@@ -1,10 +1,10 @@
 #version 410 core
 
-in vec3 fPosition;
-in vec3 fNormal;
+in vec3 fPosWorld;
+in vec3 fPosEye;
+in vec3 fNormalEye;
 in vec2 fTexCoords;
 flat in vec2 fLightData;
-flat in mat4 fModelMatrix;
 
 out vec4 fColor;
 
@@ -50,10 +50,6 @@ vec3 spotAmbientTotal = vec3(0, 0, 0);
 vec3 spotDiffuseTotal = vec3(0, 0, 0);
 vec3 spotSpecularTotal = vec3(0, 0, 0);
 
-mat3 normalMatrix;
-vec4 fPosWorld;
-vec4 fPosEye;
-vec3 normalEye;
 vec3 viewDir;
 
 float constant = 1.0f;
@@ -63,12 +59,9 @@ float quadratic = 0.0075f;
 float computeDirectionalAndSpotLightShadow(bool directional, int i) {
     vec3 normalizedCoords;
     if (directional) 
-    {
         normalizedCoords = fPositionDirectionalLight[i].xyz / fPositionDirectionalLight[i].w;
-    } else 
-    {
+    else 
         normalizedCoords = fPositionSpotLight[i].xyz / fPositionSpotLight[i].w;
-    }
     normalizedCoords = normalizedCoords * 0.5 + 0.5;
     if (normalizedCoords.z > 1.0f)
         return 0.0f;
@@ -76,9 +69,11 @@ float computeDirectionalAndSpotLightShadow(bool directional, int i) {
     float bias = 0.005f;
     float shadow = 0.0;
     vec2 texelSize;
-    if (directional) {
+    if (directional) 
+    {
         texelSize = 1.0 / textureSize(directionalLightShadowMap[i], 0);
-    } else {
+    } else 
+    {
         texelSize = 1.0 / textureSize(spotLightShadowMap[i], 0);
     }
     for(int x = -1; x <= 1; ++x)
@@ -89,7 +84,8 @@ float computeDirectionalAndSpotLightShadow(bool directional, int i) {
             if (directional) 
             {
                 pcfDepth = texture(directionalLightShadowMap[i], normalizedCoords.xy + vec2(x, y) * texelSize).r; 
-            } else 
+            } 
+            else 
             {
                 pcfDepth = texture(spotLightShadowMap[i], normalizedCoords.xy + vec2(x, y) * texelSize).r; 
             }
@@ -102,7 +98,7 @@ float computeDirectionalAndSpotLightShadow(bool directional, int i) {
 
 float computePointLightShadow(int i)
 {
-    vec3 fragToLight = fPosWorld.xyz - pointLightPosition[i];
+    vec3 fragToLight = fPosWorld - pointLightPosition[i];
     float closestDepth = texture(pointLightShadowMap[i], fragToLight).r;
     float far_plane = 20.0f;
     closestDepth *= far_plane;
@@ -120,8 +116,8 @@ void computeDirectionalLights()
         {
             vec3 lightDirN = vec3(normalize(viewMatrix * vec4(directionalLightDirection[i], 0.0f)));
             vec3 ambient = directionalLightIntensity[i] * fLightData.x * directionalLightColor[i];
-            vec3 diffuse = directionalLightIntensity[i] * max(dot(normalEye, lightDirN), 0.0f) * directionalLightColor[i];
-            vec3 reflectDir = reflect(-lightDirN, normalEye);
+            vec3 diffuse = directionalLightIntensity[i] * max(dot(fNormalEye, lightDirN), 0.0f) * directionalLightColor[i];
+            vec3 reflectDir = reflect(-lightDirN, fNormalEye);
             float specCoeff = pow(max(dot(viewDir, reflectDir), 0.0f), 32);
             vec3 specular = directionalLightIntensity[i] * fLightData.y * specCoeff * directionalLightColor[i];
             if (directionalLightIsShadowCasting[i] != 0) 
@@ -144,14 +140,14 @@ void computePointLights()
         if (pointLightIntensity[i] > 0.0f) 
         {
             vec3 lightPosEye = vec3(viewMatrix * vec4(pointLightPosition[i], 1.0f));
-            vec3 lightVector = lightPosEye - fPosEye.xyz;
+            vec3 lightVector = lightPosEye - fPosEye;
             float dist = length(lightVector);
             lightVector = normalize(lightVector);
-            float brightness = max(dot(normalEye, lightVector), 0.0f);
+            float brightness = max(dot(fNormalEye, lightVector), 0.0f);
             float attenuation = 1.0f / (constant + linear * dist + quadratic * (dist * dist));
             vec3 ambient = pointLightIntensity[i] * attenuation * fLightData.x * pointLightColor[i];
-            vec3 diffuse = pointLightIntensity[i] * attenuation * max(dot(normalEye, lightVector), 0.0f) * pointLightColor[i];
-            vec3 reflectDir = reflect(-lightVector, normalEye);
+            vec3 diffuse = pointLightIntensity[i] * attenuation * max(dot(fNormalEye, lightVector), 0.0f) * pointLightColor[i];
+            vec3 reflectDir = reflect(-lightVector, fNormalEye);
             float specCoeff = pow(max(dot(viewDir, reflectDir), 0.0f), 32);
             vec3 specular = pointLightIntensity[i] * attenuation * fLightData.y * specCoeff * pointLightColor[i]; 
             if (i < 5 && pointLightIsShadowCasting[i] != 0)
@@ -174,7 +170,7 @@ void computeSpotLights()
         if (spotLightIntensity[i] > 0.0f) 
         {
             vec3 lightPosEye = vec3(viewMatrix * vec4(spotLightPosition[i], 1.0f));
-            vec3 lightVector = lightPosEye - fPosEye.xyz;
+            vec3 lightVector = lightPosEye - fPosEye;
             float dist = length(lightVector);
             lightVector = normalize(lightVector);
             vec3 spotDir = normalize(vec3(viewMatrix * vec4(spotLightDirection[i], 0.0f)));
@@ -184,8 +180,8 @@ void computeSpotLights()
                 float fade = 1.0 - (1.0 - angle) / (1.0 - spotLightCutoff[i]);
                 float attenuation = 1.0f / (constant + linear * dist + quadratic * (dist * dist));
                 vec3 ambient = attenuation * fade * spotLightIntensity[i] * fLightData.x * spotLightColor[i];
-                vec3 diffuse = attenuation * fade * spotLightIntensity[i] * max(dot(normalEye, lightVector), 0.0f) * spotLightColor[i];
-                vec3 reflectDir = reflect(-lightVector, normalEye);
+                vec3 diffuse = attenuation * fade * spotLightIntensity[i] * max(dot(fNormalEye, lightVector), 0.0f) * spotLightColor[i];
+                vec3 reflectDir = reflect(-lightVector, fNormalEye);
                 float specCoeff = pow(max(dot(viewDir, reflectDir), 0.0f), 32);
                 vec3 specular = attenuation * fade * spotLightIntensity[i] * fLightData.y * specCoeff * spotLightColor[i];
             
@@ -213,11 +209,7 @@ float computeFog()
 
 void main() 
 {
-    normalMatrix = mat3(transpose(inverse(viewMatrix * fModelMatrix)));
-    fPosWorld = fModelMatrix * vec4(fPosition, 1.0f); 
-    fPosEye = viewMatrix * fPosWorld;
-    normalEye = normalize(normalMatrix * fNormal);
-    viewDir = normalize(-fPosEye.xyz);
+    viewDir = normalize(-fPosEye);
     computeDirectionalLights();
     computePointLights();
     computeSpotLights();
@@ -237,10 +229,6 @@ void main()
     vec3 color = min(finalDirectional + finalPoint + finalSpot, 1.0f);
     float fogFactor = computeFog();
     color = mix(fogColor, color, fogFactor);
-    // float depth = computePointLightShadow(0);
-    // fColor = vec4(shadow, 0, 0, 1.0f);
-    // fColor = vec4(fPositionLight.xyz / fPositionLight.w, 1.0f);
-    // fColor = vec4(vec3(computePointLightShadow(0) / 20.0f), 1.0f);
     fColor = vec4(color, 1.0f);
 }
  

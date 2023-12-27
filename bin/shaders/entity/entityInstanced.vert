@@ -15,32 +15,37 @@ out vec4 fPositionDirectionalLight[3];
 uniform mat4 spotLightSpaceMatrix[5];
 out vec4 fPositionSpotLight[5];
 
-out vec3 fPosition;
-out vec3 fNormal;
+out vec3 fPosWorld;
+out vec3 fPosEye; 
+out vec3 fNormalEye;
 out vec2 fTexCoords;
 flat out vec2 fLightData;
-flat out mat4 fModelMatrix;
 
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 
 void main() 
 {
-	fPosition = vPosition;
-	fNormal = vNormal;
 	fTexCoords = vTexCoords;
 	fLightData = lightData;
-	fModelMatrix[0] = modelMatrixCol0;
-	fModelMatrix[1] = modelMatrixCol1;
-	fModelMatrix[2] = modelMatrixCol2;
-	fModelMatrix[3] = modelMatrixCol3;
+	mat4 modelMatrix;
+	modelMatrix[0] = modelMatrixCol0;
+	modelMatrix[1] = modelMatrixCol1;
+	modelMatrix[2] = modelMatrixCol2;
+	modelMatrix[3] = modelMatrixCol3;
+	vec4 worldPos = modelMatrix * vec4(vPosition, 1.0f);
+	vec4 eyePos = viewMatrix * worldPos;
+	fPosWorld = worldPos.xyz;
+	fPosEye = eyePos.xyz;
+    mat3 normalMatrix = mat3(transpose(inverse(viewMatrix * modelMatrix)));
+    fNormalEye = normalize(normalMatrix * vNormal);
 	for (int i = 0; i < 3; i++) 
 	{
-		fPositionDirectionalLight[i] = directionalLightSpaceMatrix[i] * fModelMatrix * vec4(vPosition, 1.0f);
+		fPositionDirectionalLight[i] = directionalLightSpaceMatrix[i] * worldPos;
 	}
 	for (int i = 0;i < 5; i++) 
 	{
-		fPositionSpotLight[i] = spotLightSpaceMatrix[i] * fModelMatrix * vec4(vPosition, 1.0f);
+		fPositionSpotLight[i] = spotLightSpaceMatrix[i] * worldPos;
 	}
-	gl_Position = projectionMatrix * viewMatrix * fModelMatrix * vec4(vPosition, 1.0f);
+	gl_Position = projectionMatrix * eyePos;
 }

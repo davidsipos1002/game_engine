@@ -37,11 +37,11 @@ namespace gps
     void Renderer::initLights()
     {
         for (auto &pair : directionalLights)
-            pair.second = new ShadowMap(false, window->getWindowDimensions().width, window->getWindowDimensions().height);
+            pair.second = new ShadowMap(false, window->getWindowDimensions().width / 2, window->getWindowDimensions().height / 2);
         for (auto &pair : pointLights)
-            pair.second = new ShadowMap(true, 2048, 2048);
+            pair.second = new ShadowMap(true, 1024, 1024);
         for (auto &pair : spotLights)
-            pair.second = new ShadowMap(false, window->getWindowDimensions().width, window->getWindowDimensions().height);
+            pair.second = new ShadowMap(false, window->getWindowDimensions().width / 2, window->getWindowDimensions().height / 2);
     }
 
     void Renderer::loadShaders(Loader *loader)
@@ -238,7 +238,7 @@ namespace gps
                 for (GLuint i = 0; i < textures.size(); i++)
                 {
                     glActiveTexture(GL_TEXTURE0 + i);
-                    glUniform1i(glGetUniformLocation(instancedEntityShader->shaderProgram, textures[i].type.c_str()), i);
+                    instancedEntityShader->loadValue(textures[i].type.c_str(), i);
                     glBindTexture(GL_TEXTURE_2D, textures[i].id);
                 }
             }
@@ -287,7 +287,7 @@ namespace gps
                 for (GLuint i = 0; i < textures.size(); i++)
                 {
                     glActiveTexture(GL_TEXTURE0 + i);
-                    glUniform1i(glGetUniformLocation(entityShader->shaderProgram, textures[i].type.c_str()), i);
+                    entityShader->loadValue(textures[i].type.c_str(), i);
                     glBindTexture(GL_TEXTURE_2D, textures[i].id);
                 }
             }
@@ -414,9 +414,9 @@ namespace gps
     void Renderer::render(Camera *camera)
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glViewport(0, 0, window->getWindowDimensions().width, window->getWindowDimensions().height);
         prepareInstances();
         renderShadowMaps();
+        glViewport(0, 0, window->getWindowDimensions().width, window->getWindowDimensions().height);
         renderEntities(camera);
         renderInstancedEntities(camera);
         if (enableSkyBox)
