@@ -19,6 +19,7 @@ namespace gps
         camera = new Camera(glm::vec3(0, 0, 3), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0), &window);
         particleManager = new ParticleManager();
         particleRenderer = new ParticleRenderer(particleManager, loader);
+        particleRenderer->init();
         animator = new Animator();
         init();
     }
