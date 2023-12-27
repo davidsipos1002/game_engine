@@ -27,9 +27,9 @@ namespace gps
 
         renderer = new Renderer(&window, &loader, "skybox");
         camera = new Camera(glm::vec3(0, 0, 3), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0), &window);
-        
+
         particleManager = new ParticleManager();
-        particleRenderer = new ParticleRenderer(particleManager, &loader); 
+        particleRenderer = new ParticleRenderer(particleManager, &loader);
         std::vector<std::string> filenames;
         filenames.push_back("models/particleStar.png");
         filenames.push_back("models/star1.png");
@@ -103,10 +103,12 @@ namespace gps
         // spotLight.isShadowCasting = true;
 
         Animation<Entity> *animation = animator.createTriggeredAnimation<Entity>([&]()
-                                                                                 { return keyboard->isKeyPressed(GLFW_KEY_P); });
+                                                                                 { return keyboard->isKeyPressed(GLFW_KEY_P); },
+                                                                                 true);
         Animation<Entity> *teapotA = animator.createPeriodicAnimation<Entity>(3, 3);
         Animation<Entity> *subComponent = animator.createTriggeredAnimation<Entity>([&]()
-                                                                                    { return keyboard->isKeyPressed(GLFW_KEY_P); });
+                                                                                    { return keyboard->isKeyPressed(GLFW_KEY_P); },
+                                                                                    true);
         animation->addKeyFrame(KeyFrame<Entity>());
         animation->addKeyFrame(KeyFrame<Entity>(1.5, glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1)));
         subComponent->addKeyFrame(KeyFrame<Entity>());
@@ -122,38 +124,56 @@ namespace gps
         renderer->fogDensity = 0.02f;
         particleRenderer->init();
         particleRenderer->fogDensity = 0.02f;
+        Animation<Camera> *camAnim = animator.createTriggeredAnimation<Camera>([&]()
+                                                                               { return keyboard->isKeyPressed(GLFW_KEY_Z); },
+                                                                               false);
+        camAnim->addKeyFrame(KeyFrame<Camera>(0, 1, 0.2, -M_PI, 0));
+        camAnim->addKeyFrame(KeyFrame<Camera>(2, 0, 0, M_PI / 2, 0));
+        camera->setAnimation(camAnim);
     }
 
     void Application::update(double delta)
     {
-        if (keyboard->isKeyPressed(GLFW_KEY_W))
-            camera->move(gps::MOVE_FORWARD, delta * cameraSpeed);
-
-        if (keyboard->isKeyPressed(GLFW_KEY_S))
-            camera->move(gps::MOVE_BACKWARD, delta * cameraSpeed);
-
-        if (keyboard->isKeyPressed(GLFW_KEY_A))
-            camera->move(gps::MOVE_LEFT, delta * cameraSpeed);
-
-        if (keyboard->isKeyPressed(GLFW_KEY_D))
-            camera->move(gps::MOVE_RIGHT, delta * cameraSpeed);
-
         if (keyboard->getDisplayMode() == 1)
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         else
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        
+        updateCamera(delta);
         animator.updateAnimations(delta);
         particleManager->update(delta);
         emitter->emitParticles(delta);
+    }
 
-        static float mouseSpeed = 0.02f;
-        double xpos, ypos;
-        glfwGetCursorPos(window.getWindow(), &xpos, &ypos);
+    void Application::updateCamera(double delta)
+    {
+        Animation<Camera> *animation = camera->getAnimation();
         WindowDimensions dim = window.getWindowDimensions();
-        pitch += delta * mouseSpeed * float(dim.width / 2 - xpos);
-        yaw += delta * mouseSpeed * float(dim.height / 2 - ypos);
-        camera->rotate(pitch, yaw);
+        if (animation && animation->isRunning())
+        {
+            camera->move(static_cast<MOVE_DIRECTION>(animation->interpolatedKeyFrame.direction), delta * animation->interpolatedKeyFrame.speed);
+            pitch = animation->interpolatedKeyFrame.pitch;
+            yaw = animation->interpolatedKeyFrame.yaw;
+            camera->rotate(pitch, yaw);
+        }
+        else
+        {
+            if (keyboard->isKeyPressed(GLFW_KEY_W))
+                camera->move(gps::MOVE_FORWARD, delta * cameraSpeed);
+
+            if (keyboard->isKeyPressed(GLFW_KEY_S))
+                camera->move(gps::MOVE_BACKWARD, delta * cameraSpeed);
+
+            if (keyboard->isKeyPressed(GLFW_KEY_A))
+                camera->move(gps::MOVE_LEFT, delta * cameraSpeed);
+
+            if (keyboard->isKeyPressed(GLFW_KEY_D))
+                camera->move(gps::MOVE_RIGHT, delta * cameraSpeed);
+            double xpos, ypos;
+            glfwGetCursorPos(window.getWindow(), &xpos, &ypos);
+            pitch += delta * mouseSensitivity * float(dim.width / 2 - xpos);
+            yaw += delta * mouseSensitivity * float(dim.height / 2 - ypos);
+            camera->rotate(pitch, yaw);
+        }
         glfwSetCursorPos(window.getWindow(), dim.width / 2, dim.height / 2);
     }
 
@@ -168,7 +188,8 @@ namespace gps
         {
             if (keyboard->getDisplayMode() == 2)
                 renderer->renderEntitiesWithFaces(camera);
-            else {
+            else
+            {
                 renderer->renderEntities(camera);
                 particleRenderer->render(camera);
             }

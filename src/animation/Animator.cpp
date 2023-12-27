@@ -24,7 +24,7 @@ namespace gps
             bool oneTime = std::get<1>(*it);
             AnimationBase *animation = std::get<2>(*it);
 
-            if (animation->hasEnded()) 
+            if (oneTime && animation->hasEnded()) 
             {
                 it = triggeredAnimations.erase(it);
                 continue;

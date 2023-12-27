@@ -39,6 +39,7 @@ namespace gps
         Camera *camera;
 
         GLfloat cameraSpeed = 5.0f;
+        float mouseSensitivity = 0.02f;
 
         int displayMode = 0;
         float pitch = -M_PI;
@@ -57,6 +58,7 @@ namespace gps
         static void windowResizeCallback(GLFWwindow *window, int width, int height);
         void init();
         void update(double delta);
+        void updateCamera(double delta);
         void render();
         void cleanup();
     };
