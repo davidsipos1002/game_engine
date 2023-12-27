@@ -11,6 +11,7 @@
         "istream": "cpp",
         "locale": "cpp",
         "numeric": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "unordered_map": "cpp"
     }
 }

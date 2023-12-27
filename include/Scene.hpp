@@ -10,6 +10,7 @@ class Scene : public Application
        
        ParticleEmitter *emitter;
        ParticleEmitter *emitter1;
+       Entity *quad;
 
         void init() override;
         void update(double delta) override;

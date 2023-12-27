@@ -23,7 +23,7 @@ namespace gps
         float aspect = 1.0f;
         if (shadowHeight)
             aspect = (float)shadowWidth / shadowHeight;
-        glm::mat4 viewMatrix = glm::lookAt(lightPosition, lightDirection, glm::normalize(glm::cross(lightDirection, lightPosition)));
+        glm::mat4 viewMatrix = glm::lookAt(lightPosition, lightPosition + lightDirection, glm::normalize(glm::cross(lightDirection, lightPosition)));
         glm::mat projectionMatrix = glm::perspective(glm::radians(90.0f), aspect, 0.1f, 20.0f);
         lightSpaceMatrix = projectionMatrix * viewMatrix;
     }

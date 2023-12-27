@@ -1,5 +1,4 @@
 #include <objects/Mesh.hpp>
-
 namespace gps
 {
 
@@ -9,6 +8,16 @@ namespace gps
 		this->indices = indices;
 		this->textures = textures;
 		this->setupMesh();
+	}
+
+	Mesh::~Mesh()
+	{
+		glBindVertexArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		glDeleteBuffers(1, &this->buffers.VBO);
+		glDeleteBuffers(1, &this->buffers.EBO);
+		glDeleteVertexArrays(1, &this->buffers.VAO);
 	}
 
 	Buffers Mesh::getBuffers()
@@ -53,12 +62,13 @@ namespace gps
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)0);
-
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, Normal));
 		glEnableVertexAttribArray(2);
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, TexCoords));
 
 		glBindVertexArray(0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 }

@@ -82,7 +82,7 @@ namespace gps
                 renderer->renderEntitiesWithFaces(camera);
             else
             {
-                renderer->renderEntities(camera);
+                renderer->render(camera);
                 particleRenderer->render(camera);
             }
         }
@@ -117,6 +117,7 @@ namespace gps
     void Application::__cleanup()
     {
         cleanup();
+        renderer->cleanup();
         window.deleteWindow();
         delete renderer;
         delete camera;

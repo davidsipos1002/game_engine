@@ -50,6 +50,11 @@ namespace gps
                 return subComponentAnimations.at(subComponentName);
             return nullptr;
         }
+        
+        int getAnimatedSubComponentsCount() const
+        {
+            return subComponentAnimations.size();
+        }
 
         void attachMainComponentAnimation(Animation<Entity> *animation)
         {

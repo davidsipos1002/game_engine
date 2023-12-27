@@ -38,6 +38,7 @@ namespace gps
     {
         GLuint VAO;
         GLuint VBO;
+        GLuint instanceVBO;
         GLuint EBO;
     };
 
@@ -50,6 +51,7 @@ namespace gps
         std::vector<Texture> textures;
 
         Mesh(const std::vector<Vertex> &vertices, const std::vector<GLuint> &indices, const std::vector<Texture> &textures);
+        ~Mesh();
 
         Buffers getBuffers();
         void draw(gps::Shader *shader);

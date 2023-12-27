@@ -3,10 +3,11 @@
 in vec3 fPosition;
 in vec3 fNormal;
 in vec2 fTexCoords;
+flat in vec2 fLightData;
+flat in mat4 fModelMatrix;
 
 out vec4 fColor;
 
-uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 
 uniform vec3 directionalLightDirection[3];
@@ -30,9 +31,6 @@ uniform float spotLightIntensity[10];
 uniform int spotLightIsShadowCasting[5];
 uniform sampler2D spotLightShadowMap[5];
 in vec4 fPositionSpotLight[5];
-
-uniform float ambientStrength;
-uniform float specularStrength;
 
 uniform sampler2D diffuseTexture;
 uniform sampler2D specularTexture;
@@ -121,11 +119,11 @@ void computeDirectionalLights()
         if (directionalLightIntensity[i] > 0.0f) 
         {
             vec3 lightDirN = vec3(normalize(viewMatrix * vec4(directionalLightDirection[i], 0.0f)));
-            vec3 ambient = directionalLightIntensity[i] * ambientStrength * directionalLightColor[i];
+            vec3 ambient = directionalLightIntensity[i] * fLightData.x * directionalLightColor[i];
             vec3 diffuse = directionalLightIntensity[i] * max(dot(normalEye, lightDirN), 0.0f) * directionalLightColor[i];
             vec3 reflectDir = reflect(-lightDirN, normalEye);
             float specCoeff = pow(max(dot(viewDir, reflectDir), 0.0f), 32);
-            vec3 specular = directionalLightIntensity[i] * specularStrength * specCoeff * directionalLightColor[i];
+            vec3 specular = directionalLightIntensity[i] * fLightData.y * specCoeff * directionalLightColor[i];
             if (directionalLightIsShadowCasting[i] != 0) 
             {
                 float shadow = computeDirectionalAndSpotLightShadow(true, i);
@@ -151,11 +149,11 @@ void computePointLights()
             lightVector = normalize(lightVector);
             float brightness = max(dot(normalEye, lightVector), 0.0f);
             float attenuation = 1.0f / (constant + linear * dist + quadratic * (dist * dist));
-            vec3 ambient = pointLightIntensity[i] * attenuation * ambientStrength * pointLightColor[i];
+            vec3 ambient = pointLightIntensity[i] * attenuation * fLightData.x * pointLightColor[i];
             vec3 diffuse = pointLightIntensity[i] * attenuation * max(dot(normalEye, lightVector), 0.0f) * pointLightColor[i];
             vec3 reflectDir = reflect(-lightVector, normalEye);
             float specCoeff = pow(max(dot(viewDir, reflectDir), 0.0f), 32);
-            vec3 specular = pointLightIntensity[i] * attenuation * specularStrength * specCoeff * pointLightColor[i]; 
+            vec3 specular = pointLightIntensity[i] * attenuation * fLightData.y * specCoeff * pointLightColor[i]; 
             if (i < 5 && pointLightIsShadowCasting[i] != 0)
             {
                 float shadow = computePointLightShadow(i);
@@ -185,11 +183,11 @@ void computeSpotLights()
             {
                 float fade = 1.0 - (1.0 - angle) / (1.0 - spotLightCutoff[i]);
                 float attenuation = 1.0f / (constant + linear * dist + quadratic * (dist * dist));
-                vec3 ambient = attenuation * fade * spotLightIntensity[i] * ambientStrength * spotLightColor[i];
+                vec3 ambient = attenuation * fade * spotLightIntensity[i] * fLightData.x * spotLightColor[i];
                 vec3 diffuse = attenuation * fade * spotLightIntensity[i] * max(dot(normalEye, lightVector), 0.0f) * spotLightColor[i];
                 vec3 reflectDir = reflect(-lightVector, normalEye);
                 float specCoeff = pow(max(dot(viewDir, reflectDir), 0.0f), 32);
-                vec3 specular = attenuation * fade * spotLightIntensity[i] * specularStrength * specCoeff * spotLightColor[i];
+                vec3 specular = attenuation * fade * spotLightIntensity[i] * fLightData.y * specCoeff * spotLightColor[i];
             
                 if (i < 5 && spotLightIsShadowCasting[i] != 0) 
                 {
@@ -215,8 +213,8 @@ float computeFog()
 
 void main() 
 {
-    normalMatrix = mat3(transpose(inverse(viewMatrix * modelMatrix)));
-    fPosWorld = modelMatrix * vec4(fPosition, 1.0f); 
+    normalMatrix = mat3(transpose(inverse(viewMatrix * fModelMatrix)));
+    fPosWorld = fModelMatrix * vec4(fPosition, 1.0f); 
     fPosEye = viewMatrix * fPosWorld;
     normalEye = normalize(normalMatrix * fNormal);
     viewDir = normalize(-fPosEye.xyz);
@@ -245,3 +243,4 @@ void main()
     // fColor = vec4(vec3(computePointLightShadow(0) / 20.0f), 1.0f);
     fColor = vec4(color, 1.0f);
 }
+ 

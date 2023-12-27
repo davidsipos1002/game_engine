@@ -5,7 +5,7 @@ namespace gps
 {
     ParticleRenderer::ParticleRenderer(ParticleManager *manager, Loader *loader) : manager(manager)
     {
-        particleShader = loader->loadShader("shaders/particles.vert", "shaders/particles.frag");
+        particleShader = loader->loadShader("shaders/particles/particles.vert", "shaders/particles/particles.frag");
     }
     
     ParticleRenderer::~ParticleRenderer()
