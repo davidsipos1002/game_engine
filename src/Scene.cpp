@@ -6,6 +6,7 @@ Scene::Scene(bool fullScreen, int width, int height, const std::string &title) :
 
 void Scene::init()
 {
+    skyBox = loader->loadSkyBox("skybox"); 
     std::vector<std::string> filenames;
     filenames.push_back("models/particleStar.png");
     filenames.push_back("models/star1.png");

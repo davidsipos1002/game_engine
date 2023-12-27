@@ -5,6 +5,12 @@
         "set": "cpp",
         "sstream": "cpp",
         "array": "cpp",
-        "tuple": "cpp"
+        "tuple": "cpp",
+        "concepts": "cpp",
+        "ios": "cpp",
+        "istream": "cpp",
+        "locale": "cpp",
+        "numeric": "cpp",
+        "ostream": "cpp"
     }
 }

@@ -32,7 +32,7 @@ namespace gps
         Shader *shadowMapShader;
         Shader *skyboxShader;
         Shader *facesShader;
-        SkyBox *skyBox;
+        SkyBox **skyBox;
 
         void initOpenGL();
         void initLights();
@@ -52,7 +52,7 @@ namespace gps
         float fogDensity = 0.03f;
         glm::vec3 fogColor = glm::vec3(0.5f, 0.5f, 0.5f);
 
-        Renderer(Window *window, Loader *loader, SkyBox *skyBox);
+        Renderer(Window *window, Loader *loader, SkyBox **skyBox);
         ~Renderer();
 
         void addEntity(Entity *entity);

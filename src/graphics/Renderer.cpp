@@ -2,7 +2,7 @@
 
 namespace gps
 {
-    Renderer::Renderer(Window *window, Loader *loader, SkyBox *skyBox) : window(window), skyBox(skyBox)
+    Renderer::Renderer(Window *window, Loader *loader, SkyBox **skyBox) : window(window), skyBox(skyBox)
     {
         initOpenGL();
         initLights();
@@ -115,7 +115,7 @@ namespace gps
         for (auto &pair : entities)
             renderModels(pair.first);
         if (enableSkyBox)
-            skyBox->render(skyboxShader, camera->getViewMatrix(), camera->getProjectionMatrix());
+            (*skyBox)->render(skyboxShader, camera->getViewMatrix(), camera->getProjectionMatrix());
     }
     
     void Renderer::loadLightsToShader()

@@ -16,10 +16,11 @@ namespace gps
         keyboard = Keyboard::getInstance(window);
         mouse = Mouse::getInstance(window);
         loader = new Loader();
-        renderer = new Renderer(&window, loader, loader->loadSkyBox("skybox"));
+        renderer = new Renderer(&window, loader, &skyBox);
         camera = new Camera(glm::vec3(0, 0, 3), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0), &window);
         particleManager = new ParticleManager();
         particleRenderer = new ParticleRenderer(particleManager, loader);
+        animator = new Animator();
         init();
     }
 
@@ -125,6 +126,7 @@ namespace gps
         delete camera;
         delete particleRenderer;
         delete particleManager;
+        delete animator;
         delete loader;
     }
 

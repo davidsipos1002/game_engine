@@ -32,6 +32,7 @@ namespace gps
         ParticleManager *particleManager;
         ParticleRenderer *particleRenderer;
         Camera *camera;
+        SkyBox *skyBox;
 
         GLfloat cameraSpeed;
         float mouseSensitivity;
