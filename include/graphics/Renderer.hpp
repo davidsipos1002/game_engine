@@ -36,7 +36,7 @@ namespace gps
 
         void initOpenGL();
         void initLights();
-        void loadShadersAndSkyBox(Loader *loader, const std::string &skyBox);
+        void loadShaders(Loader *loader);
         void loadLightsToShader();
         void renderModels(Model3D *model);
         void renderShadowMapModels(Model3D *model, Shader *shader);
@@ -52,7 +52,7 @@ namespace gps
         float fogDensity = 0.03f;
         glm::vec3 fogColor = glm::vec3(0.5f, 0.5f, 0.5f);
 
-        Renderer(Window *window, Loader *loader, const std::string &skyBox);
+        Renderer(Window *window, Loader *loader, SkyBox *skyBox);
         ~Renderer();
 
         void addEntity(Entity *entity);

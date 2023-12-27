@@ -17,49 +17,41 @@
 #include <particles/ParticleEmitter.hpp>
 #include <particles/ParticleTexture.hpp>
 #include <cmath>
+#include <functional>
 namespace gps
 {
     class Application
     {
-    private:
+    protected:
         Window window;
         Keyboard *keyboard;
         Mouse *mouse;
-        Loader loader;
+        Loader *loader;
         Renderer *renderer;
-        Animator animator;
-        
-        std::string teapot1;
-        std::string teapot2;
-        std::string shader;
-        std::string dirShadowMap;
-        std::string quad;
-        std::string quadEntity;
-
-        Camera *camera;
-
-        GLfloat cameraSpeed = 5.0f;
-        float mouseSensitivity = 0.02f;
-
-        int displayMode = 0;
-        float pitch = -M_PI;
-        float yaw = 0; 
-        
+        Animator *animator;
         ParticleManager *particleManager;
         ParticleRenderer *particleRenderer;
-        ParticleEmitter *emitter;
+        Camera *camera;
+
+        GLfloat cameraSpeed;
+        float mouseSensitivity;
 
     public:
-        Application();
-        ~Application();
+        Application(bool fullScreen, int width, int height, const std::string &title);
+        virtual ~Application(){};
         void run();
 
     private:
         static void windowResizeCallback(GLFWwindow *window, int width, int height);
-        void init();
-        void update(double delta);
+        virtual void init() = 0;
+        virtual void update(double delta) = 0;
+        virtual bool doCustomRender();
+        virtual void render();
+        virtual void cleanup() = 0;
+        void __init();
+        void __update(double delta);
         void updateCamera(double delta);
-        void render();
-        void cleanup();
+        void __render();
+        void __cleanup();
     };
 }

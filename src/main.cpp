@@ -1,8 +1,8 @@
-#include <engine/Application.hpp>
+#include <Scene.hpp>
 
 int main(int argc, const char *argv[])
 {
-    gps::Application application;
-    application.run();
+    Scene scene(true, 1024, 768, "OpenGL Project");
+    scene.run();
     return EXIT_SUCCESS;
 }

@@ -2,11 +2,11 @@
 
 namespace gps
 {
-    Renderer::Renderer(Window *window, Loader *loader, const std::string &skyBox) : window(window)
+    Renderer::Renderer(Window *window, Loader *loader, SkyBox *skyBox) : window(window), skyBox(skyBox)
     {
         initOpenGL();
         initLights();
-        loadShadersAndSkyBox(loader, skyBox);
+        loadShaders(loader);
     }
 
     void Renderer::initOpenGL()
@@ -33,7 +33,7 @@ namespace gps
             pair.second = new ShadowMap(false, window->getWindowDimensions().width, window->getWindowDimensions().height);
     }
     
-    void Renderer::loadShadersAndSkyBox(Loader *loader, const std::string &skyBox)
+    void Renderer::loadShaders(Loader *loader)
     {
         entityShader = loader->loadShader("shaders/entityNormal.vert", "shaders/entityNormal.frag");
         directionalAndSpotShadowShader = loader->loadShader("shaders/directionalAndSpotShadow.vert", "shaders/directionalAndSpotShadow.frag");
@@ -41,7 +41,6 @@ namespace gps
         shadowMapShader = loader->loadShader("shaders/shadowMap.vert", "shaders/shadowMap.frag");
         skyboxShader = loader->loadShader("shaders/skybox.vert", "shaders/skybox.frag");
         facesShader = loader->loadShader("shaders/faces.vert", "shaders/faces.geom", "shaders/faces.frag");
-        this->skyBox = loader->loadSkyBox(skyBox);
     }
 
     Renderer::~Renderer()
