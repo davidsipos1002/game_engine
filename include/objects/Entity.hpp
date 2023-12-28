@@ -18,7 +18,7 @@ namespace gps
         float ambientStrength;
         float specularStrength;
 
-        Entity(Model3D *model) : model(model), position(glm::vec3(0, 0, 0)), rotation(glm::vec3(0, 0, 0)), scale(glm::vec3(1)) {}
+        Entity(Model3D *model) : model(model), position(glm::vec3(0, 0, 0)), rotation(glm::vec3(0, 0, 0)), scale(glm::vec3(1)), ambientStrength(0.2f), specularStrength(0.5f) {}
 
         Model3D *getModel();
     };

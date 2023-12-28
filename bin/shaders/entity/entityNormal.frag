@@ -82,13 +82,9 @@ float computeDirectionalAndSpotLightShadow(bool directional, int i) {
         {
             float pcfDepth;
             if (directional) 
-            {
                 pcfDepth = texture(directionalLightShadowMap[i], normalizedCoords.xy + vec2(x, y) * texelSize).r; 
-            } 
             else 
-            {
                 pcfDepth = texture(spotLightShadowMap[i], normalizedCoords.xy + vec2(x, y) * texelSize).r; 
-            }
             shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;        
         }    
     }   
@@ -120,12 +116,9 @@ void computeDirectionalLights()
             vec3 reflectDir = reflect(-lightDirN, fNormalEye);
             float specCoeff = pow(max(dot(viewDir, reflectDir), 0.0f), 32);
             vec3 specular = directionalLightIntensity[i] * fLightData.y * specCoeff * directionalLightColor[i];
-            if (directionalLightIsShadowCasting[i] != 0) 
-            {
-                float shadow = computeDirectionalAndSpotLightShadow(true, i);
-                diffuse *= 1.0f - shadow;
-                specular *= 1.0f - shadow;
-            }
+            float shadow = directionalLightIsShadowCasting[i] * computeDirectionalAndSpotLightShadow(true, i);
+            diffuse *= 1.0f - shadow;
+            specular *= 1.0f - shadow;
             directionalAmbientTotal += ambient;
             directionalDiffuseTotal += diffuse;
             directionalSpecularTotal += specular;
@@ -150,9 +143,9 @@ void computePointLights()
             vec3 reflectDir = reflect(-lightVector, fNormalEye);
             float specCoeff = pow(max(dot(viewDir, reflectDir), 0.0f), 32);
             vec3 specular = pointLightIntensity[i] * attenuation * fLightData.y * specCoeff * pointLightColor[i]; 
-            if (i < 5 && pointLightIsShadowCasting[i] != 0)
+            if (i < 5)
             {
-                float shadow = computePointLightShadow(i);
+                float shadow = pointLightIsShadowCasting[i] * computePointLightShadow(i);
                 diffuse *= 1.0f - shadow;
                 specular *= 1.0f - shadow; 
             }
@@ -184,14 +177,12 @@ void computeSpotLights()
                 vec3 reflectDir = reflect(-lightVector, fNormalEye);
                 float specCoeff = pow(max(dot(viewDir, reflectDir), 0.0f), 32);
                 vec3 specular = attenuation * fade * spotLightIntensity[i] * fLightData.y * specCoeff * spotLightColor[i];
-            
-                if (i < 5 && spotLightIsShadowCasting[i] != 0) 
+                if (i < 5) 
                 {
-                    float shadow = computeDirectionalAndSpotLightShadow(false, i);
-                    diffuse *= 1.0f -  shadow;
+                    float shadow = spotLightIsShadowCasting[i] * computeDirectionalAndSpotLightShadow(false, i);
+                    diffuse *= 1.0f - shadow;
                     specular *= 1.0f - shadow;
                 }
-
                 spotAmbientTotal += ambient;
                 spotDiffuseTotal += diffuse;
                 spotSpecularTotal += specular;
