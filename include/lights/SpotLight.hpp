@@ -6,7 +6,7 @@
 
 namespace gps
 {
-    class SpotLight : public Light, Animated<SpotLight>
+    class SpotLight : public Light, public Animated<SpotLight>
     {
     public:
         glm::vec3 lightPosition;

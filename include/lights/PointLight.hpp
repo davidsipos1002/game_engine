@@ -6,7 +6,7 @@
 #include <array>
 namespace gps
 {
-    class PointLight : public Light, Animated<PointLight>
+    class PointLight : public Light, public Animated<PointLight>
     {
     public:
         glm::vec3 lightPosition;

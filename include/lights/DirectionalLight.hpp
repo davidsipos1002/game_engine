@@ -6,7 +6,7 @@
 
 namespace gps
 {
-    class DirectionalLight : public Light, Animated<DirectionalLight>
+    class DirectionalLight : public Light, public Animated<DirectionalLight>
     {
     public:
         glm::mat4 lightSpaceMatrix = glm::mat4(1);
