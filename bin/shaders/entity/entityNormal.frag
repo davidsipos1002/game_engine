@@ -52,8 +52,8 @@ vec3 spotSpecularTotal = vec3(0, 0, 0);
 
 vec3 viewDir;
 
-float constant = 1.0f;
-float linear = 0.0045f;
+float constant = 2.0f;
+float linear = 0.045f;
 float quadratic = 0.0075f;
 
 float computeDirectionalAndSpotLightShadow(bool directional, int i) {
