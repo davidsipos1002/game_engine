@@ -12,7 +12,7 @@ namespace gps
         this->cameraRightDirection = glm::normalize(glm::cross(cameraFrontDirection, this->cameraUpDirection));
         projectionMatrix = glm::perspective(glm::radians(45.0f),
                                       (float)window->getWindowDimensions().width / (float)window->getWindowDimensions().height,
-                                      0.1f, 20.0f);
+                                      0.1f, 50.0f);
         viewMatrix = glm::lookAt(cameraPosition, cameraPosition + cameraTarget, this->cameraUpDirection);
     }
 

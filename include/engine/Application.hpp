@@ -22,7 +22,7 @@ namespace gps
 {
     class Application
     {
-    protected:
+    public:
         Window window;
         Keyboard *keyboard;
         Mouse *mouse;

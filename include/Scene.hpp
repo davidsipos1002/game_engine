@@ -17,9 +17,10 @@ private:
     void render() override;
     void cleanup() override;
     void generateGround(int x, int y);
-    void generateTreesAndMushrooms(int x, int y);
+    void generateTrees(int x, int y, const glm::vec3 &center);
     void setupCampingPlace(const glm::vec3 &position);
     void setupForestCabin(const glm::vec3 &position);
+    void setupCameraAnimation();
 
 public:
     Scene(bool fullScreen, int width, int height, const std::string &title);

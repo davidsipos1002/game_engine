@@ -172,6 +172,8 @@ namespace gps
         KeyFrame operator+(const KeyFrame &other) const
         {
             KeyFrame ret = *this;
+            ret.direction = other.direction;
+            ret.speed = other.speed;
             ret.pitch += other.pitch;
             ret.yaw += other.yaw;
             return ret;
