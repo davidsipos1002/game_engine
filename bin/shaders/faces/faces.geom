@@ -14,11 +14,11 @@ flat out vec3 fLightDirection;
 void main()
 {
     fLightDirection = gLightDirection[0];
+    fNormalEye = gNormalEye[0];
     for (int i = 0; i < 3; i++)
     {
         gl_Position = gl_in[i].gl_Position;
         fPosEye = gPosEye[i];
-        fNormalEye = gNormalEye[i];
         EmitVertex();
     }
     EndPrimitive();
