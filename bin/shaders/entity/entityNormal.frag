@@ -54,7 +54,7 @@ vec3 viewDir;
 
 float constant = 1.0f;
 float linear = 0.045f;
-float quadratic = 0.05f;
+float quadratic = 0.1f;
 
 float computeDirectionalAndSpotLightShadow(bool directional, int i) {
     vec3 normalizedCoords;
