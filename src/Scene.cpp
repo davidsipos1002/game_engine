@@ -35,7 +35,7 @@ void Scene::init()
 
     renderer->fogColor = 1 / 255.0f * glm::vec3(12, 16, 31);
     renderer->fogDensity = 0.04f;
-    renderer->skyBoxColorModifier = glm::vec3(0.2, 0.2, 0.2);
+    renderer->skyBoxColorModifier = 0.8f * renderer->fogColor;
 }
 
 void Scene::setupCameraAnimation()
